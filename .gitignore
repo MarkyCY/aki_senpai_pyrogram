@@ -1,0 +1,5 @@
+env
+.env
+*.session
+*.pyc
+AkiraS.session-journal
