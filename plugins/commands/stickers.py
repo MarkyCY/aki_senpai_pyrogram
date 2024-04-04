@@ -31,26 +31,11 @@ async def del_sticker_command(app: Client, message: Message):
         await app.send_message(chat_id, "Por favor, haz reply a un sticker para obtener su ID.")
         return
     
-    packname = "a" + str(message.from_user.id) + "_by_Akira_Senpai_bot"
-    emoji = message.reply_to_message.sticker.emoji
+
     sticker_id = message.reply_to_message.sticker.file_id
     decoded = FileId.decode(sticker_id)
 
-    ## Obtener el conjunto de stickers
-    #stickerset = await app.invoke(GetStickerSet(
-    #    stickerset=InputStickerSetShortName(short_name=packname),
-    #    hash=0
-    #))
-    #
-    #delete = {}
-    #for s in stickerset.documents:
-    #    # Guardamos una tupla con el id, access_hash y file_reference
-    #    delete[s.attributes[1].alt] = (s.id, s.access_hash, s.file_reference)
 
-    #sticker_id, access_hash, file_reference = delete[emoji]
-    #print(sticker_id)
-    #print(access_hash)
-    #print(file_reference)
     try:
         sticker_to_remove = InputDocument(
             id=decoded.media_id,
