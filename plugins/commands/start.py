@@ -1,0 +1,11 @@
+from pyromod import Client, Message
+from pyrogram import filters
+#from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+import asyncio
+
+@Client.on_message(filters.command('start'))
+async def start_command(app: Client, message: Message):
+    if (message.chat.type == 'private'):
+        await app.send_message(message.chat.id, "Hola para subscribirte en el concurso solo escribe o toca: /sub")
+    else:
+        await app.send_message(message.chat.id, "Uhhh quieres participar? Contactame por PV y escribeme /sub \n@Akira_Senpai_bot")
