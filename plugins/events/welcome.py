@@ -11,9 +11,6 @@ from database.mongodb import get_db
 db = get_db()
 users = db.users
 
-#Importamos los datos necesarios para el bot
-Token = os.getenv('BOT_API')
-
 # Definimos una lista de mensajes de bienvenida por defecto
 default_welcome_messages = [
     "¡Bienvenido! En Otaku Senpai siempre hay espacio para más locos del anime y el manga.",
