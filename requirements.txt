@@ -1,5 +1,4 @@
-pyrogram
-pyromod
+https://github.com/TelegramPlayGround/pyrogram/archive/unknown_errors.zip
 tgcrypto
 Pillow
 pymongo
