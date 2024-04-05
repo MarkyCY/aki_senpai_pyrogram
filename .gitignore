@@ -4,3 +4,5 @@ env
 *.pyc
 AkiraS.session-journal
 stealsticker.webp
+AkiraS.session-shm
+AkiraS.session-wal
