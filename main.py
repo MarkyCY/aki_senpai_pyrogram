@@ -27,7 +27,7 @@ async def main():
     await app.start()
     print('*Bot Online.')
     #Enviar un mensaje al Admin para avisar de que el Bot ya está Online
-    await app.send_message(873919300,text='Aki está lista')
+    await app.send_message(873919300, text='Aki está lista')
 
 #Iniciar Proceso de la función main()
 print("Bot Starting")
