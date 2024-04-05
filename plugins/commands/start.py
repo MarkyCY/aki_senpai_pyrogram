@@ -6,6 +6,6 @@ import asyncio
 @Client.on_message(filters.command('start'))
 async def start_command(app: Client, message: Message):
     if (message.chat.type == 'private'):
-        await app.send_message(message.chat.id, "Hola para subscribirte en el concurso solo escribe o toca: /sub")
+        await app.send_message(message.chat.id, text="Hola para subscribirte en el concurso solo escribe o toca: /sub")
     else:
-        await app.send_message(message.chat.id, "Uhhh quieres participar? Contactame por PV y escribeme /sub \n@Akira_Senpai_bot")
+        await app.send_message(message.chat.id, text="Uhhh quieres participar? Contactame por PV y escribeme /sub \n@Akira_Senpai_bot")

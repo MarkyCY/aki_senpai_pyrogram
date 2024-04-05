@@ -1,4 +1,5 @@
-from pyromod import Client, Message
+from pyrogram import Client
+from pyrogram.types import Message, ReplyParameters
 from pyrogram import enums, errors
 from pyrogram import filters
 from pyrogram.file_id import FileId
@@ -16,22 +17,22 @@ async def sticker_info_command(app: Client, message: Message):
     # Si el mensaje tiene un reply y es un sticker
     if message.reply_to_message and message.reply_to_message.sticker:
         sticker_id = message.reply_to_message.sticker.file_id
-        await app.send_message(chat_id, f"El ID del sticker es: <code>{sticker_id}</code>", reply_to_message_id=message.reply_to_message_id, parse_mode=enums.ParseMode.HTML)
+        await app.send_message(chat_id, text=f"El ID del sticker es: <code>{sticker_id}</code>", reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), parse_mode=enums.ParseMode.HTML)
 
     # Si el mensaje tiene un reply pero no es un sticker
     elif message.reply_to_message and not message.reply_to_message.sticker:
-        await app.send_message(chat_id, "Este comando solo puede ser usado con stickers. Por favor, haz reply a un sticker.", reply_to_message_id=message.reply_to_message_id)
+        await app.send_message(chat_id, text="Este comando solo puede ser usado con stickers. Por favor, haz reply a un sticker.", reply_parameters=ReplyParameters(message_id=message.reply_to_message_id))
 
     # Si el mensaje no tiene un reply
     else:
-        await app.send_message(chat_id, "Por favor, haz reply a un sticker para obtener su ID.")
+        await app.send_message(chat_id, text="Por favor, haz reply a un sticker para obtener su ID.")
 
 @Client.on_message(filters.command('del_sticker'))
 async def del_sticker_command(app: Client, message: Message):
     chat_id = message.chat.id
     
     if not (message.reply_to_message and message.reply_to_message.sticker):
-        await app.send_message(chat_id, "Por favor, haz reply a un sticker para obtener su ID.")
+        await app.send_message(chat_id, text="Por favor, haz reply a un sticker para obtener su ID.")
         return
     
 
@@ -48,10 +49,10 @@ async def del_sticker_command(app: Client, message: Message):
         result = await app.invoke(RemoveStickerFromSet(sticker=sticker_to_remove))
         
         if result:
-            await app.send_message(chat_id, "El sticker se ha eliminado del pack.", reply_to_message_id=message.reply_to_message_id)
+            await app.send_message(chat_id, text="El sticker se ha eliminado del pack.", reply_parameters=ReplyParameters(message_id=message.reply_to_message_id))
     except Exception as e:
         print(e)
-        await app.send_message(chat_id, "No se pudo eliminar el sticker.", reply_to_message_id=message.reply_to_message_id)
+        await app.send_message(chat_id, text="No se pudo eliminar el sticker.", reply_parameters=ReplyParameters(message_id=message.reply_to_message_id))
 
 
     ## Obtener el conjunto de stickers
@@ -116,7 +117,7 @@ async def steal_sticker_command(app: Client, message: Message):
         elif msg.reply_to_message.document:
             file_id = msg.reply_to_message.document.file_id
         else:
-            await message.reply_text(msg, "No puedo robar eso.")
+            await message.reply_text(text="No puedo robar eso.")
         
 
         if is_animated:
@@ -215,14 +216,14 @@ async def steal_sticker_command(app: Client, message: Message):
 
                 keyb = [[InlineKeyboardButton('Pack Robao', url=f'https://t.me/addstickers/{packname}')]]
                 await message.reply_text(
-                    f"Sticker agregado a tu Pack de Stickers."
+                    text=f"Sticker agregado a tu Pack de Stickers."
                     + f"\nEl emoji es: {sticker_emoji}",
                     parse_mode=enums.ParseMode.HTML, 
                     reply_markup=InlineKeyboardMarkup(keyb)
                 )
 
             except OSError as e:
-                await msg.reply_text("Solo puedo robar imágenes.")
+                await msg.reply_text(text="Solo puedo robar imágenes.")
                 print(e)
                 return
             
@@ -240,7 +241,7 @@ async def steal_sticker_command(app: Client, message: Message):
                     )
 
                 elif e.result_json['description'] == "Bad Request: can't parse sticker: expected a Unicode emoji":
-                        await msg.reply_text("Emoji no válido.")
+                        await msg.reply_text(text="Emoji no válido.")
     
 async def makepack_internal(
     app,
@@ -278,12 +279,12 @@ async def makepack_internal(
         return
         if e.message == "El nombre del stickerpack ya está ocupado":
             await msg.reply_text(
-                "Nuevo paquete de sticker creado. Miralo [aquí](https://t.me/addstickers/%s" % packname,
+                text="Nuevo paquete de sticker creado. Miralo [aquí](https://t.me/addstickers/%s" % packname,
                 parse_mode=enums.ParseMode.MARKDOWN,
             )
         elif e.message in ("Peer_id_invalid", "El bot ha sido bloqueado por el usuario"):
             await msg.reply_text(
-                "Contáctame en privado primero.",
+                text="Contáctame en privado primero.",
                 reply_markup=InlineKeyboardMarkup([[
                     InlineKeyboardButton(
                         text="Iniciar", url=f"t.me/Akira_Senpai_bot")
@@ -291,16 +292,16 @@ async def makepack_internal(
             )
         elif e.message == "Internal Server Error: created sticker set not found (500)":
             await msg.reply_text(
-            "Paquete de sticker creado siuuu. Miralo [aquí](https://t.me/addstickers/%s" % packname,
+            text="Paquete de sticker creado siuuu. Miralo [aquí](https://t.me/addstickers/%s" % packname,
             parse_mode=enums.ParseMode.MARKDOWN,
         )  
         return
 
     if success:
         await msg.reply_text(
-            "Paquete de sticker creado siuuu. Miralo [aquí](https://t.me/addstickers/%s" % packname,
+            text="Paquete de sticker creado siuuu. Miralo [aquí](https://t.me/addstickers/%s" % packname,
             parse_mode=enums.ParseMode.MARKDOWN,
         )
     else:
         await msg.reply_text(
-            "No pude crear el Pack de Stickers :(")
+            text="No pude crear el Pack de Stickers :(")
