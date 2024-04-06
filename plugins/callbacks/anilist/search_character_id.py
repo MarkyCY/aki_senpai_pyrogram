@@ -17,7 +17,7 @@ async def cancel(app: Client, call: CallbackQuery):
     cid = call.message.chat.id
     mid = call.message.id
     uid = call.from_user.id
-    anime_id = call.data.split('_')[-1]
+    character_id = call.data.split('_')[-1]
     if not call.message.reply_to_message:
         app.answer_callback_query(call.id, "No se encontró el reply del mensaje.")
         app.delete_message(cid, mid)
@@ -26,7 +26,7 @@ async def cancel(app: Client, call: CallbackQuery):
         app.answer_callback_query(call.id, "Tu no pusiste este comando...", True)
         return
     #parts = call.data.split("_")
-    await show_character(app, cid, anime_id)
+    await show_character(app, cid, character_id)
     return
 
 def timestamp_conv(timestamp):

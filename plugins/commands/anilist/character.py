@@ -8,7 +8,7 @@ source_language = 'auto'  # Auto detectar idioma de origen
 target_language = 'es'  # español
 
 @Client.on_message(filters.command('character'))
-async def anime_command(app: Client, message: Message):
+async def character_command(app: Client, message: Message):
     if len(message.text.split(' ')) <= 1:
         await message.reply_text(text=f"Debes poner el nombre del anime luego de /anime")
         return
