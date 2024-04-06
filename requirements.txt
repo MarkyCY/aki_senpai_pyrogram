@@ -5,7 +5,8 @@ pymongo
 graphqlclient
 APScheduler
 pytz
-requests
+#requests
+aiohttp
 six
 asyncio
 #flask
