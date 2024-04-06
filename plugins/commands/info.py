@@ -2,9 +2,6 @@ from pyrogram import Client
 from pyrogram.types import Message, ReplyParameters
 from pyrogram import filters
 
-import os
-import random
-from datetime import datetime
 from database.mongodb import get_db
 
 # Conectar a la base de datos
