@@ -1,17 +1,14 @@
-from pyrogram import Client, filters, types, enums
-from pyrogram.types import Message, ReplyParameters, LinkPreviewOptions
+from pyrogram import Client, filters, types
+from pyrogram.types import Message, ReplyParameters
 
-from API.AniList.api_anilist import search_anime, search_anime_id
-from plugins.others.translate import async_translate
-from datetime import datetime
+from API.AniList.api_anilist import search_anime
 
-import re
 
 source_language = 'auto'  # Auto detectar idioma de origen
 target_language = 'es'  # español
 
 @Client.on_message(filters.command('anime'))
-async def start_command(app: Client, message: Message):
+async def anime_command(app: Client, message: Message):
     if len(message.text.split(' ')) <= 1:
         await message.reply_text(text=f"Debes poner el nombre del anime luego de /anime")
         return
@@ -33,7 +30,3 @@ async def start_command(app: Client, message: Message):
     markup = types.InlineKeyboardMarkup(inline_keyboard=btns)
 
     await app.send_message(message.chat.id, text='Estos son los resultados de la busqueda de animes:', reply_parameters=ReplyParameters(message_id=message.id), reply_markup=markup)
-
-
-
-         
