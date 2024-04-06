@@ -25,7 +25,7 @@ async def cancel(app: Client, call: CallbackQuery):
         app.answer_callback_query(call.id, "Tu no pusiste este comando...", True)
         return
     #parts = call.data.split("_")
-    await show_anime(app, cid, mid, anime_id)
+    await show_anime(app, cid, anime_id)
     return
 
 
@@ -35,7 +35,7 @@ def timestamp_conv(timestamp):
     return format
 
 
-async def show_anime(app, chat_id, message_id, id):
+async def show_anime(app, chat_id, id):
     anime = await search_anime_id(id)
     name = anime['data']['Media']['title']['english']
     if (name is None):

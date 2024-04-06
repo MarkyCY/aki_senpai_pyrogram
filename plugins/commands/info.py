@@ -10,7 +10,7 @@ users = db.users
 
 
 @Client.on_message(filters.command('info'))
-async def start_command(app: Client, message: Message):
+async def info_command(app: Client, message: Message):
     #Verificar si el mensaje es una respuesta a otro mensaje
     if message.reply_to_message is not None:
         #Si el mensaje es un reply a otro mensaje, obtengo los datos del usuario al que se le hizo reply
