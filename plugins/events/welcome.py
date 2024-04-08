@@ -7,10 +7,6 @@ import random
 from datetime import datetime
 from database.mongodb import get_db
 
-# Conectar a la base de datos
-db = get_db()
-users = db.users
-
 # Definimos una lista de mensajes de bienvenida por defecto
 default_welcome_messages = [
     "¡Bienvenido! En Otaku Senpai siempre hay espacio para más locos del anime y el manga.",
@@ -73,13 +69,16 @@ WEEKEND_START = 5
 
 @Client.on_message(filters.new_chat_members)
 async def send_welcome_event(app: Client, message: Message):
+    # Conectar a la base de datos
+    db = await get_db()
+    users = db.users
     # Obtenemos el nombre de usuario de la persona que se unio al grupo
     chat_id = message.chat.id
     #message_id = message.id
     new_user_id = message.new_chat_members[0].id
-    user = users.find_one({"user_id": new_user_id})
+    user = await users.find_one({"user_id": new_user_id})
     if user is None:
-        users.insert_one({"user_id": new_user_id})
+        await users.insert_one({"user_id": new_user_id})
 
     current_date = datetime.today()
     current_month = current_date.month
