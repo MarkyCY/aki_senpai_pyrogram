@@ -1,7 +1,7 @@
 import os
-from pymongo import MongoClient
+import motor.motor_asyncio
 
-def get_db():
+async def get_db():
     mongo_uri = os.getenv('MONGO_URI')
-    client = MongoClient(mongo_uri)
+    client = motor.motor_asyncio.AsyncIOMotorClient(mongo_uri)
     return client.otakusenpai
