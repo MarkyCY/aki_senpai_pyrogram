@@ -17,8 +17,9 @@ basicConfig(format="*%(levelname)s %(message)s", level=INFO, force=True)
 
 
 plugins = dict(root="plugins")
-
-app = Client('AkiraS',api_id=api_id, api_hash=api_hash, bot_token=bot_token, plugins=plugins)
+#my_bot
+#AkiraS
+app = Client('my_bot',api_id=api_id, api_hash=api_hash, bot_token=bot_token, plugins=plugins)
 
 #Función para iniciar el Bot
 async def main():
@@ -26,7 +27,7 @@ async def main():
     await app.start()
     print('*Bot Online.')
     #Enviar un mensaje al Admin para avisar de que el Bot ya está Online
-    #await app.send_message(873919300, text='Aki está lista')
+    await app.send_message(873919300, text='Aki está lista')
 
 #Iniciar Proceso de la función main()
 print("Bot Starting")
