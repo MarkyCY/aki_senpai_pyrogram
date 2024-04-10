@@ -34,16 +34,11 @@ async def info_command(app: Client, message: Message):
     }
 
     downloaded_file = await app.download_media(message.reply_to_message, file_name="image.jpg")
-
-    #with open("image.jpg", 'wb') as new_file:
-    #    new_file.write(downloaded_file)
         
     result = await async_post_image(url, params, downloaded_file)
 
     res = json.loads(result)
 
-    #reaction = ReactionTypeEmoji(type="emoji", emoji="")
-    #bot.set_message_reaction(message.chat.id, message.message_id, reaction=[reaction])
     await app.set_message_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="👨‍💻")])
 
     print(f"Haciendo soliticud a SauceNAO... user: @{message.from_user.username}")
