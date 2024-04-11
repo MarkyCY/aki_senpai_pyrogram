@@ -25,7 +25,7 @@ async def manga_command(app: Client, message: Message):
         else:
             title = res['title']['romaji']
 
-        btn = [types.InlineKeyboardButton(str(title), callback_data=f"show_manga_{res['id']}")]
+        btn = [types.InlineKeyboardButton(str(title), callback_data=f"show_manga_{res['id']}_{message.from_user.id}")]
         btns.append(btn)
     markup = types.InlineKeyboardMarkup(inline_keyboard=btns)
 

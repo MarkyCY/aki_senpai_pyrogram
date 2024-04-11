@@ -25,7 +25,7 @@ async def character_command(app: Client, message: Message):
         else:
             name = res['name']['native']
 
-        btn = [types.InlineKeyboardButton(str(name), callback_data=f"show_character_{res['id']}")]
+        btn = [types.InlineKeyboardButton(str(name), callback_data=f"show_character_{res['id']}_{message.from_user.id}")]
         btns.append(btn)
     markup = types.InlineKeyboardMarkup(inline_keyboard=btns)
 
