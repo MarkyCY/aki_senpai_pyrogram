@@ -11,21 +11,20 @@ import re
 source_language = 'auto'  # Auto detectar idioma de origen
 target_language = 'es'  # español
 
-@Client.on_callback_query(filters.regex(r"^show_anime_(\d+)$"))
+@Client.on_callback_query(filters.regex(r"^show_anime_(\d+)_\d+$"))
 async def cancel(app: Client, call: CallbackQuery):
     cid = call.message.chat.id
     mid = call.message.id
     uid = call.from_user.id
-    anime_id = call.data.split('_')[-1]
-    if not call.message.reply_to_message:
-        app.answer_callback_query(call.id, "No se encontró el reply del mensaje.")
-        app.delete_message(cid, mid)
-        return
-    if call.message.reply_to_message.from_user.id != uid:
-        app.answer_callback_query(call.id, "Tu no pusiste este comando...", True)
+    partes = call.data.split('_')
+    anime_id = int(partes[2])
+    ruid = int(partes[3])
+
+    if ruid != uid:
+        await app.answer_callback_query(call.id, "Tu no pusiste este comando...", True)
         return
     #parts = call.data.split("_")
-    await show_anime(app, cid, anime_id)
+    await show_anime(app, mid, cid, anime_id)
     return
 
 
@@ -35,7 +34,7 @@ def timestamp_conv(timestamp):
     return format
 
 
-async def show_anime(app, chat_id, id):
+async def show_anime(app, mid, chat_id, id):
     anime = await search_anime_id(id)
     name = anime['data']['Media']['title']['english']
     if (name is None):
@@ -77,12 +76,14 @@ async def show_anime(app, chat_id, id):
 
 <strong>Estado:</strong> {status}
 <strong>Para Adultos?:</strong> {adult}
+
+<strong>Imagen:</strong> {image}
 """
     if nextAiringEpisode:
         msg += f"\n<strong>Próxima emisión:</strong>\nEpisodio <strong>{nextAiringEpisode['episode']}</strong> Emisión: <code>{timestamp_conv(nextAiringEpisode['airingAt'])}</code>\n"
      
     if image is not None:
-        await app.send_message(chat_id, text=msg, parse_mode=enums.ParseMode.HTML, link_preview_options=LinkPreviewOptions(url=image, prefer_large_media=True, show_above_text=True, manual=True, safe=True))
+        await app.edit_message_text(chat_id, mid, text=msg, link_preview_options=LinkPreviewOptions(url=image, prefer_large_media=True, show_above_text=True), parse_mode=enums.ParseMode.HTML)
     else:
-        await app.send_message(chat_id, text=msg, parse_mode=enums.ParseMode.HTML, link_preview_options=LinkPreviewOptions(is_disabled=True))
+        await app.edit_message_text(chat_id, mid, text=msg, parse_mode=enums.ParseMode.HTML, link_preview_options=LinkPreviewOptions(is_disabled=True))
     
