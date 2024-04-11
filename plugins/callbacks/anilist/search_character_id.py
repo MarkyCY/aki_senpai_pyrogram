@@ -12,21 +12,20 @@ import re
 source_language = 'auto'  # Auto detectar idioma de origen
 target_language = 'es'  # español
 
-@Client.on_callback_query(filters.regex(r"^show_character_(\d+)$"))
+@Client.on_callback_query(filters.regex(r"^show_character_(\d+)_\d+$"))
 async def cancel(app: Client, call: CallbackQuery):
     cid = call.message.chat.id
     mid = call.message.id
     uid = call.from_user.id
-    character_id = call.data.split('_')[-1]
-    if not call.message.reply_to_message:
-        app.answer_callback_query(call.id, "No se encontró el reply del mensaje.")
-        app.delete_message(cid, mid)
-        return
-    if call.message.reply_to_message.from_user.id != uid:
-        app.answer_callback_query(call.id, "Tu no pusiste este comando...", True)
+    partes = call.data.split('_')
+    character_id = int(partes[2])
+    ruid = int(partes[3])
+
+    if ruid != uid:
+        await app.answer_callback_query(call.id, "Tu no pusiste este comando...", True)
         return
     #parts = call.data.split("_")
-    await show_character(app, cid, character_id)
+    await show_character(app, mid, cid, character_id)
     return
 
 def timestamp_conv(timestamp):
@@ -35,7 +34,7 @@ def timestamp_conv(timestamp):
     return format
 
 
-async def show_character(app, chat_id, id):
+async def show_character(app, mid, chat_id, id):
     character = await searchCharacterId(id)
 
     full_name = character['data']['Character']['name']['full']
@@ -65,6 +64,6 @@ async def show_character(app, chat_id, id):
 {description}
 """
     if image is not None:
-        await app.send_message(chat_id, text=msg, parse_mode=enums.ParseMode.HTML, link_preview_options=LinkPreviewOptions(url=image, prefer_large_media=True, show_above_text=True, manual=True, safe=True))
+        await app.edit_message_text(chat_id, mid, text=msg, parse_mode=enums.ParseMode.HTML, link_preview_options=LinkPreviewOptions(url=image, prefer_large_media=True, show_above_text=True, manual=True, safe=True))
     else:
-        await app.send_message(chat_id, text=msg, parse_mode=enums.ParseMode.HTML, link_preview_options=LinkPreviewOptions(is_disabled=True))
+        await app.edit_message_text(chat_id, mid, text=msg, parse_mode=enums.ParseMode.HTML, link_preview_options=LinkPreviewOptions(is_disabled=True))
