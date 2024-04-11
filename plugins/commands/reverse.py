@@ -14,6 +14,9 @@ async def async_post_image(url, params, image_path):
         async with session.post(url, params=params, data={'file': open(image_path, 'rb')}) as response:
             return await response.text()
 
+async def progress(current, total):
+    print(f"{current * 100 / total:.1f}%")
+
 @Client.on_message(filters.command('reverse'))
 async def info_command(app: Client, message: Message):
     chat_id = message.chat.id
@@ -33,7 +36,7 @@ async def info_command(app: Client, message: Message):
         "testmode": "1"
     }
 
-    downloaded_file = await app.download_media(message.reply_to_message, file_name="image.jpg")
+    downloaded_file = await app.download_media(message.reply_to_message, file_name="image.jpg", progress=progress)
         
     result = await async_post_image(url, params, downloaded_file)
 
