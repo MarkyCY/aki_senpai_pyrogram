@@ -1,6 +1,11 @@
 from pyromod import Client
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+from plugins.commands.get_youtube import get_yt_videos
+
 import asyncio
+import pytz
 import os
 
 # Create a new Pyrogram client
@@ -23,11 +28,15 @@ app = Client('my_bot',api_id=api_id, api_hash=api_hash, bot_token=bot_token, plu
 
 #Función para iniciar el Bot
 async def main():
-    #Iniciar Cliente
     await app.start()
     print('*Bot Online.')
-    #Enviar un mensaje al Admin para avisar de que el Bot ya está Online
     #await app.send_message(873919300, text='Aki está lista')
+
+#Crear los horarios
+scheduler = AsyncIOScheduler()
+tz = pytz.timezone('Cuba')
+scheduler.add_job(get_yt_videos, CronTrigger(minute='*/30', timezone=tz))#, args=(None, True))
+scheduler.start()
 
 #Iniciar Proceso de la función main()
 print("Bot Starting")
