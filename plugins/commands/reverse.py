@@ -65,5 +65,5 @@ async def info_command(app: Client, message: Message):
             msg = await message.reply_text(text="No se encontraron personajes en la respuesta de la API.")
             await app.set_message_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="💅")])
     else:
-        msg = message.reply_text(text="No se encontraron resultados en la API.")
+        msg = await message.reply_text(text="No se encontraron resultados en la API.")
         await app.set_message_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="💅")])
