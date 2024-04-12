@@ -5,8 +5,6 @@ from pyrogram import enums
 
 from database.mongodb import get_db
 
-import json
-
 
 @Client.on_message(filters.command('staff'))
 async def info_command(app: Client, message: Message):
