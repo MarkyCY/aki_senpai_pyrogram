@@ -18,7 +18,7 @@ async def progress(current, total):
     print(f"{current * 100 / total:.1f}%")
 
 @Client.on_message(filters.command('reverse'))
-async def info_command(app: Client, message: Message):
+async def reverse_command(app: Client, message: Message):
     chat_id = message.chat.id
     
     if chat_id != -1001485529816 and message.from_user.id != 873919300:

@@ -34,7 +34,7 @@ def convert_date(fecha_iso):
 
 
 @Client.on_message(filters.command('get_videos'))
-async def report_command(app: Client, message: Message):
+async def get_video_command(app: Client, message: Message):
     if message is not None:
         user_id = message.from_user.id
         chat_id = message.chat.id

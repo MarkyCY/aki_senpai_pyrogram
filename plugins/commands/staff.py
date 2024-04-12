@@ -7,7 +7,7 @@ from database.mongodb import get_db
 
 
 @Client.on_message(filters.command('staff'))
-async def info_command(app: Client, message: Message):
+async def staff_command(app: Client, message: Message):
 
     chat_type = str(message.chat.type).split('.')[1].lower()
     if not (chat_type == 'supergroup' or chat_type == 'group'):
