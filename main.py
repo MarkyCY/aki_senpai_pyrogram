@@ -2,7 +2,7 @@ from pyromod import Client
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from plugins.commands.get_youtube import get_yt_videos
+from plugins.commands.get_youtube import get_video_command
 
 import asyncio
 import pytz
@@ -35,7 +35,7 @@ async def main():
 #Crear los horarios
 scheduler = AsyncIOScheduler()
 tz = pytz.timezone('Cuba')
-scheduler.add_job(get_yt_videos, CronTrigger(minute='*/30', timezone=tz))#, args=(None, True))
+scheduler.add_job(get_video_command, CronTrigger(minute='*/30', timezone=tz), args=(app,))
 scheduler.start()
 
 #Iniciar Proceso de la función main()
