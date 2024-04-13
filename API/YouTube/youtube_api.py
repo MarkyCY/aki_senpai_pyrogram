@@ -32,6 +32,7 @@ async def get_latest_videos(youtube, channel_id):
         channelId=channel_id,
         order="date",
         type="video",
+        maxResults=5
     )
     
     response = await asyncio.get_event_loop().run_in_executor(None, request.execute)
