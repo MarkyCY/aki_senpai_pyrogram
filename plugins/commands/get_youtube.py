@@ -4,7 +4,6 @@ from pyrogram.types import Message, LinkPreviewOptions, InlineKeyboardButton, In
 from pyrogram import filters
 
 import re
-import time
 import pytz
 import asyncio
 
@@ -34,7 +33,7 @@ def convert_date(fecha_iso):
 
 
 @Client.on_message(filters.command('get_videos'))
-async def get_video_command(app: Client, message: Message):
+async def get_video_command(app: Client = None, message: Message = None):
     if message is not None:
         user_id = message.from_user.id
         chat_id = message.chat.id
@@ -49,16 +48,13 @@ async def get_video_command(app: Client, message: Message):
             message.reply_text(text="Solo los administradores pueden usar este comando.")
             return
         
-        await get_yt_videos()
-
-async def get_yt_videos():
     # Conectar a la base de datos
     db = await get_db()
     youtube = db.youtube
 
     youtube_client = await authenticate()
     channel_id = "UCftYv-uM9iItUY4eJp2zerg"
-    
+
     print("Buscando Videos...")
     videos = await get_latest_videos(youtube_client, channel_id)
     print("Busqueda Finalizada.")
@@ -96,7 +92,7 @@ Definición: <strong>{video["Content Details"]["definition"].upper()}</strong> |
                         ]
                     )
         try:
-            await Client.send_message(-1001485529816, text=msg, message_thread_id=251766, link_preview_options=link_preview_options, parse_mode=enums.ParseMode.HTML, reply_markup=reply_markup)
+            await app.send_message(-1001485529816, text=msg, message_thread_id=251766, link_preview_options=link_preview_options, parse_mode=enums.ParseMode.HTML, reply_markup=reply_markup)
         except Exception as e:
-            print(e)
+            print("Error al enviar mensaje: ",e)
         await asyncio.sleep(3)
