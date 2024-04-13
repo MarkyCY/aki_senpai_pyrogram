@@ -1,5 +1,8 @@
 from pyromod import Client
+from dotenv import load_dotenv
 
+# Carga los valores del archivo .env
+load_dotenv()
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from plugins.commands.get_youtube import get_video_command
