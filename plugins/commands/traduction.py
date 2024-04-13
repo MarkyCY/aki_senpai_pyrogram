@@ -3,7 +3,6 @@ from pyrogram.types import Message
 from pyrogram import filters
 
 from plugins.others.translate import async_translate
-from database.mongodb import get_db
 
 @Client.on_message(filters.command('tr'))
 async def traduction_command(app: Client, message: Message):
