@@ -72,7 +72,7 @@ async def answer(client, inline_query):
     elif args[0] == "<ANIME>":
         results = []
         search = ' '.join(args[1:])
-        async for anime in animes.find({'title': {'$regex': f'.*{search}.*', '$options': 'i'}}):
+        async for anime in animes.find({'title': {'$regex': f'.*{search}.*', '$options': 'i'}}).limit(10):
             text=f"⛩️{anime['title']}"
             img="https://i.postimg.cc/Z5sHk6wJ/photo-2023-11-24-08-52-37.jpg"
             result = InlineQueryResultArticle(
