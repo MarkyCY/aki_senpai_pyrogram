@@ -21,7 +21,12 @@ useControlMongoInc = UseControlMongo()
 async def generate_text(input_text):
     try:
         genai.configure(api_key=os.getenv('GEMINI_API'))
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel(model_name='gemini-1.5-pro-latest',
+                                      system_instruction="""
+Eres Akira, la hija de @MarkyWTF el cual es tu creador. Eres un bot del grupo de Telegram Otaku Senpai. 
+Eres entusiasta y carismática pero también muy atrevida y grosera. A veces llamas a otros caranalga, mamawebo o peruano. 
+Te gusta Mushoku Tensei.
+""")
         res = model.generate_content(input_text)
         return res
     except Exception as e:
@@ -40,6 +45,7 @@ async def manejar_mensaje(app: Client, message: Message):
     chat_id = message.chat.id
     user = await users.find_one({"user_id": user_id})
 
+    user_info = None
     if user is not None:
         user_info = user.get('description', None)
 
@@ -47,7 +53,13 @@ async def manejar_mensaje(app: Client, message: Message):
         await message.reply_text(text="Esta función es exclusiva de Otaku Senpai.")
         return
     
-    if await useControlMongoInc.verif_limit(user_id) is False and not any(admin['user_id'] == user_id for admin in Admins.find()):
+    async def isAdmin(user_id):
+        async for admin in Admins.find():
+            if admin['user_id'] == user_id:
+                return True
+        return False
+                
+    if await useControlMongoInc.verif_limit(user_id) is False and await isAdmin(user_id) is False:
         msg = await message.reply_text(text="Has llegado al límite de uso diario!")
         await app.set_message_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="🥴")])
         return
@@ -58,7 +70,7 @@ async def manejar_mensaje(app: Client, message: Message):
         return
     
     #Mention detect
-    mention = "None"
+    mention = None
     if hasattr(message, 'entities') and message.entities is not None:
         for entity in message.entities:
             if entity.type == "mention":
@@ -80,16 +92,15 @@ async def manejar_mensaje(app: Client, message: Message):
             descr = '-'
         reply = f"to_username: @{username}, description: '{descr}'"
 
-    prompt = """
-[Rol] Eres Akira, la hija de @MarkyWTF el cual es tu creador. Eres un bot del grupo de Telegram Otaku Senpai. Eres entusiasta y carismática, pero también muy atrevida y grosera. A veces llamas a otros 'caranalga'. Te gusta Mushoku Tensei y eres bromista.
-Teniendo en cuenta la siguiente información del usuario:    
+    prompt = """Teniendo en cuenta la siguiente información del usuario:
 Solo puedes usar estos emojis: ["👍","👎","❤","🔥","🥰","👏","😁","🤔","🤯","😱","🤬","😢","🤩","🤮","💩","🥱","🥴","😍","🤣","💔","🤨","😐","🍾","💋","🖕","😈","😴","😭","🤓"]
 Devuelve todo en formato json con este formato: {"message": "respuesta", "reaction": "emoji"}".
 """
-    input_text = f"{prompt} [From: '@{message.from_user.username}', user_description: '{user_info}', user_message: '{message.text}', mention_to: ['{mention}'], reply_to: ['{reply}']]Responde el texto de user_message como si fueras Akira con textos cortos con formato de mensaje de telegram siguiendo el rol con respuestas naturales y devuelve un texto limpio sin nada que arruine el rol."
+    input_text = f"{prompt} Data: [From: '@{message.from_user.username}', user_description: '{user_info}', user_message: '{message.text}', mention_to: ['{mention}'], reply_to: ['{reply}']]Responde el texto de user_message como si fueras Akira con textos cortos con formato de mensaje de telegram siguiendo el rol con respuestas naturales y devuelve un texto limpio sin nada que arruine el rol."
 
     try:
         response = await generate_text(input_text)
+        print(response)
         parts = response.parts
         if parts:
             response = response.candidates[0].content.parts[0].text
@@ -99,11 +110,10 @@ Devuelve todo en formato json con este formato: {"message": "respuesta", "reacti
     except Exception as e:
         await message.reply_text(text="Lo siento no puedo atenderte ahora", parse_mode=enums.ParseMode.HTML)
         print(f"An error occurred: {e}")
-        print(f"feedback: {response.prompt_feedback}")
         return
     await app.set_message_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="👨‍💻")])
     await app.send_chat_action(chat_id, enums.ChatAction.TYPING)
-    await asyncio.sleep(3)
+    #await asyncio.sleep(3)
 
     # Encuentra el índice de inicio y final de la parte JSON
     start_index = response.find('{')
