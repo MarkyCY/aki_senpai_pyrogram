@@ -40,6 +40,8 @@ async def manejar_mensaje(app: Client, message: Message):
     chat_id = message.chat.id
     user = await users.find_one({"user_id": user_id})
 
+    user_info = None
+    
     if user is not None:
         user_info = user.get('description', None)
 
@@ -47,7 +49,13 @@ async def manejar_mensaje(app: Client, message: Message):
         await message.reply_text(text="Esta función es exclusiva de Otaku Senpai.")
         return
     
-    if await useControlMongoInc.verif_limit(user_id) is False and not any(admin['user_id'] == user_id for admin in Admins.find()):
+    async def isAdmin(user_id):
+        async for admin in Admins.find():
+            if admin['user_id'] == user_id:
+                return True
+        return False
+                
+    if await useControlMongoInc.verif_limit(user_id) is False and await isAdmin(user_id) is False:
         msg = await message.reply_text(text="Has llegado al límite de uso diario!")
         await app.set_message_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="🥴")])
         return
