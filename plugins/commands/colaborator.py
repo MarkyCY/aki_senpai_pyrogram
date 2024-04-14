@@ -29,7 +29,7 @@ async def set_mod_command(app: Client, message: Message):
     reply_user_id = message.reply_to_message.from_user.id
 
     user = await users.find_one({'user_id': message.reply_to_message.from_user.id})
-    if user['is_mod'] and user['is_mod'] is True:
+    if 'is_mod' in user and user['is_mod'] is True:
         await message.reply_text(text="Este usuario ya es colaborador.")
         return
 
@@ -68,7 +68,7 @@ async def del_mod_command(app: Client, message: Message):
     reply_user_id = message.reply_to_message.from_user.id
 
     user = await users.find_one({'user_id': message.reply_to_message.from_user.id})
-    if user['is_mod'] and user['is_mod'] is False:
+    if 'is_mod' not in user and user['is_mod'] is False:
         await message.reply_text(text="Este usuario no es colaborador.")
         return
 
