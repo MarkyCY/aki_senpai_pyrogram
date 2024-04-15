@@ -27,7 +27,7 @@ def convert_date(fecha_iso):
     zona_cuba = pytz.timezone('America/Havana')
     fecha_cuba = fecha_obj.astimezone(zona_cuba)
 
-    fecha_formateada = fecha_cuba.strftime('%m/%d/%y %I:%M %p')
+    fecha_formateada = fecha_cuba.strftime('%d/%m/%y %I:%M %p')
 
     return fecha_formateada
 
