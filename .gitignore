@@ -9,3 +9,4 @@ AkiraS.session-wal
 image.jpg
 API/YouTube/credentials.json
 API/YouTube/youtube_token.pickle
+API/YouTube/calendar_token.pickle
