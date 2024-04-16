@@ -78,7 +78,7 @@ async def steal_sticker_command(app: Client, message: Message):
     user = msg.from_user
     args = message.text.split(None, 1)
     packnum = 0
-    packname = "f" + str(user.id) + "_by_labolitacu_bot"
+    packname = "f" + str(user.id) + "_by_Akira_Senpai_bot"
     
     packname_found = 0
     max_stickers = 120
@@ -91,7 +91,7 @@ async def steal_sticker_command(app: Client, message: Message):
             
             if len(stickerset.documents) >= max_stickers:
                 packnum += 1
-                packname = ("f" + str(packnum) + "_" + str(user.id) + "_by_labolitacu_bot")
+                packname = ("f" + str(packnum) + "_" + str(user.id) + "_by_Akira_Senpai_bot")
             else:
                 packname_found = 1
         except errors.StickersetInvalid as e:
