@@ -39,13 +39,13 @@ async def get_video_command(app: Client = None, message: Message = None):
         chat_id = message.chat.id
 
         if chat_id != -1001485529816:
-            message.reply_text(text="Este comando es exclusivo de Otaku Senpai.")
+            await message.reply_text(text="Este comando es exclusivo de Otaku Senpai.")
             return
 
         chat_member = await app.get_chat_member(chat_id, user_id)
         role_name = str(chat_member.status).split('.')[1]
         if role_name.lower() not in ['administrator', 'owner']:
-            message.reply_text(text="Solo los administradores pueden usar este comando.")
+            await message.reply_text(text="Solo los administradores pueden usar este comando.")
             return
         
     # Conectar a la base de datos
