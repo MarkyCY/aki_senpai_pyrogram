@@ -58,10 +58,11 @@ async def show_character(app, mid, chat_id, id):
 <strong>Edad:</strong> {age}
 <strong>Tipo de Sangre:</strong> {blood_type}
 <strong>Favorito:</strong> {'Sí' if is_favorite else 'No'}
-<strong>Enlace:</strong> {site_url}
 
 <strong>Descripción:</strong>
 {description}
+
+<strong>Imagen:</strong> {image}
 """
     if image is not None:
         await app.edit_message_text(chat_id, mid, text=msg, parse_mode=enums.ParseMode.HTML, link_preview_options=LinkPreviewOptions(url=image, prefer_large_media=True, show_above_text=True, manual=True, safe=True))

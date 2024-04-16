@@ -71,6 +71,8 @@ async def show_manga(app, mid, chat_id, id):
 
 <strong>Estado:</strong> {status}
 <strong>Para Adultos?:</strong> {adult}
+
+<strong>Imagen:</strong> {image}
 """
 
     if image is not None:
