@@ -30,4 +30,4 @@ Excepción para animes cancelados o con 0 posibilidades de continuación en form
 
 NOTA: Los admins no debemos explicaciones.
 """
-    message.reply_text(text=text, parse_mode=enums.ParseMode.HTML)
+    await message.reply_text(text=text, parse_mode=enums.ParseMode.HTML)
