@@ -3,7 +3,7 @@ from pyrogram.types import Message
 from pyrogram import filters
 from pyrogram import enums
 
-from API.YouTube.youtube_api import authenticate_calendar, list_events
+from API.GoogleCalendar.calendar_api import authenticate_calendar, list_events
 from plugins.others.contest import *
 
 
