@@ -13,7 +13,7 @@ async def sub_command(app: Client, message: Message):
     
     chat_type = str(message.chat.type).split('.')[1].lower()
     if not (chat_type == 'private'):
-        await app.send_message(message.chat.id, text="Este comando solo puede ser usado en privado.")
+        await message.reply_text(text="Este comando solo puede ser usado en privado.")
         return
 
     # Conectar a la base de datos
@@ -29,11 +29,11 @@ async def sub_command(app: Client, message: Message):
     chat_member = await app.get_chat_member(-1001485529816, user_id)
 
     if chat_member is None:
-        await app.send_message(chat_id, text=f"Solo los participantes de <a href='https://t.me/OtakuSenpai2020'>Otaku Senpai</a> pueden participar en el concurso.", parse_mode=enums.ParseMode.HTML)
+        await message.reply_text(text=f"Solo los participantes de <a href='https://t.me/OtakuSenpai2020'>Otaku Senpai</a> pueden participar en el concurso.", parse_mode=enums.ParseMode.HTML)
         return
 
     if username is None:
-        await app.send_message(chat_id, text=f"Lo siento, no te puedes subscribir al concurso sin un nombre de usuario")
+        await message.reply_text(text=f"Lo siento, no te puedes subscribir al concurso sin un nombre de usuario")
         return
     
     user = users.find_one({'user_id': user_id})
@@ -63,7 +63,7 @@ async def unsub_command(app: Client, message: Message):
     
     chat_type = str(message.chat.type).split('.')[1].lower()
     if not (chat_type == 'private'):
-        await app.send_message(message.chat.id, text="Este comando solo puede ser usado en privado.")
+        await message.reply_text(text="Este comando solo puede ser usado en privado.")
         return
 
     # Conectar a la base de datos
