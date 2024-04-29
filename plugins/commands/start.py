@@ -1,4 +1,5 @@
-from pyromod import Client, Message
+from pyrogram import Client
+from pyrogram.types import Message
 from pyrogram import filters
 #from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 #import asyncio
