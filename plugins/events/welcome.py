@@ -95,4 +95,4 @@ async def send_welcome_event(app: Client, message: Message):
 
     # Enviamos el mensaje de bienvenida al grupo
     msg = await message.reply_text(text=f"{welcome_message}")
-    await app.set_message_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="😁")])
+    await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="😁")])

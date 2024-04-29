@@ -57,12 +57,12 @@ async def manejar_mensaje(app: Client, message: Message):
                 
     if await useControlMongoInc.verif_limit(user_id) is False and await isAdmin(user_id) is False:
         msg = await message.reply_text(text="Has llegado al límite de uso diario!")
-        await app.set_message_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="🥴")])
+        await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="🥴")])
         return
     
     if len(message.text) > 130:
         msg = await message.reply_text(text="Demasiado texto! Me mareo 😵‍💫")
-        await app.set_message_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="🥴")])
+        await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="🥴")])
         return
     
     #Mention detect
@@ -109,7 +109,7 @@ Devuelve todo en formato json con este formato: {"message": "respuesta", "reacti
         print(f"An error occurred: {e}")
         print(f"feedback: {response.prompt_feedback}")
         return
-    await app.set_message_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="👨‍💻")])
+    await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="👨‍💻")])
     await app.send_chat_action(chat_id, enums.ChatAction.TYPING)
     await asyncio.sleep(3)
 
@@ -126,11 +126,11 @@ Devuelve todo en formato json con este formato: {"message": "respuesta", "reacti
 
     try:
         msg = await message.reply_text(text=text, parse_mode=enums.ParseMode.HTML)
-        await app.set_message_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji=reaction_emoji)])
+        await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji=reaction_emoji)])
     
         #Registrar uso
         await useControlMongoInc.reg_use(user_id)
                  
     except Exception as err:
         print(err)
-        await app.set_message_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="💅")])
+        await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="💅")])

@@ -42,7 +42,7 @@ async def reverse_command(app: Client, message: Message):
 
     res = json.loads(result)
 
-    await app.set_message_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="👨‍💻")])
+    await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="👨‍💻")])
 
     print(f"Haciendo soliticud a SauceNAO... user: @{message.from_user.username}")
 
@@ -59,11 +59,11 @@ async def reverse_command(app: Client, message: Message):
             
         if characters is not None:
             text = f"**Búsqueda: {characters}**\n**Fuente: {source}**"
-            await app.set_message_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="⚡")])
+            await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="⚡")])
             await message.reply_text(text=text, parse_mode=enums.ParseMode.MARKDOWN)
         else:
             msg = await message.reply_text(text="No se encontraron personajes en la respuesta de la API.")
-            await app.set_message_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="💅")])
+            await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="💅")])
     else:
         msg = await message.reply_text(text="No se encontraron resultados en la API.")
-        await app.set_message_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="💅")])
+        await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="💅")])
