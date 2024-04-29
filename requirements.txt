@@ -1,9 +1,8 @@
-https://github.com/TelegramPlayGround/pyrogram/archive/unknown_errors.zip
+pyrogram
 tgcrypto
 Pillow
 motor
 python-dotenv
-pyromod
 graphqlclient
 APScheduler
 pytz
