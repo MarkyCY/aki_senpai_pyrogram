@@ -3,6 +3,7 @@ tgcrypto
 Pillow
 motor
 python-dotenv
+pyromod
 graphqlclient
 APScheduler
 pytz

@@ -1,4 +1,4 @@
-from pyromod import Client
+from pyrogram import Client
 from dotenv import load_dotenv
 
 # Carga los valores del archivo .env
@@ -33,7 +33,7 @@ app = Client('my_bot',api_id=api_id, api_hash=api_hash, bot_token=bot_token, plu
 async def main():
     await app.start()
     print('*Bot Online.')
-    #await app.send_message(873919300, text='Aki está lista')
+    await app.send_message(873919300, text='Aki está lista')
 
 #Crear los horarios
 scheduler = AsyncIOScheduler()
