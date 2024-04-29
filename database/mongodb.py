@@ -2,5 +2,6 @@ import os
 import motor.motor_asyncio
 
 async def get_db():
-    client = motor.motor_asyncio.AsyncIOMotorClient("127.0.0.1", 27017)
+    mongo_uri = os.getenv('MONGO_URI')
+    client = motor.motor_asyncio.AsyncIOMotorClient(mongo_uri)
     return client.otakusenpai
