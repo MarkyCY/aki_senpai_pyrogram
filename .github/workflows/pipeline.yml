@@ -39,5 +39,5 @@ jobs:
         MONGO_URI: ${{ secrets.MONGO_URI }}
       run: |
         echo "Iniciando el Server"
-        screen -dmS mysession python main.py
+        screen -dmS mysession python main.py &
       if: always()
