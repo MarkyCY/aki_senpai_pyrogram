@@ -1,3 +1,4 @@
+#Como agrego los enviromets con secret y que mi programa lo lea: 
 name: Deploy SSH
 on:
   push:
@@ -21,7 +22,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Test with pytest
+
+    - name: Start
+      env:
+        API_ID: ${{ secrets.API_ID }}
+        API_HASH: ${{ secrets.API_HASH }}
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        GEMINI_API: ${{ secrets.GEMINI_API }}
+        LIMIT_USE: ${{ secrets.LIMIT_USE }}
+        VIDEOG_DB: ${{ secrets.VIDEOG_DB }}
+        SAUCENAO: ${{ secrets.SAUCENAO }}
+        MONGO_URI: ${{ secrets.MONGO_URI }}
       run: |
         echo "Calvooo"
-        #python main.py
+        python main.py
