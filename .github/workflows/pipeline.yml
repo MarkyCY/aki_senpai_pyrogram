@@ -1,0 +1,22 @@
+name: Deploy SSH
+on: [push]
+jobs:
+
+  build:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: |
+         screen -XS aki quit
+         screen -S aki
+         cd /home/ubuntu/akira
+         git pull origin main
+         source ./venv/bin/activate
+         python main.py
