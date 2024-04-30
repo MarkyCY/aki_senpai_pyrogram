@@ -24,9 +24,10 @@ jobs:
 
     - name: Kill previous screen session
       run: |
-        screen -XS mysession quit
-
-    - name: Start
+        screen -XS mysession quit || true
+      if: always()
+      
+    - name: Start new process
       env:
         API_ID: ${{ secrets.API_ID }}
         API_HASH: ${{ secrets.API_HASH }}
@@ -39,3 +40,4 @@ jobs:
       run: |
         echo "Iniciando el Server"
         screen -dmS mysession python main.py
+      if: always()
