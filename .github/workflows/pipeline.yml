@@ -34,5 +34,5 @@ jobs:
         SAUCENAO: ${{ secrets.SAUCENAO }}
         MONGO_URI: ${{ secrets.MONGO_URI }}
       run: |
-        echo "Calvooo"
-        python main.py
+        echo "Iniciando el Server"
+        python main.py &
