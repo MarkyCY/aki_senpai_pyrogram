@@ -25,6 +25,7 @@ jobs:
     - name: Kill previous screen session
       run: |
         screen -XS mysession quit || true
+        screen -wipe || true
       if: always()
       
     - name: Start new process
@@ -39,5 +40,5 @@ jobs:
         MONGO_URI: ${{ secrets.MONGO_URI }}
       run: |
         echo "Iniciando el Server"
-        screen -dmS mysession python main.py &
+        screen -dmS mysession python main.py
       if: always()
