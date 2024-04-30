@@ -20,8 +20,8 @@ print("API_ID:", api_id)
 print("API_HASH:", api_hash)
 print("BOT_TOKEN:", bot_token)
 
-from logging import basicConfig, INFO
-basicConfig(format="*%(levelname)s %(message)s", level=INFO, force=True)
+#from logging import basicConfig, INFO
+#basicConfig(format="*%(levelname)s %(message)s", level=INFO, force=True)
 
 
 plugins = dict(root="plugins")
