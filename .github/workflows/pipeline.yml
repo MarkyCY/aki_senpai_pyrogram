@@ -1,4 +1,3 @@
-#Como agrego los enviromets con secret y que mi programa lo lea: 
 name: Deploy SSH
 on:
   push:
@@ -35,4 +34,4 @@ jobs:
         MONGO_URI: ${{ secrets.MONGO_URI }}
       run: |
         echo "Iniciando el Server"
-        python main.py &
+        nohup python main.py &
