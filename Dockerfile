@@ -1,8 +1,8 @@
 # Usa una imagen base de Python
-FROM python:3.11.7
+FROM python:3.11.7-alpine
 
 # Instala screen
-RUN apt-get update && apt-get install -y screen
+#RUN apt-get update && apt-get install -y screen
 
 # Establece el directorio de trabajo
 WORKDIR /app
@@ -14,4 +14,5 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Define el comando predeterminado que se ejecutará cuando el contenedor se inicie
-CMD screen -dmS aki python main.py
+#CMD screen -dmS aki python main.py
+CMD ["python3", "main.py"]
