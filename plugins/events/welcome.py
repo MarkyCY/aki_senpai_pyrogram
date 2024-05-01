@@ -1,5 +1,5 @@
 from pyrogram import Client
-from pyrogram.types import Message, ReactionTypeEmoji
+from pyrogram.types import Message, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import filters
 
 import os
@@ -94,5 +94,15 @@ async def send_welcome_event(app: Client, message: Message):
         welcome_message = random.choice(default_welcome_messages)
 
     # Enviamos el mensaje de bienvenida al grupo
-    msg = await message.reply_text(text=f"{welcome_message}")
+    reply_markup=InlineKeyboardMarkup(
+                        [
+                            [
+                                InlineKeyboardButton(
+                                    "📏 Leer las Reglas",
+                                    url="https://t.me/Akira_Senpai_bot?start=rules"
+                                )
+                            ]
+                        ]
+                    )
+    msg = await message.reply_text(text=f"{welcome_message}", reply_markup=reply_markup)
     await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="😁")])
