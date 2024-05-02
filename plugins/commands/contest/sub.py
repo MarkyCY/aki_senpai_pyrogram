@@ -43,6 +43,10 @@ async def sub_command(app: Client, message: Message):
         await reg_user(user_id, username)
 
     contest_list = contest.find({'contest_num': 2})
+    
+    if contest_list is None:
+        await app.send_message(chat_id, text=f"Lo siento, no hay ningún concurso en este momento.")
+        return
 
     async for user in contest_list:
             for sub in user['subscription']:
