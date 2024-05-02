@@ -29,7 +29,7 @@ async def sub_command(app: Client, message: Message):
     chat_member = await app.get_chat_member(-1001485529816, user_id)
 
     if chat_member is None:
-        await message.reply_text(text=f"Solo los participantes de <a href='https://t.me/OtakuSenpai2020'>Otaku Senpai</a> pueden participar en el concurso.", parse_mode=enums.ParseMode.HTML)
+        await message.reply_text(text=f"Solo los integrantes de <a href='https://t.me/OtakuSenpai2020'>Otaku Senpai</a> pueden participar en el concurso.", parse_mode=enums.ParseMode.HTML)
         return
 
     if username is None:
