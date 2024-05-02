@@ -63,7 +63,10 @@ async def staff_command(app: Client, message: Message):
         if mods:
             user = mods[-1]
             user_id = user['user_id']
-            get_user = await app.get_chat_member(chat_id, int(user_id))
+            try:
+                get_user = await app.get_chat_member(chat_id, int(user_id))
+            except Exception as e:
+                pass
             message_text += f"\n└<a href='https://t.me/{get_user.user.username}'>{get_user.user.first_name}</a>"
      
     await message.reply_text(text=message_text, parse_mode=enums.ParseMode.HTML, link_preview_options=LinkPreviewOptions(is_disabled=True))
