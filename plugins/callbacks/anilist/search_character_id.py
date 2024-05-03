@@ -13,7 +13,7 @@ source_language = 'auto'  # Auto detectar idioma de origen
 target_language = 'es'  # español
 
 @Client.on_callback_query(filters.regex(r"^show_character_(\d+)_\d+$"))
-async def cancel(app: Client, call: CallbackQuery):
+async def search_character(app: Client, call: CallbackQuery):
     cid = call.message.chat.id
     mid = call.message.id
     uid = call.from_user.id
