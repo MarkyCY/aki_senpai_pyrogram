@@ -1,5 +1,5 @@
 from pyrogram import Client
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import filters
 from pyrogram import enums
 
@@ -8,8 +8,8 @@ from plugins.others.contest import *
 
 import os
 
-@Client.on_message(filters.command('sub'))
-async def sub_command(app: Client, message: Message):
+@Client.on_message(filters.command('concursos'))
+async def contest_command(app: Client, message: Message, call_msg_id=None):
     
     chat_type = str(message.chat.type).split('.')[1].lower()
     if not (chat_type == 'private'):
@@ -24,7 +24,6 @@ async def sub_command(app: Client, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
     username = message.from_user.username
-    found = False
 
     chat_member = await app.get_chat_member(-1001485529816, user_id)
 
@@ -42,69 +41,24 @@ async def sub_command(app: Client, message: Message):
     else:
         await reg_user(user_id, username)
 
-    contest_list = contest.find({'contest_num': 2})
-    
-    if contest_list is None:
-        await app.send_message(chat_id, text=f"Lo siento, no hay ningún concurso en este momento.")
+    #contest_list = contest.find({'contest_num': 2})
+    contest_list = contest.find({'status': 'active'})
+    count = await contest_list.to_list(length=None)
+
+    if contest_list is None or len(count) == 0:
+        await app.send_message(chat_id, text=f"Lo siento, no hay ningún concurso abierto en este momento.")
         return
-
-    async for user in contest_list:
-            for sub in user['subscription']:
-                if sub['user'] == user_id:
-                    found = True
-                    break
-                
-            if found:
-                await app.send_message(chat_id, text=f"Oh! Ya estabas registrado en el concurso.")
-                break
-            
-            if not found:
-                await add_user(user_id)
-                await app.send_message(chat_id, text=f'Bien acabo de registrarte en el concurso @{username}. Para desuscribirte en cualquier momento usa el comando /unsub')
-
-@Client.on_message(filters.command('unsub'))
-async def unsub_command(app: Client, message: Message):
     
-    chat_type = str(message.chat.type).split('.')[1].lower()
-    if not (chat_type == 'private'):
-        await message.reply_text(text="Este comando solo puede ser usado en privado.")
+    btns = []
+    list = [doc async for doc in contest.find({'status': 'active'})]
+    for contest in list:
+        title = contest['title']
+        btn = [InlineKeyboardButton(str(title), callback_data=f"show_contest_{int(contest['contest_num'])}")]
+        btns.append(btn)
+    markup = InlineKeyboardMarkup(inline_keyboard=btns)
+
+    if call_msg_id is not None:
+        await app.edit_message_text(chat_id, call_msg_id, text=f"Concursos Disponibles:", reply_markup=markup)
         return
-
-    # Conectar a la base de datos
-    db = await get_db()
-    users = db.users
-    contest = db.contest
-    Contest_Data = db.contest_data
-
-    chat_id = message.chat.id
-    user_id = message.from_user.id
-    found = False
     
-    user = await users.find_one({'user_id': user_id})
-    content_photo = await Contest_Data.find_one({'u_id': user_id, 'type': 'photo'})
-    content_text = await Contest_Data.find_one({'u_id': user_id, 'type': 'text'})
-
-    contest_list = contest.find({'contest_num': 2})
-
-    async for user in contest_list:
-            for sub in user['subscription']:
-                if sub['user'] == user_id:
-                    found = True
-                    break
-
-            if not found:
-                await app.send_message(chat_id, text=f'No estás registrado en el concurso')
-                return
-            
-            await del_user(user_id)
-            await app.send_message(chat_id, text=f"Bien te has desuscrito del concurso.")
-
-            if content_photo:
-                await Contest_Data.delete_one({'u_id': user_id, 'type': 'photo'})
-                os.remove(f"./downloads/{user_id}.jpg")
-
-            if content_text:
-                await Contest_Data.delete_one({'u_id': user_id, 'type': 'text'})
-            
-            await app.send_message(chat_id, text=f"Se han eliminado tus datos de concurso.")
-            break
+    await message.reply_text(text=f"Concursos Disponibles:", reply_markup=markup)
