@@ -28,10 +28,6 @@ async def set_mod_command(app: Client, message: Message):
     
     reply_user_id = message.reply_to_message.from_user.id
 
-    user = await users.find_one({'user_id': message.reply_to_message.from_user.id})
-    if 'is_mod' in user and user['is_mod'] is True:
-        await message.reply_text(text="Este usuario ya es colaborador.")
-        return
 
     filter = {"user_id": reply_user_id}
 
@@ -42,6 +38,11 @@ async def set_mod_command(app: Client, message: Message):
         print(f"Error: {e}")
         return
 
+    user = await users.find_one({'user_id': message.reply_to_message.from_user.id})
+    if 'is_mod' in user and user['is_mod'] is True:
+        await message.reply_text(text="Este usuario ya es colaborador.")
+        return
+    
     await message.reply_text(text="Usuario agregado como colaborador.")
     
 @Client.on_message(filters.command('del_mod'))
