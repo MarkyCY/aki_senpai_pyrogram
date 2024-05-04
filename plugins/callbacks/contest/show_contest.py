@@ -5,7 +5,7 @@ from pyrogram import filters
 from database.mongodb import get_db
 from plugins.others.contest import *
 
-from plugins.commands.contest.sub import contest_command
+from plugins.commands.contest.contest import contest_command
 
 @Client.on_callback_query(filters.regex(r"^show_contest_\d+$"))
 async def show_contest(app: Client, call: CallbackQuery):
