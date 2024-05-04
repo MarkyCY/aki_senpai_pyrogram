@@ -66,6 +66,7 @@ async def search_anime_id(id):
         }
         bannerImage
         duration
+        averageScore
         episodes
         endDate {
             year

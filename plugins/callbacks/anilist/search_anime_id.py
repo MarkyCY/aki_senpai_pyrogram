@@ -41,6 +41,7 @@ async def show_anime(app, mid, chat_id, id):
         name = anime['data']['Media']['title']['romaji']
      
     duration = anime['data']['Media']['duration']
+    score = anime['data']['Media']['averageScore']
     episodes = anime['data']['Media']['episodes']
     status = anime['data']['Media']['status']
     isAdult = anime['data']['Media']['isAdult']
@@ -75,6 +76,7 @@ async def show_anime(app, mid, chat_id, id):
 {description}
 
 <strong>Estado:</strong> {status}
+<strong>Puntuación:</strong> {score}/100
 <strong>Para Adultos?:</strong> {adult}
 
 <strong>Imagen:</strong> {image}
