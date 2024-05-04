@@ -16,9 +16,6 @@ api_id = os.getenv('API_ID')
 api_hash = os.getenv('API_HASH')
 bot_token = os.getenv('BOT_TOKEN')
 
-print("API_ID:", api_id)
-print("API_HASH:", api_hash)
-print("BOT_TOKEN:", bot_token)
 
 #from logging import basicConfig, INFO
 #basicConfig(format="*%(levelname)s %(message)s", level=INFO, force=True)
