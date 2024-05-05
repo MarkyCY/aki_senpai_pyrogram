@@ -14,12 +14,12 @@ async def subs_command(app: Client, message: Message):
         return
     
     args = message.text.split(" ")
-    contest_num = int(args[1])
+    contest_id = int(args[1])
 
     db = await get_db()
     contest = db.contest
 
-    res = await contest.find_one({'contest_num': contest_num})
+    res = await contest.find_one({'_id': contest_id})
     text = "Suscriptores:\n"
     if res is not None:
         for i, val in enumerate(res['subscription']):

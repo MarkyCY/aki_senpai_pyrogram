@@ -41,7 +41,6 @@ async def contest_command(app: Client, message: Message, call_msg_id=None):
     else:
         await reg_user(user_id, username)
 
-    #contest_list = contest.find({'contest_num': 2})
     contest_list = contest.find({'status': 'active'})
     count = await contest_list.to_list(length=None)
 
@@ -53,7 +52,7 @@ async def contest_command(app: Client, message: Message, call_msg_id=None):
     list = [doc async for doc in contest.find({'status': 'active'})]
     for contest in list:
         title = contest['title']
-        btn = [InlineKeyboardButton(str(title), callback_data=f"show_contest_{int(contest['contest_num'])}")]
+        btn = [InlineKeyboardButton(str(title), callback_data=f"show_contest_{contest['_id']}")]
         btns.append(btn)
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
 
