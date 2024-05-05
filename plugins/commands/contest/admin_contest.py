@@ -27,7 +27,7 @@ async def contest_select(app: Client, message: Message):
     infos.update({message.from_user.id: {}})
 
 @Client.on_callback_query(conv_filter("contest_type") & filters.regex(r"^contest_type_\d+$"))
-async def type_handler(client, call):
+async def type_callback(client, call):
 
     parts = call.data.split('_')
 
@@ -104,8 +104,60 @@ async def description_handler(client, message):
     if count < 50:
         await message.reply_text('Ingrese una descripción mayor a 50 caractéres')
         return
-
-
+    
     infos.get(message.from_user.id).update({"contest_description": description})
+
+    buttons = [
+        [
+            InlineKeyboardButton("Si", callback_data="contest_status_1"),
+            InlineKeyboardButton("No", callback_data="contest_status_0"),
+        ]
+    ]
+    markup = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    await message.reply_text('Está activo el concuso?', reply_markup=markup)
+    conversations.update({message.from_user.id: "contest_status"})
+
+@Client.on_callback_query(conv_filter("contest_status") & filters.regex(r"^contest_status_\d+$"))
+async def status_callback(client, call):
+
+    parts = call.data.split('_')
+
+    if parts[2] == "0":
+        status = "inactive"
+    elif parts[2] == "1":
+        status = "active"
+
+    infos.get(call.from_user.id).update({"status": status})
+
+    match status:
+        case "inactive":
+            await client.send_message(call.from_user.id, text='Fecha de Inicio')
+            conversations.update({call.from_user.id: "contest_start"})
+            return
+        case "active":
+            await client.send_message(call.from_user.id, text='Fecha de Fin')
+            conversations.update({call.from_user.id: "contest_end"})
+            return
+
+
+@Client.on_message(conv_filter("contest_start") & filters.private)
+async def start_handler(client, message):
+    date = message.text
+    
+    infos.get(message.from_user.id).update({"start_date": date})
+
+    await client.send_message(message.from_user.id, text='Fecha de Fin')
+    conversations.update({message.from_user.id: "contest_end"})
+    return
+
+
+@Client.on_message(conv_filter("contest_end") & filters.private)
+async def end_handler(client, message):
+    date = message.text
+
+    infos.get(message.from_user.id).update({"end_date": date})
+
     print(infos)
     conversations.pop(message.from_user.id)
+    await message.reply_text('Concurso creado!')
