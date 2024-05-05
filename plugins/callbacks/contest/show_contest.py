@@ -109,9 +109,9 @@ Tu obra debe contener más de <strong>{contest_sel['amount_text']} palabras</str
                 text=f"""
 <strong>Guía:</strong>
 
-Para entregar tu obra debes enviarmela como imágenes, se agradece y valora mucho la calidad de la imagen. 
+Para entregar tu obra debes enviarmela como imagen(es), se agradece y valora mucho la calidad de la imagen. 
 
-Puedes enviarme hasta un total de <strong>{contest_sel['amount_photo']} imágen(es)</strong> y yo te preguntaré si es para el concurso y para que concurso es, en caso de estar participando en otros concursos.
+Puedes enviarme hasta un total de <strong>{contest_sel['amount_photo']} imagen(es)</strong> y yo te preguntaré si es para el concurso y para que concurso es, en caso de estar participando en otros concursos.
 """
         await app.send_message(chat_id, text, enums.ParseMode.HTML)
 #contest_sel
