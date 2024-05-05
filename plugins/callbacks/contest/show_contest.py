@@ -95,7 +95,15 @@ async def sub_contest(app: Client, call: CallbackQuery):
         else:
             name = call.from_user.first_name
 
-        await app.edit_message_text(chat_id, mid, text=f'Bien acabo de registrarte en el concurso {name}.')
+        buttons = [
+            [
+                InlineKeyboardButton("❌Desuscribirse", callback_data=f"unsub_contest_{contest_id}"),
+            ]
+        ]
+         
+        markup = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+        await app.edit_message_text(chat_id, mid, text=f'Bien acabo de registrarte en el concurso {name}.', reply_markup=markup)
         match contest_sel['type']:
             case "text":
                 text=f"""
