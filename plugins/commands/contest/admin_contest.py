@@ -1,5 +1,5 @@
 from pyrogram import Client
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import filters
 
 conversations = {}
@@ -13,27 +13,39 @@ def conv_filter(conversation_level):
 
 @Client.on_message(filters.command('form') & filters.private)
 async def contest_select(app: Client, message: Message):
-    await message.reply_text('Seleccione el tipo de concurso')
+    print("Contest: ", message.from_user.username)
+    buttons = [
+        [
+            InlineKeyboardButton("🗒️Texto", callback_data="contest_type_0"),
+            InlineKeyboardButton("🖼️Imágenes", callback_data="contest_type_1"),
+        ]
+    ]
+    markup = InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    await message.reply_text('Seleccione el tipo de concurso', reply_markup=markup)
     conversations.update({message.from_user.id: "contest_type"})
     infos.update({message.from_user.id: {}})
 
-@Client.on_message(conv_filter("contest_type") & filters.private)
-async def type_handler(client, message):
+@Client.on_callback_query(conv_filter("contest_type") & filters.regex(r"^contest_type_\d+$"))
+async def type_handler(client, call):
 
-    if message.text.lower() != "text" and message.text.lower() != "photo":
-        await message.reply_text('Seleccione texto o imagen')
-        return
-    
-    infos.get(message.from_user.id).update({"type": message.text.lower()})
+    parts = call.data.split('_')
 
-    match message.text.lower():
+    if parts[2] == "0":
+        type = "text"
+    elif parts[2] == "1":
+        type = "photo"
+
+    infos.get(call.from_user.id).update({"type": type})
+
+    match type:
         case "text":
-            await message.reply_text('Cantidad de Caractéres')
-            conversations.update({message.from_user.id: "contest_amount_text"})
+            await client.send_message(call.from_user.id, text='Cantidad de Caractéres')
+            conversations.update({call.from_user.id: "contest_amount_text"})
             return
         case "photo":
-            await message.reply_text('Cantidad de Imagenes')
-            conversations.update({message.from_user.id: "contest_amount_photo"})
+            await client.send_message(call.from_user.id, text='Cantidad de Imagenes')
+            conversations.update({call.from_user.id: "contest_amount_photo"})
             return
 
 @Client.on_message(conv_filter("contest_amount_photo") & filters.private)
