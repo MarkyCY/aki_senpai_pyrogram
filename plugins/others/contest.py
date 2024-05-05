@@ -3,13 +3,13 @@ from pyrogram import enums
 
 from database.mongodb import get_db
 
-async def add_user(user_id):
+async def add_user(user_id, id):
     # Conectar a la base de datos
     db = await get_db()
     contest = db.contest
 
     # Consulta para seleccionar el documento a actualizar
-    filter = {'contest_num': 2}
+    filter = {'_id': id}
 
     # Operación de actualización para agregar dos usuarios más a la lista 'completed_by'
     update = {'$push': {'subscription': {'user': user_id}}}
@@ -19,13 +19,13 @@ async def add_user(user_id):
 
     return result
 
-async def del_user(user_id):
+async def del_user(user_id, id):
     # Conectar a la base de datos
     db = await get_db()
     contest = db.contest
 
     # Consulta para seleccionar el documento a actualizar
-    filter = {'contest_num': 2}
+    filter = {'_id': id}
 
     # Operación de actualización para agregar dos usuarios más a la lista 'completed_by'
     update = {'$pull': {'subscription': {'user': user_id}}}
