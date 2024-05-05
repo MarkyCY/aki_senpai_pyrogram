@@ -103,7 +103,6 @@ async def sub_contest(app: Client, call: CallbackQuery):
          
         markup = InlineKeyboardMarkup(inline_keyboard=buttons)
 
-        await app.edit_message_text(chat_id, mid, text=f'Bien acabo de registrarte en el concurso {name}.', reply_markup=markup)
         match contest_sel['type']:
             case "text":
                 text=f"""
@@ -121,8 +120,11 @@ Para entregar tu obra debes enviarmela como imagen(es), se agradece y valora muc
 
 Puedes enviarme hasta un total de <strong>{contest_sel['amount_photo']} imagen(es)</strong> y yo te preguntaré si es para el concurso y para que concurso es, en caso de estar participando en otros concursos.
 """
+        
         await app.send_message(chat_id, text, enums.ParseMode.HTML)
-#contest_sel
+
+        await app.edit_message_text(chat_id, mid, text=f'Bien acabo de registrarte en el concurso {name}.', reply_markup=markup)
+        
         return
 
 
