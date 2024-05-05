@@ -5,6 +5,8 @@ from pyrogram import filters
 conversations = {}
 infos = {}
 
+from database.mongodb import get_db
+
 def conv_filter(conversation_level):
     def func(_, __, message):
         return conversations.get(message.from_user.id) == conversation_level
@@ -61,7 +63,7 @@ async def photo_handler(client, message):
         await message.reply_text('Ingrese un número entre 1 y 10 para la cantidad de imágenes')
         return
 
-    infos.get(message.from_user.id).update({"contest_amount_photo": amount})
+    infos.get(message.from_user.id).update({"amount_photo": amount})
     
     await message.reply_text('Nombre del concurso')
     conversations.update({message.from_user.id: "contest_title"})
@@ -72,14 +74,14 @@ async def text_handler(client, message):
     try:
         amount = int(message.text)
     except ValueError:
-        await message.reply_text('Ingrese un número para la cantidad de caracteres')
+        await message.reply_text('Ingrese un número para la cantidad de palabras')
         return
 
-    if amount < 200 or amount > 2000:
-        await message.reply_text('Ingrese un número entre 200 y 2000 para la cantidad de caractéres')
+    if amount < 10 or amount > 500:
+        await message.reply_text('Ingrese un número entre 10 y 500 para la cantidad de palabras')
         return
 
-    infos.get(message.from_user.id).update({"contest_amount_text": amount})
+    infos.get(message.from_user.id).update({"amount_text": amount})
     
     await message.reply_text('Nombre del concurso')
     conversations.update({message.from_user.id: "contest_title"})
@@ -90,7 +92,7 @@ async def title_handler(client, message):
 
     title = message.text
 
-    infos.get(message.from_user.id).update({"contest_title": title})
+    infos.get(message.from_user.id).update({"title": title})
 
     await message.reply_text('Descripción del concurso')
     conversations.update({message.from_user.id: "contest_description"})
@@ -105,7 +107,7 @@ async def description_handler(client, message):
         await message.reply_text('Ingrese una descripción mayor a 50 caractéres')
         return
     
-    infos.get(message.from_user.id).update({"contest_description": description})
+    infos.get(message.from_user.id).update({"description": description})
 
     buttons = [
         [
@@ -145,7 +147,7 @@ async def status_callback(client, call):
 async def start_handler(client, message):
     date = message.text
     
-    infos.get(message.from_user.id).update({"start_date": date})
+    infos.get(message.from_user.id).update({"subscription": [], "start_date": date})
 
     await client.send_message(message.from_user.id, text='Fecha de Fin')
     conversations.update({message.from_user.id: "contest_end"})
@@ -154,10 +156,15 @@ async def start_handler(client, message):
 
 @Client.on_message(conv_filter("contest_end") & filters.private)
 async def end_handler(client, message):
+
+    db = await get_db()
+    contest = db.contest
+
     date = message.text
 
-    infos.get(message.from_user.id).update({"end_date": date})
+    infos.get(message.from_user.id).update({"end_date": date, "created_by": message.from_user.id})
 
-    print(infos)
+    contest.insert_one(infos[message.from_user.id])
     conversations.pop(message.from_user.id)
-    await message.reply_text('Concurso creado!')
+
+    await message.reply_text('✔️ Concurso creado!')
