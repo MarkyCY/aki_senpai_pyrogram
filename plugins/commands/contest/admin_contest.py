@@ -147,7 +147,7 @@ async def status_callback(client, call):
 async def start_handler(client, message):
     date = message.text
     
-    infos.get(message.from_user.id).update({"subscription": [], "start_date": date})
+    infos.get(message.from_user.id).update({"start_date": date})
 
     await client.send_message(message.from_user.id, text='Fecha de Fin')
     conversations.update({message.from_user.id: "contest_end"})
@@ -162,7 +162,7 @@ async def end_handler(client, message):
 
     date = message.text
 
-    infos.get(message.from_user.id).update({"end_date": date, "created_by": message.from_user.id})
+    infos.get(message.from_user.id).update({"end_date": date, "subscription": [], "created_by": message.from_user.id})
 
     contest.insert_one(infos[message.from_user.id])
     conversations.pop(message.from_user.id)
