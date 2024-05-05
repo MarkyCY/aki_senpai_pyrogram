@@ -14,7 +14,7 @@ import os
 # Create a new Pyrogram client
 api_id = os.getenv('API_ID')
 api_hash = os.getenv('API_HASH')
-bot_token = os.getenv('BOT_TOKEN')
+bot_token = "5967012336:AAE188rfjmsvcQiGvJlSBYLRPAiiLkGm5Gk"
 
 
 #from logging import basicConfig, INFO
@@ -23,7 +23,7 @@ bot_token = os.getenv('BOT_TOKEN')
 
 plugins = dict(root="plugins")
 #my_bot
-#AkiraS
+#bolita
 app = Client('my_bot',api_id=api_id, api_hash=api_hash, bot_token=bot_token, plugins=plugins)
 
 #Función para iniciar el Bot
