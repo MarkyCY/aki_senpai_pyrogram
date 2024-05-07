@@ -85,7 +85,7 @@ async def photo_handler(client, message):
     conversations.update({message.from_user.id: "contest_title"})
 
 @Client.on_message(conv_filter("contest_amount_video") & filters.private)
-async def photo_handler(client, message):
+async def video_handler(client, message):
 
     try:
         amount = int(message.text)
