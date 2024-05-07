@@ -1,5 +1,6 @@
 from pyrogram import Client
 from dotenv import load_dotenv
+from pyrogram.types import BotCommand
 
 # Carga los valores del archivo .env
 load_dotenv()
@@ -31,6 +32,24 @@ async def main():
     await app.start()
     print('*Bot Online.')
     await app.send_message(873919300, text='Aki está lista')
+    await app.set_bot_commands([
+        BotCommand("anime", "Buscar información sobre un anime"),
+        BotCommand("manga", "Buscar información sobre un manga"),
+        BotCommand("game", "Buscar información sobre videojuegos"),
+        BotCommand("character", "Buscar información sobre un personaje"),
+        BotCommand("afk", "Modo afk"),
+        BotCommand("steal", "Obtener Stickers"),
+        BotCommand("del_sticker", "Eliminar Sticker del Pack"),
+        BotCommand("set_bio", "Poner descripción"),
+        BotCommand("info", "Ver la información de un usuario"),
+        BotCommand("tr", "Traducir elementos"),
+        BotCommand("reverse", "Buscar personaje"),
+        BotCommand("add_anime", "Agregar anime a la base de datos"),
+        BotCommand("del_anime", "Eliminar anime de la base de datos"),
+        BotCommand("staff", "Listado del Staff del grupo"),
+        BotCommand("concursos", "Ver los concursos del grupo"),
+        BotCommand("create", "Crear un concurso"),
+    ])
 
 #Crear los horarios
 scheduler = AsyncIOScheduler()
