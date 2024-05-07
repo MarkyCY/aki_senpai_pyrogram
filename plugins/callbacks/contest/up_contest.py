@@ -63,7 +63,7 @@ async def up_contest(app: Client, call: CallbackQuery):
     reply_markup=InlineKeyboardMarkup(
         [[InlineKeyboardButton("⏮️Revertir", f"revert_up_{sent_message.id}_{timestamp}")]]
     )
-    await app.pin_chat_message(principal_chat_id, sent_message.id)
+    await app.pin_chat_message(principal_chat_id, sent_message.id, True)
     await app.edit_message_text(chat_id, call.message.id, "<strong>✔️Concurso subido!</strong>\nSi te equivocaste puedes revertir con el botón.\n⚠️Luego de 5 minutos no pudes revertir.", parse_mode=enums.ParseMode.HTML, reply_markup=reply_markup)
 
 @Client.on_callback_query(filters.regex(r"^up_contest_cancel"))
