@@ -16,8 +16,10 @@ def diference_min(timestamp_a, timestamp_b):
         
     return diference
 
-principal_chat_id = -1001664356911
-principal_thread_id = 53628
+#Otaku -1001485529816 - 251988
+#Marrano -1001664356911 - 53628
+principal_chat_id = -1001485529816
+principal_thread_id = 251988
 
 @Client.on_callback_query(filters.regex(r"^contest_up_[a-f\d]{24}_\d+$"))
 async def up_contest(app: Client, call: CallbackQuery):
@@ -33,7 +35,7 @@ async def up_contest(app: Client, call: CallbackQuery):
 
     msg = await app.get_messages(chat_id=chat_id, message_ids=message_id)
 
-    text = f"Esta obra es envíada por <a href='tg://user?id={call.from_user.id}'>{call.from_user.first_name}</a>"
+    text = f"Esta obra es envíada por <a href='tg://user?id={call.from_user.id}'>{call.from_user.first_name}</a> participando en el concurso: {contest_sel['title']}"
     match contest_sel['type']:
         case 'text':
             msg_text = msg.text
