@@ -183,7 +183,7 @@ async def back_contests(app: Client, call: CallbackQuery):
 #ADMINS -
 
 @Client.on_callback_query(filters.regex(r"^trash_contest_[a-f\d]{24}$"))
-async def sub_contest(app: Client, call: CallbackQuery):
+async def trash_contest(app: Client, call: CallbackQuery):
     parts = call.data.split('_')
     contest_id = ObjectId(parts[2])
     user_id = call.from_user.id
