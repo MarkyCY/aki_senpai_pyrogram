@@ -5,6 +5,7 @@ from pyrogram import filters
 #import asyncio
 
 from plugins.commands.rules import rules_command
+from plugins.commands.contest.contest import contest_command
 
 @Client.on_message(filters.command('start'))
 async def start_command(app: Client, message: Message):
@@ -14,6 +15,9 @@ async def start_command(app: Client, message: Message):
 
         if elemento == "rules":
             await rules_command(app, message)
+            return        
+        if elemento == "contests":
+            await contest_command(app, message)
             return        
     except (IndexError, NameError):
         pass

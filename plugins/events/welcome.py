@@ -101,7 +101,13 @@ async def send_welcome_event(app: Client, message: Message):
                                     "📏 Leer las Reglas",
                                     url="https://t.me/Akira_Senpai_bot?start=rules"
                                 )
-                            ]
+                            ],
+                            [
+                                InlineKeyboardButton(
+                                    "🏆 Concursos Disponibles",
+                                    url="https://t.me/Akira_Senpai_bot?start=contests"
+                                )
+                            ],
                         ]
                     )
     msg = await message.reply_text(text=f"{welcome_message}", reply_markup=reply_markup)
