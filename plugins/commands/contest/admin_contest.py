@@ -13,13 +13,21 @@ def conv_filter(conversation_level):
 
     return filters.create(func, "ConversationFilter")
 
-@Client.on_message(filters.command('form') & filters.private)
+@Client.on_message(filters.command('create') & filters.private)
 async def contest_select(app: Client, message: Message):
-    print("Contest: ", message.from_user.username)
+
+    db = await get_db()
+    admins = db.admins
+
+    Admin = [doc['user_id'] async for doc in admins.find()]
+    if message.from_user.id not in Admin:
+        return
+    
     buttons = [
         [
             InlineKeyboardButton("🗒️Texto", callback_data="contest_type_0"),
             InlineKeyboardButton("🖼️Imágenes", callback_data="contest_type_1"),
+            InlineKeyboardButton("📹Video", callback_data="contest_type_2"),
         ]
     ]
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)
@@ -37,6 +45,8 @@ async def type_callback(client, call):
         type = "text"
     elif parts[2] == "1":
         type = "photo"
+    elif parts[2] == "2":
+        type = "video"
 
     infos.get(call.from_user.id).update({"type": type})
 
@@ -49,6 +59,10 @@ async def type_callback(client, call):
             await client.send_message(call.from_user.id, text='Cantidad de Imagenes')
             conversations.update({call.from_user.id: "contest_amount_photo"})
             return
+        case "video":
+            await client.send_message(call.from_user.id, text='Cantidad de Videos')
+            conversations.update({call.from_user.id: "contest_amount_video"})
+            return
 
 @Client.on_message(conv_filter("contest_amount_photo") & filters.private)
 async def photo_handler(client, message):
@@ -59,11 +73,33 @@ async def photo_handler(client, message):
         await message.reply_text('Ingrese un número para la cantidad de imágenes')
         return
 
-    if amount < 1 or amount > 10:
-        await message.reply_text('Ingrese un número entre 1 y 10 para la cantidad de imágenes')
+    #if amount < 1 or amount > 10:
+    if amount != 1:
+        #await message.reply_text('Ingrese un número entre 1 y 10 para la cantidad de imágenes')
+        await message.reply_text('Por ahora solo se permite 1')
         return
 
     infos.get(message.from_user.id).update({"amount_photo": amount})
+    
+    await message.reply_text('Nombre del concurso')
+    conversations.update({message.from_user.id: "contest_title"})
+
+@Client.on_message(conv_filter("contest_amount_video") & filters.private)
+async def photo_handler(client, message):
+
+    try:
+        amount = int(message.text)
+    except ValueError:
+        await message.reply_text('Ingrese un número para la cantidad de imágenes')
+        return
+
+    #if amount < 1 or amount > 10:
+    if amount != 1:
+        #await message.reply_text('Ingrese un número entre 1 y 10 para la cantidad de imágenes')
+        await message.reply_text('Por ahora solo se permite 1')
+        return
+
+    infos.get(message.from_user.id).update({"amount_video": amount})
     
     await message.reply_text('Nombre del concurso')
     conversations.update({message.from_user.id: "contest_title"})
@@ -77,7 +113,7 @@ async def text_handler(client, message):
         await message.reply_text('Ingrese un número para la cantidad de palabras')
         return
 
-    if amount < 10 or amount > 500:
+    if amount < 50 or amount > 500:
         await message.reply_text('Ingrese un número entre 10 y 500 para la cantidad de palabras')
         return
 
