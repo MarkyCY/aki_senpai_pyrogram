@@ -78,7 +78,7 @@ async def up_contest(app: Client, call: CallbackQuery):
     now = datetime.now()
     timestamp = int(now.timestamp())
     reply_markup=InlineKeyboardMarkup(
-        [[InlineKeyboardButton("⏮️Revertir", f"revert_up_{sent_message.id}_{timestamp}")]]
+        [[InlineKeyboardButton("⏮️Revertir", f"revert_up_{sent_message.id}_{timestamp}_{contest_id}")]]
     )
     try:
         await app.pin_chat_message(principal_chat_id, sent_message.id, True)
@@ -94,12 +94,18 @@ async def up_cancel_contest(app: Client, call: CallbackQuery):
     chat_id = call.message.chat.id
     await app.delete_messages(chat_id, call.message.id)
 
-@Client.on_callback_query(filters.regex(r"^revert_up_(\d+)_\d+$"))
+@Client.on_callback_query(filters.regex(r"^revert_up_(\d+)_\d+_[a-f\d]{24}$"))
 async def up_revert_contest(app: Client, call: CallbackQuery):
+
+    db = await get_db()
+    Contest_Data = db.contest_data
+
     chat_id = call.message.chat.id
     parts = call.data.split('_')
     message_id = int(parts[2])
     timestamp_old = int(parts[3])
+    contest_id = ObjectId(parts[4])
+    user_id = call.from_user.id
 
     now = datetime.now()
     timestamp_now = int(now.timestamp())
@@ -114,3 +120,4 @@ async def up_revert_contest(app: Client, call: CallbackQuery):
         await app.answer_callback_query(call.id, "Lo siento, ya no puedes revertir pues ha ocurrido un error. Contacta con los administradores.", True)
         return
     await app.edit_message_text(chat_id, call.message.id, "Operación revertida con éxito, debes enviar otra obra del mismo tipo para valorar antes de que acabe el tiempo del concurso.")
+    await Contest_Data.delete_one({'contest_id': contest_id, 'user_id': user_id})
