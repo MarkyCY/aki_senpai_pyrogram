@@ -8,12 +8,21 @@ from plugins.others.contest import *
 
 import os
 
-@Client.on_message(filters.command('concursos'))
+@Client.on_message(filters.command(['concursos', 'sub']))
 async def contest_command(app: Client, message: Message, call_msg_id=None):
-    
+    reply_markup=InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    "🏆 Ver Concursos",
+                    url="https://t.me/Akira_Senpai_bot?start=contests"
+                )
+            ],
+        ]
+    )
     chat_type = str(message.chat.type).split('.')[1].lower()
     if not (chat_type == 'private'):
-        await message.reply_text(text="Este comando solo puede ser usado en privado.")
+        await message.reply_text(text="Este comando solo puede ser usado en privado. Presiona el botón.", reply_markup=reply_markup)
         return
 
     # Conectar a la base de datos
