@@ -18,8 +18,8 @@ def diference_min(timestamp_a, timestamp_b):
 
 #Otaku -1001485529816 - 251988
 #Marrano -1001664356911 - 53628
-principal_chat_id = -1001485529816
-principal_thread_id = 251988
+principal_chat_id = -1001664356911
+principal_thread_id = 53628
 
 @Client.on_callback_query(filters.regex(r"^contest_up_[a-f\d]{24}_\d+$"))
 async def up_contest(app: Client, call: CallbackQuery):
