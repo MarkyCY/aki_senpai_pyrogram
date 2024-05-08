@@ -27,9 +27,11 @@ async def up_contest(app: Client, call: CallbackQuery):
     parts = call.data.split('_')
     contest_id = ObjectId(parts[2])
     message_id = int(parts[3])
+    user_id = call.from_user.id
 
     db = await get_db()
     contest = db.contest
+    Contest_Data = db.contest_data
 
     contest_sel = await contest.find_one({'_id': contest_id})
 
@@ -42,29 +44,50 @@ async def up_contest(app: Client, call: CallbackQuery):
             msg_text += "\n\n", text
             try:
                 sent_message = await app.send_message(principal_chat_id, msg.text, message_thread_id=principal_thread_id, reply_markup=None)
+                data = {'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'text': msg.text}
             except Exception as e:
                 await app.send_message(chat_id, text="Ha ocurrido un error")
                 return
         case 'photo':
             try:
                 sent_message = await app.send_photo(principal_chat_id, msg.photo.file_id, caption=text, message_thread_id=principal_thread_id, reply_markup=None)
+                data = {'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'file_id': msg.photo.file_id}
             except Exception as e:
                 await app.send_message(chat_id, text="Ha ocurrido un error")
                 return
         case 'video':
             try:
                 sent_message = await app.send_video(principal_chat_id, msg.video.file_id, caption=text, message_thread_id=principal_thread_id, reply_markup=None)
+                data = {'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'file_id': msg.video.file_id}
             except Exception as e:
                 await app.send_message(chat_id, text="Ha ocurrido un error")
                 return
+            
+    contest_data = await Contest_Data.find_one({'contest_id': contest_id, 'user_id': user_id})
+    print(sent_message.id)
+    if contest_data:
+        try:
+            await app.unpin_chat_message(principal_chat_id, contest_data['m_id'])
+        except Exception:
+            pass
+        await app.delete_messages(principal_chat_id, contest_data['m_id'])
+        await Contest_Data.update_one({'contest_id': contest_id, 'user_id': user_id}, {'$set': data})
+    else:
+        await Contest_Data.insert_one(data)
             
     now = datetime.now()
     timestamp = int(now.timestamp())
     reply_markup=InlineKeyboardMarkup(
         [[InlineKeyboardButton("⏮️Revertir", f"revert_up_{sent_message.id}_{timestamp}")]]
     )
-    await app.pin_chat_message(principal_chat_id, sent_message.id, True)
-    await app.edit_message_text(chat_id, call.message.id, "<strong>✔️Concurso subido!</strong>\nSi te equivocaste puedes revertir con el botón.\n⚠️Luego de 5 minutos no pudes revertir.", parse_mode=enums.ParseMode.HTML, reply_markup=reply_markup)
+    try:
+        await app.pin_chat_message(principal_chat_id, sent_message.id, True)
+    except Exception:
+        pass
+    if contest_data:
+        await app.edit_message_text(chat_id, call.message.id, "<strong>✔️Concurso actualizado!</strong>", parse_mode=enums.ParseMode.HTML)
+    else:
+        await app.edit_message_text(chat_id, call.message.id, "<strong>✔️Concurso subido!</strong>\nSi te equivocaste puedes revertir con el botón.\n⚠️Luego de 5 minutos no pudes revertir.", parse_mode=enums.ParseMode.HTML, reply_markup=reply_markup)
 
 @Client.on_callback_query(filters.regex(r"^up_contest_cancel"))
 async def up_cancel_contest(app: Client, call: CallbackQuery):
