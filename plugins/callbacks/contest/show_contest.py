@@ -9,9 +9,12 @@ from bson import ObjectId
 from plugins.commands.contest.contest import contest_command
 
 @Client.on_callback_query(filters.regex(r"^show_contest_[a-f\d]{24}$"))
-async def show_contest(app: Client, call: CallbackQuery):
-    parts = call.data.split('_')
-    contest_id = ObjectId(parts[2])
+async def show_contest(app: Client, call: CallbackQuery, re_open=None):
+    if re_open:
+        contest_id = re_open
+    else:
+        parts = call.data.split('_')
+        contest_id = ObjectId(parts[2])
     chat_id = call.message.chat.id
     username = call.from_user.username
     mid = call.message.id
@@ -48,7 +51,7 @@ Concurso de <strong>{contest_sel['title']}</strong>
     ]
     Admin = [doc['user_id'] async for doc in admins.find()]
     if call.from_user.id in Admin:
-        buttons.append([InlineKeyboardButton(f"🗑️Eliminar", callback_data=f"trash_contest_{contest_id}")])
+        buttons.append([InlineKeyboardButton(f"🔒Cerrar", callback_data=f"close_contest_{contest_id}"), InlineKeyboardButton(f"📝Editar", callback_data=f"edit_contest_{contest_id}")])
     
     buttons.append([InlineKeyboardButton("🔙Atrás", callback_data=f"back_contests")])
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)
@@ -182,13 +185,11 @@ async def back_contests(app: Client, call: CallbackQuery):
 
 #ADMINS -
 
-@Client.on_callback_query(filters.regex(r"^trash_contest_[a-f\d]{24}$"))
-async def trash_contest(app: Client, call: CallbackQuery):
+@Client.on_callback_query(filters.regex(r"^close_contest_[a-f\d]{24}$"))
+async def close_contest(app: Client, call: CallbackQuery):
     parts = call.data.split('_')
     contest_id = ObjectId(parts[2])
-    user_id = call.from_user.id
     chat_id = call.message.chat.id
-    username = call.from_user.username
     mid = call.message.id
     
     db = await get_db()
@@ -201,9 +202,50 @@ async def trash_contest(app: Client, call: CallbackQuery):
         return
     
     try:
-        contest.delete_one({'_id': contest_id})
+        contest.update_one({'_id': contest_id}, {'$set': {'status': 'closed'}})
     except Exception as e:
         print("Ha ocurrido un error: " + str(e))
         return
     
-    await app.edit_message_text(chat_id, mid, text=f'Concurso eliminado!')
+    reply_markup=InlineKeyboardMarkup(
+        [[InlineKeyboardButton("🔓Re Abrir", f"open_contest_{contest_id}")]]
+    )
+
+    await app.edit_message_text(chat_id, mid, text=f'Concurso Cerrado', reply_markup=reply_markup)
+
+@Client.on_callback_query(filters.regex(r"^open_contest_[a-f\d]{24}$"))
+async def open_contest(app: Client, call: CallbackQuery):
+    parts = call.data.split('_')
+    contest_id = ObjectId(parts[2])
+    
+    db = await get_db()
+    contest = db.contest
+    admins = db.admins
+
+    Admin = [doc['user_id'] async for doc in admins.find()]
+    if call.from_user.id not in Admin:
+        await app.answer_callback_query(call.id, "No eres administrador...")
+        return
+    
+    try:
+        contest.update_one({'_id': contest_id}, {'$set': {'status': 'active'}})
+    except Exception as e:
+        print("Ha ocurrido un error: " + str(e))
+        return
+    
+    await show_contest(app, call, contest_id)
+    await app.answer_callback_query(call.id, "Concurso abierto!")
+
+@Client.on_callback_query(filters.regex(r"^edit_contest_[a-f\d]{24}$"))
+async def edit_contest(app: Client, call: CallbackQuery):
+
+    db = await get_db()
+    contest = db.contest
+    admins = db.admins
+
+    Admin = [doc['user_id'] async for doc in admins.find()]
+    if call.from_user.id not in Admin:
+        await app.answer_callback_query(call.id, "No eres administrador...")
+        return
+
+    await app.answer_callback_query(call.id, "Esta función aún no está completa.")
