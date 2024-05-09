@@ -23,6 +23,6 @@ async def start_command(app: Client, message: Message):
         pass
     
     if chat_type == 'private':
-        await message.reply_text(text="Hola para subscribirte en el concurso solo escribe o toca: /sub")
+        await message.reply_text(text="Hola soy Akira Senpai, para ver los concuros escribe: /concursos")
     else:
-        await message.reply_text(text="Uhhh quieres participar? Contactame por PV y escribeme /sub \n@Akira_Senpai_bot")
+        await message.reply_text(text="Uhhh quieres participar? Contactame por PV y escribeme /concursos \n@Akira_Senpai_bot")
