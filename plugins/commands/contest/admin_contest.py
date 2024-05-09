@@ -7,6 +7,18 @@ infos = {}
 
 from database.mongodb import get_db
 
+
+from datetime import datetime
+
+def string_a_timestamp(fecha_string):
+    formato = "%d/%m/%Y %H:%M"
+    try:
+        fecha_objeto = datetime.strptime(fecha_string, formato)
+        timestamp = int(fecha_objeto.timestamp())
+        return timestamp
+    except ValueError:
+        return False
+
 def conv_filter(conversation_level):
     def func(_, __, message):
         return conversations.get(message.from_user.id) == conversation_level
@@ -170,18 +182,28 @@ async def status_callback(client, call):
 
     match status:
         case "inactive":
-            await client.send_message(call.from_user.id, text='Fecha de Inicio')
+            await client.send_message(call.from_user.id, text='Fecha de Inicio\n\nFormato:\n25/07/2024 15:30\nDD/MM/AAAA HH:MM')
             conversations.update({call.from_user.id: "contest_start"})
             return
         case "active":
-            await client.send_message(call.from_user.id, text='Fecha de Fin')
+            now = datetime.now()
+            timestamp_now = int(now.timestamp())
+
+            infos.get(call.from_user.id).update({"start_date": timestamp_now})
+
+            await client.send_message(call.from_user.id, text='Fecha de Fin\n\nFormato:\n25/07/2024 15:30\nDD/MM/AAAA HH:MM')
             conversations.update({call.from_user.id: "contest_end"})
             return
 
 
 @Client.on_message(conv_filter("contest_start") & filters.private)
 async def start_handler(client, message):
-    date = message.text
+
+    date = string_a_timestamp(message.text)
+
+    if date is False:
+        await message.reply_text('Formato incorrecto\n\nFormato:\n25/07/2024 15:30\nDD/MM/AAAA HH:MM')
+        return
     
     infos.get(message.from_user.id).update({"start_date": date})
 
@@ -193,13 +215,20 @@ async def start_handler(client, message):
 @Client.on_message(conv_filter("contest_end") & filters.private)
 async def end_handler(client, message):
 
+    date = string_a_timestamp(message.text)
+    
+    if date is False:
+        await message.reply_text('Formato incorrecto\n\nFormato:\n25/07/2024 15:30\nDD/MM/AAAA HH:MM')
+        return
+
+    if date < infos[message.from_user.id]["start_date"]:
+        await message.reply_text('La fecha de finalización debe ser posterior a la de inicio')
+        return
+
     db = await get_db()
     contest = db.contest
 
-    date = message.text
-
     infos.get(message.from_user.id).update({"end_date": date, "subscription": [], "created_by": message.from_user.id})
-
     contest.insert_one(infos[message.from_user.id])
     conversations.pop(message.from_user.id)
 
