@@ -47,6 +47,7 @@ async def main():
         BotCommand("add_anime", "Agregar anime a la base de datos"),
         BotCommand("del_anime", "Eliminar anime de la base de datos"),
         BotCommand("staff", "Listado del Staff del grupo"),
+        BotCommand("programas", "Próximos programas en emisión"),
         BotCommand("concursos", "Ver los concursos del grupo"),
         BotCommand("create", "Crear un concurso"),
     ])
