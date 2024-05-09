@@ -47,6 +47,7 @@ async def up_contest(app: Client, call: CallbackQuery):
                 data = {'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'text': msg.text}
             except Exception as e:
                 await app.send_message(chat_id, text="Ha ocurrido un error")
+                print(e)
                 return
         case 'photo':
             try:
@@ -54,6 +55,7 @@ async def up_contest(app: Client, call: CallbackQuery):
                 data = {'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'file_id': msg.photo.file_id}
             except Exception as e:
                 await app.send_message(chat_id, text="Ha ocurrido un error")
+                print(e)
                 return
         case 'video':
             try:
@@ -61,6 +63,7 @@ async def up_contest(app: Client, call: CallbackQuery):
                 data = {'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'file_id': msg.video.file_id}
             except Exception as e:
                 await app.send_message(chat_id, text="Ha ocurrido un error")
+                print(e)
                 return
             
     contest_data = await Contest_Data.find_one({'contest_id': contest_id, 'user_id': user_id})
