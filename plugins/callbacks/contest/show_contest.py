@@ -7,6 +7,12 @@ from plugins.others.contest import *
 from bson import ObjectId
 
 from plugins.commands.contest.contest import contest_command
+from datetime import datetime
+
+def timestamp_to_str(timestamp):
+    date = datetime.fromtimestamp(timestamp)
+    return date.strftime("%d/%m/%Y %I:%M %p")
+
 
 @Client.on_callback_query(filters.regex(r"^show_contest_[a-f\d]{24}$"))
 async def show_contest(app: Client, call: CallbackQuery, re_open=None):
@@ -42,6 +48,7 @@ Concurso de <strong>{contest_sel['title']}</strong>
 
 <strong>Descripción</strong>:
 {contest_sel['description']}
+<strong>Fecha de cierre</strong>: {timestamp_to_str(contest_sel['end_date'])}
 """
     buttons = [
         [
