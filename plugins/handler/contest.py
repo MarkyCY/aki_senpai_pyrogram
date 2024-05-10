@@ -10,8 +10,15 @@ async def is_player(user_id):
 
     db = await get_db()
     contest = db.contest
+    admins = db.admins
 
     contests = [doc async for doc in contest.find({'status': 'active'})]
+    
+    # Verificar si el usuario es administrador
+    Admin = [doc['user_id'] async for doc in admins.find()]
+    if user_id in Admin:
+        contests = [doc async for doc in contest.find()]
+
     for concurso in contests:
         for suscriptor in concurso['subscription']:
             if suscriptor['user'] == user_id:
