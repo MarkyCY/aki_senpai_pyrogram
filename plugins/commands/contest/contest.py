@@ -9,7 +9,7 @@ from plugins.others.contest import *
 import os
 
 @Client.on_message(filters.command(['concursos', 'sub']))
-async def contest_command(app: Client, message: Message, call_msg_id=None):
+async def contest_command(app: Client, message: Message, call_msg_id=None, user_id=None):
     reply_markup=InlineKeyboardMarkup(
         [
             [
@@ -29,9 +29,11 @@ async def contest_command(app: Client, message: Message, call_msg_id=None):
     db = await get_db()
     users = db.users
     contest = db.contest
+    admins = db.admins
 
     chat_id = message.chat.id
-    user_id = message.from_user.id
+    if user_id is None:
+        user_id = message.from_user.id
     username = message.from_user.username
 
     chat_member = await app.get_chat_member(-1001485529816, user_id)
@@ -51,6 +53,10 @@ async def contest_command(app: Client, message: Message, call_msg_id=None):
         await reg_user(user_id, username)
 
     contest_list = contest.find({'status': 'active'})
+
+    Admin = [doc['user_id'] async for doc in admins.find()]
+    if user_id in Admin:
+        contest_list = contest.find()
     count = await contest_list.to_list(length=None)
 
     if contest_list is None or len(count) == 0:
@@ -58,11 +64,26 @@ async def contest_command(app: Client, message: Message, call_msg_id=None):
         return
     
     btns = []
-    list = [doc async for doc in contest.find({'status': 'active'})]
-    for contest in list:
-        title = contest['title']
-        btn = [InlineKeyboardButton(str(title), callback_data=f"show_contest_{contest['_id']}")]
-        btns.append(btn)
+
+    if user_id not in Admin:
+        list = [doc async for doc in contest.find({'status': 'active'})]
+        for contest in list:
+            title = contest['title']
+            btn = [InlineKeyboardButton(str(title), callback_data=f"show_contest_{contest['_id']}")]
+            btns.append(btn)
+    else:
+        list = [doc async for doc in contest.find()]
+        for contest in list:
+            title = contest['title']
+            if contest['status'] == 'active':
+                title = f"{title} | 🔵"
+            elif contest['status'] == 'inactive':
+                title = f"{title} | ⚪"
+            elif contest['status'] == 'closed':
+                title = f"{title} | 🔴"
+            btn = [InlineKeyboardButton(str(title), callback_data=f"show_contest_{contest['_id']}")]
+            btns.append(btn)
+
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
 
     if call_msg_id is not None:
