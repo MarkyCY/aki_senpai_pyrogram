@@ -64,7 +64,9 @@ async def show_contest(app: Client, call: CallbackQuery, re_open=None):
         await app.answer_callback_query(call.id, "No existe el concurso...", True)
         return
     
-    if contest_sel["status"] != "active":
+    Admin = [doc['user_id'] async for doc in admins.find()]
+    #if call.from_user.id not in Admin:
+    if contest_sel["status"] != "active" and call.from_user.id not in Admin:
         await app.answer_callback_query(call.id, "El concurso está cerrado...", True)
         return
     
@@ -83,8 +85,13 @@ Concurso de <strong>{contest_sel['title']}</strong>
     ]
     Admin = [doc['user_id'] async for doc in admins.find()]
     if call.from_user.id in Admin:
-        buttons.append([InlineKeyboardButton(f"🔒Cerrar", callback_data=f"close_contest_{contest_id}"), InlineKeyboardButton(f"📝Editar", callback_data=f"edit_contest_{contest_id}")])
-    
+        match contest_sel['status']:
+            case "active":
+                buttons.append([InlineKeyboardButton(f"🔒Cerrar", callback_data=f"close_contest_{contest_id}"), InlineKeyboardButton(f"📝Editar", callback_data=f"edit_contest_{contest_id}")])
+            case "closed" | "inactive":
+                buttons.append([InlineKeyboardButton("🔓Abrir", f"open_contest_{contest_id}"), InlineKeyboardButton(f"📝Editar", callback_data=f"edit_contest_{contest_id}")])
+                
+
     buttons.append([InlineKeyboardButton("🔙Atrás", callback_data=f"back_contests")])
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -212,7 +219,7 @@ async def unsub_contest(app: Client, call: CallbackQuery):
 
 @Client.on_callback_query(filters.regex(r"^back_contests"))
 async def back_contests(app: Client, call: CallbackQuery):
-    await contest_command(app, call.message, call.message.id)
+    await contest_command(app, call.message, call.message.id, call.from_user.id)
 
 
 #region ADMINS
@@ -221,8 +228,6 @@ async def back_contests(app: Client, call: CallbackQuery):
 async def close_contest(app: Client, call: CallbackQuery):
     parts = call.data.split('_')
     contest_id = ObjectId(parts[2])
-    chat_id = call.message.chat.id
-    mid = call.message.id
     
     db = await get_db()
     contest = db.contest
@@ -239,11 +244,8 @@ async def close_contest(app: Client, call: CallbackQuery):
         print("Ha ocurrido un error: " + str(e))
         return
     
-    reply_markup=InlineKeyboardMarkup(
-        [[InlineKeyboardButton("🔓Re Abrir", f"open_contest_{contest_id}")]]
-    )
-
-    await app.edit_message_text(chat_id, mid, text=f'Concurso Cerrado', reply_markup=reply_markup)
+    await show_contest(app, call, contest_id)
+    await app.answer_callback_query(call.id, "Concurso cerrado!")
 
 @Client.on_callback_query(filters.regex(r"^open_contest_[a-f\d]{24}$"))
 async def open_contest(app: Client, call: CallbackQuery):
