@@ -230,6 +230,9 @@ async def end_handler(client, message):
 
     infos.get(message.from_user.id).update({"end_date": date, "subscription": [], "created_by": message.from_user.id})
     contest.insert_one(infos[message.from_user.id])
+
     conversations.pop(message.from_user.id)
+    infos.pop(message.from_user.id)
 
     await message.reply_text('✔️ Concurso creado!')
+    
