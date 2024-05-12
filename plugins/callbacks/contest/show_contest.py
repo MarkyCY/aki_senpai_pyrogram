@@ -291,11 +291,10 @@ async def subscribers_contest(app: Client, call: CallbackQuery):
     
     subs = []
     if contest_sel['subscription'] == []:
-        text = "No hay suscriptores..."
-        return
+        return await app.answer_callback_query(call.id, "No hay suscriptores..")
     else:
         text = f"Estos son los suscriptores del concurso {contest_sel['title']}:\n\n"
-        for i, sub in enumerate(contest_sel['subscription'], start=1):
+        for sub in contest_sel['subscription']:
             subs.append(sub['user'])
     try:
         users = await app.get_users(subs)
