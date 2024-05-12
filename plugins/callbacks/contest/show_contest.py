@@ -90,6 +90,8 @@ Concurso de <strong>{contest_sel['title']}</strong>
                 buttons.append([InlineKeyboardButton(f"🔒Cerrar", callback_data=f"close_contest_{contest_id}"), InlineKeyboardButton(f"📝Editar", callback_data=f"edit_contest_{contest_id}")])
             case "closed" | "inactive":
                 buttons.append([InlineKeyboardButton("🔓Abrir", f"open_contest_{contest_id}"), InlineKeyboardButton(f"📝Editar", callback_data=f"edit_contest_{contest_id}")])
+        
+        buttons.append([InlineKeyboardButton("👥Ver suscriptores", callback_data=f"subscribers_contest_{contest_id}")])
                 
 
     buttons.append([InlineKeyboardButton("🔙Atrás", callback_data=f"back_contests")])
@@ -269,6 +271,39 @@ async def open_contest(app: Client, call: CallbackQuery):
     
     await show_contest(app, call, contest_id)
     await app.answer_callback_query(call.id, "Concurso abierto!")
+
+#Ver Suscriptores
+@Client.on_callback_query(filters.regex(r"^subscribers_contest_[a-f\d]{24}$"))
+async def subscribers_contest(app: Client, call: CallbackQuery):
+    parts = call.data.split('_')
+    contest_id = ObjectId(parts[2])
+
+    db = await get_db()
+    contest = db.contest
+    admins = db.admins
+
+    contest_sel = await contest.find_one({'_id': contest_id})
+
+    Admin = [doc['user_id'] async for doc in admins.find()]
+    if call.from_user.id not in Admin:
+        await app.answer_callback_query(call.id, "No eres administrador...")
+        return
+    
+    subs = []
+    if contest_sel['subscription'] == []:
+        text = "No hay suscriptores..."
+        return
+    else:
+        text = f"Estos son los suscriptores del concurso {contest_sel['title']}:\n\n"
+        for i, sub in enumerate(contest_sel['subscription'], start=1):
+            subs.append(sub['user'])
+    try:
+        users = await app.get_users(subs)
+    except Exception as e:
+        print("Ha ocurrido un error: " + str(e))
+
+    text = text + "\n".join([f"{i}. <a href='tg://user?id={user.id}'>{user.first_name}</a>" for i, user in enumerate(users, start=1)])
+    return await app.send_message(call.message.chat.id, text, parse_mode=enums.ParseMode.HTML)
 
 
 #region Edit Contest
