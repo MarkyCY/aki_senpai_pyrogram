@@ -1,9 +1,14 @@
 from pyrogram import Client
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram import filters, enums
+from pyrogram import filters
 
+from datetime import datetime, timedelta
 from database.mongodb import get_db
 
+# Diccionario para rastrear cuándo un usuario recibió el mensaje por última vez
+last_message_time = {}
+
+# Diccionario para rastrear los concursos activos
 concursos_usuario = {}
 
 async def is_player(user_id):
@@ -34,6 +39,32 @@ async def is_player(user_id):
     
     return concursos_usuario
 
+
+async def contest_word_filter(_, __, message):
+    words = message.text.lower().split()
+    if 'concurso' in words:
+        return True
+    return False
+    
+concurso_word_filter_detect = filters.create(contest_word_filter)
+
+
+@Client.on_message(filters.group & concurso_word_filter_detect & (filters.text))
+async def detect_concurso_word(app: Client, message: Message):
+    user_id = message.from_user.id
+    current_time = datetime.now()
+
+    # Verifica si el usuario ya ha recibido el mensaje hoy
+    if user_id in last_message_time:
+        last_time = last_message_time[user_id]
+        # Si no ha pasado un día completo, no envía el mensaje
+        if (current_time - last_time) < timedelta(days=1):
+            return
+
+    # Guarda la hora actual como la última vez que se envió el mensaje
+    last_message_time[user_id] = current_time
+    # Envía el mensaje
+    return await message.reply_text("Respecto al concurso: HAN LLEGADO MUCHOS VIDEOS Y POR POLITICAS DE YOUTUBE NO SE PUEDEN SUBIR TODOS A LA VEZ. ASÍ QUE SE EXTIENDE EL CONCURSO HASTA QUE TODOS PUEDAN SUBIRSE Y ESTRENARSE DE MANERA SIMULTÁNEA.")
 
 async def contest_filter(_, __, message):
     isplayer = await is_player(message.from_user.id)
