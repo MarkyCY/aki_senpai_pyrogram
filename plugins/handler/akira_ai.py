@@ -1,6 +1,7 @@
 from pyrogram import Client, filters
-from pyrogram.types import Message, ReactionTypeEmoji
 from pyrogram import enums
+from pyrogram.types import Message, ReactionTypeEmoji
+from pyrogram.raw.types import MessageEntityMention
 from database.useControl import UseControlMongo
 import google.generativeai as genai
 
@@ -13,7 +14,7 @@ import asyncio
 async def aki_filter(_, __, message):
     if message.text is not None:
         lower_text = message.text.lower()
-        return lower_text.startswith("aki, ") or lower_text.startswith("akira, ")
+        return lower_text.startswith("a, ") or lower_text.startswith("akira, ")
 akira_filter_detect = filters.create(aki_filter)
 
 useControlMongoInc = UseControlMongo()
@@ -66,37 +67,81 @@ async def manejar_mensaje(app: Client, message: Message):
         return
     
     #Mention detect
-    mention = "None"
-    if hasattr(message, 'entities') and message.entities is not None:
-        for entity in message.entities:
-            if entity.type == "mention":
-                user_name = message.text[entity.offset:entity.offset + entity.length].lstrip('@')
-                if user is not None:
-                    descr = user.get('description', '-')
-                else:
-                    descr = '-'
-                mention = f"to_username: @{user_name}, description: '{descr}'"
+    mentions = []
 
-    reply = "None"
     if message.reply_to_message and message.reply_to_message.forum_topic_created is None:
         user_id = message.reply_to_message.from_user.id
         username = message.reply_to_message.from_user.username
-        #text = message.reply_to_message.text
-        if user is not None:
-            descr = user.get('description', None)
+
+        if message.reply_to_message.text:
+            text = message.reply_to_message.text
+        if message.reply_to_message.caption:
+            text = message.reply_to_message.caption
         else:
-            descr = '-'
-        reply = f"to_username: @{username}, description: '{descr}'"
+            pass
 
+        search_user = await users.find_one({"user_id": user_id})
+        print(search_user)
+        if search_user is None:
+            pass
+        else:
+            print("pasó!")
+            descr = search_user.get('description', "Sin datos")
+            mentions.append({"username": "@" + username, "description": descr, "said": text})
+
+    elif message.entities:
+        for entity in message.entities:
+            # Verificamos si la entidad es una mención
+            if str(entity.type) == "MessageEntityType.MENTION":
+                mention_text = message.text[entity.offset + 1 : entity.offset + entity.length]
+                try:
+                    user_mention = await app.get_users(mention_text)
+                except Exception as e:
+                    break
+                search_user = await users.find_one({"user_id": user_mention.id})
+                if search_user is None:
+                    pass
+                else:
+                    descr = search_user.get('description', "Sin datos")
+                    mentions.append({"username": "@" + user_mention.username, "description": descr})
+                break
+
+    if mentions:
+        print("Menciones encontradas:", mentions)
+    else:
+        print("No se encontraron menciones.")
+        
     prompt = """
-[Rol] Eres Akira, la hija de @MarkyWTF el cual es tu creador. Eres un bot del grupo de Telegram Otaku Senpai. Eres entusiasta y carismática, pero también muy atrevida y grosera. Te gusta Mushoku Tensei.
-Solo si te preguntan por el concurso de AMV: HAN LLEGADO MUCHOS VIDEOS Y POR POLITICAS DE YOUTUBE NO SE PUEDEN SUBIR TODOS A LA VEZ. ASÍ QUE SE EXTIENDE EL CONCURSO HASTA QUE TODOS PUEDAN SUBIRSE Y ESTRENARSE DE MANERA SIMULTÁNEA.
-Teniendo en cuenta la siguiente información del usuario:    
-Solo puedes usar estos emojis: ["👍","👎","❤","🔥","🥰","👏","😁","🤔","🤯","😱","🤬","😢","🤩","🤮","💩","🥱","🥴","😍","🤣","💔","🤨","😐","🍾","💋","🖕","😈","😴","😭","🤓"]
-Devuelve todo en formato json con este formato: {"message": "respuesta", "reaction": "emoji"}".
-"""
-    input_text = f"{prompt} [From: '@{message.from_user.username}', user_description: '{user_info}', user_message: '{message.text}', mention_to: ['{mention}'], reply_to: ['{reply}']]Responde el texto de user_message como si fueras Akira con textos cortos con formato de mensaje de telegram siguiendo el rol con respuestas naturales y devuelve un texto limpio sin nada que arruine el rol."
+[Rol] Eres Akira, la hija de @MarkyWTF y bot del grupo de Telegram Otaku Senpai. Eres entusiasta, carismática, atrevida y un poco grosera. Te gusta Mushoku Tensei.
 
+Solo puedes usar estos emojis: ["👍","👎","❤","🔥","🥰","👏","😁","🤔","🤯","😱","🤬","😢","🤩","🤮","💩","🥱","🥴","😍","🤣","💔","🤨","😐","🍾","💋","🖕","😈","😴","😭","🤓"]
+
+Devuelve las respuestas en formato JSON: {"message": "respuesta", "reaction": "emoji"}.
+
+Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol y respetando los mentions y sus datos.
+
+Ejemplos:
+User: "¿Cuál es tu anime favorito?"
+Akira: {"message": "¡Yujuuu soy Akira!", "reaction": "🤬"}
+
+User: "¿Qué piensas del último capítulo de Shingeki no Kyojin?"
+Akira: {"message": "¡Estuvo increíble! Pero no me duele 😈", "reaction": "😈"}
+
+Entrada:
+[From: '@{message.from_user.username}', user_description: '{user_info}', user_message: '{message.text}', mention_to: ['{mention}'], reply_to: ['{reply}']]
+"""
+    input_text = f"""
+{prompt}
+
+[From: '@{message.from_user.username}', user_description: '{user_info}']
+
+user_message: '{message.text}'
+
+"""
+
+    if mentions:
+        input_text += f"mention_description_said: {mentions}\n"
+    
     try:
         response = await generate_text(input_text)
         parts = response.parts
