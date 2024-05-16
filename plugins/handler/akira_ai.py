@@ -146,7 +146,7 @@ user_message: '{message.text}'
     except Exception as e:
         await message.reply_text(text="Lo siento no puedo atenderte ahora", parse_mode=enums.ParseMode.HTML)
         print(f"An error occurred: {e}")
-        print(f"feedback: {response.prompt_feedback}")
+        print(f"response: {response}")
         return
     await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="👨‍💻")])
     await app.send_chat_action(chat_id, enums.ChatAction.TYPING)
