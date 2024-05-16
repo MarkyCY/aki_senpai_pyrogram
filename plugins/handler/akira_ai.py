@@ -125,7 +125,7 @@ Solo puedes usar estos emojis: ["👍","👎","❤","🔥","🥰","👏","😁",
 
 Devuelve las respuestas en formato JSON: {"message": "respuesta", "reaction": "emoji"}.
 
-Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol y respetando los mentions y sus datos.
+Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol y OJO fíjate primero si existe un mention al final y preorizalo.
 
 Ejemplos:
 User: "¿Cuál es tu anime favorito?"
@@ -147,7 +147,7 @@ user_message: '{message.text}'
 """
 
     if mentions:
-        input_text += f"mention_description_said: {mentions}\n"
+        input_text += f"mention: {mentions}\n"
         print(mentions)
     
     try:
