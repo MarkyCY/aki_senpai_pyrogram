@@ -148,6 +148,7 @@ user_message: '{message.text}'
 
     if mentions:
         input_text += f"mention_description_said: {mentions}\n"
+        print(mentions)
     
     try:
         response = await generate_text(input_text)
