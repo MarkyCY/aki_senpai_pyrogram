@@ -17,8 +17,13 @@ async def aki_filter(_, __, message):
 akira_filter_detect = filters.create(aki_filter)
 
 async def aki_detect(_, __, message):
-    if message.reply_to_message:
-        return message.reply_to_message.from_user.id == 6275121584
+    if not message.text:
+        return False
+    
+    if not message.reply_to_message:
+        return False
+
+    return message.reply_to_message.from_user.id == 6275121584
 akira_detect = filters.create(aki_detect)
 
 useControlMongoInc = UseControlMongo()
