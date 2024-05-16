@@ -79,7 +79,7 @@ async def manejar_mensaje(app: Client, message: Message):
     mentions = []
 
     if message.reply_to_message and message.reply_to_message.forum_topic_created is None:
-        user_id = message.reply_to_message.from_user.id
+        user_reply_id = message.reply_to_message.from_user.id
         username = message.reply_to_message.from_user.username
         if username is None:
             username = message.reply_to_message.from_user.first_name
@@ -93,7 +93,7 @@ async def manejar_mensaje(app: Client, message: Message):
         else:
             pass
 
-        search_user = await users.find_one({"user_id": user_id})
+        search_user = await users.find_one({"user_id": user_reply_id})
         if search_user is None:
             pass
         else:
