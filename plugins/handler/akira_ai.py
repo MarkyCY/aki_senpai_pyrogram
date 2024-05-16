@@ -71,7 +71,11 @@ async def manejar_mensaje(app: Client, message: Message):
 
     if message.reply_to_message and message.reply_to_message.forum_topic_created is None:
         user_id = message.reply_to_message.from_user.id
-        username = message.reply_to_message.from_user.username
+        username = message.reply_to_message.from_user.get('username', None)
+        if username is None:
+            username = message.reply_to_message.from_user.first_name
+        else:
+            username = f"@{username}"
 
         if message.reply_to_message.text:
             text = message.reply_to_message.text
@@ -85,7 +89,7 @@ async def manejar_mensaje(app: Client, message: Message):
             pass
         else:
             descr = search_user.get('description', "Sin datos")
-            mentions.append({"username": "@" + username, "description": descr, "said": text})
+            mentions.append({"username": username, "description": descr, "said": text})
 
     elif message.entities:
         for entity in message.entities:
