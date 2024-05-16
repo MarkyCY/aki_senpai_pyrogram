@@ -14,7 +14,7 @@ import asyncio
 async def aki_filter(_, __, message):
     if message.text is not None:
         lower_text = message.text.lower()
-        return lower_text.startswith("a, ") or lower_text.startswith("akira, ")
+        return lower_text.startswith("aki, ") or lower_text.startswith("akira, ") or 'akira' in lower_text
 akira_filter_detect = filters.create(aki_filter)
 
 useControlMongoInc = UseControlMongo()
@@ -81,11 +81,9 @@ async def manejar_mensaje(app: Client, message: Message):
             pass
 
         search_user = await users.find_one({"user_id": user_id})
-        print(search_user)
         if search_user is None:
             pass
         else:
-            print("pasó!")
             descr = search_user.get('description', "Sin datos")
             mentions.append({"username": "@" + username, "description": descr, "said": text})
 
@@ -105,11 +103,6 @@ async def manejar_mensaje(app: Client, message: Message):
                     descr = search_user.get('description', "Sin datos")
                     mentions.append({"username": "@" + user_mention.username, "description": descr})
                 break
-
-    if mentions:
-        print("Menciones encontradas:", mentions)
-    else:
-        print("No se encontraron menciones.")
         
     prompt = """
 [Rol] Eres Akira, la hija de @MarkyWTF y bot del grupo de Telegram Otaku Senpai. Eres entusiasta, carismática, atrevida y un poco grosera. Te gusta Mushoku Tensei.
