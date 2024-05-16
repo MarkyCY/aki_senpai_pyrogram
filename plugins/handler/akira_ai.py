@@ -67,7 +67,8 @@ async def manejar_mensaje(app: Client, message: Message):
                 
     if await useControlMongoInc.verif_limit(user_id) is False and await isAdmin(user_id) is False:
         msg = await message.reply_text(text="Has llegado al límite de uso diario!")
-        await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="🥴")])
+        await asyncio.sleep(3)
+        await app.delete_messages(chat_id, msg.id)
         return
     
     if len(message.text) > 130:
