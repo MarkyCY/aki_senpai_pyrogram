@@ -14,7 +14,7 @@ import asyncio
 async def aki_filter(_, __, message):
     if message.text is not None:
         lower_text = message.text.lower()
-        return lower_text.startswith("aki, ") or lower_text.startswith("akira, ") or 'akira' in lower_text
+        return lower_text.startswith("aki, ") or lower_text.startswith("akira, ") or 'Akira' in message.text
 akira_filter_detect = filters.create(aki_filter)
 
 useControlMongoInc = UseControlMongo()
