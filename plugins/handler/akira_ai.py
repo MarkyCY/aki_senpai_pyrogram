@@ -71,7 +71,7 @@ async def manejar_mensaje(app: Client, message: Message):
 
     if message.reply_to_message and message.reply_to_message.forum_topic_created is None:
         user_id = message.reply_to_message.from_user.id
-        username = message.reply_to_message.from_user.get('username', None)
+        username = message.reply_to_message.from_user.username
         if username is None:
             username = message.reply_to_message.from_user.first_name
         else:
