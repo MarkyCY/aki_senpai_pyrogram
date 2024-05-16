@@ -1,7 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram import enums
 from pyrogram.types import Message, ReactionTypeEmoji
-from pyrogram.raw.types import MessageEntityMention
 from database.useControl import UseControlMongo
 import google.generativeai as genai
 
@@ -17,6 +16,11 @@ async def aki_filter(_, __, message):
         return lower_text.startswith("aki, ") or lower_text.startswith("akira, ") or 'Akira' in message.text
 akira_filter_detect = filters.create(aki_filter)
 
+async def aki_detect(_, __, message):
+    if message.reply_to_message:
+        return message.reply_to_message.from_user.id == 6275121584
+akira_detect = filters.create(aki_detect)
+
 useControlMongoInc = UseControlMongo()
 
 async def generate_text(input_text):
@@ -29,7 +33,7 @@ async def generate_text(input_text):
         print(f"Error al generar contenido: {e}")
         return None
 
-@Client.on_message(akira_filter_detect)
+@Client.on_message(akira_filter_detect | filters.reply & akira_detect)
 async def manejar_mensaje(app: Client, message: Message):
     db = await get_db()
     users = db.users
