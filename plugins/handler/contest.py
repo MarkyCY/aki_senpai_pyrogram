@@ -41,7 +41,11 @@ async def is_player(user_id):
 
 
 async def contest_word_filter(_, __, message):
-    words = message.text.lower().split()
+    try:
+        words = message.text.lower().split()
+    except AttributeError:
+        return False
+    
     if 'concurso' in words:
         return True
     if 'amv' in words:
