@@ -70,7 +70,7 @@ async def detect_concurso_word(app: Client, message: Message):
     # Guarda la hora actual como la última vez que se envió el mensaje
     last_message_time[user_id] = current_time
     # Envía el mensaje
-    return await message.reply_text("Respecto al concurso de AMV: HAN LLEGADO MUCHOS VIDEOS Y POR POLITICAS DE YOUTUBE NO SE PUEDEN SUBIR TODOS A LA VEZ. ASÍ QUE SE EXTIENDE EL CONCURSO HASTA QUE TODOS PUEDAN SUBIRSE Y ESTRENARSE DE MANERA SIMULTÁNEA.")
+    return await message.reply_text("Respecto al concurso de AMV: Ya todos están publicados y listos para ver. Diganle a sus amigos y hagan spam de sus concursos para obtener más vistas y likes, recuerden el concurso con más likes y vistas Gana!")
 
 async def contest_filter(_, __, message):
     isplayer = await is_player(message.from_user.id)
