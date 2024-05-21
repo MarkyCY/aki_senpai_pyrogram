@@ -28,9 +28,13 @@ akira_detect = filters.create(aki_detect)
 
 useControlMongoInc = UseControlMongo()
 
-async def generate_text(input_text):
+async def generate_text(input_text, chat_id):
+    if chat_id == -1002094390065:
+        api_key = os.getenv('YIGA_GEMINI_API')
+    else:
+        api_key = os.getenv('GEMINI_API')
     try:
-        genai.configure(api_key=os.getenv('GEMINI_API'))
+        genai.configure(api_key=api_key)
         model = genai.GenerativeModel('gemini-pro')
         res = model.generate_content(input_text)
         return res
@@ -44,7 +48,7 @@ async def manejar_mensaje(app: Client, message: Message):
     users = db.users
     Admins = db.admins
 
-    group_perm = [-1001485529816, -1001664356911, -1001223004404]
+    group_perm = [-1001485529816, -1001664356911, -1001223004404, -1002094390065]
 
     user_id = message.from_user.id
     chat_id = message.chat.id
@@ -65,7 +69,7 @@ async def manejar_mensaje(app: Client, message: Message):
                 return True
         return False
                 
-    if await useControlMongoInc.verif_limit(user_id) is False and await isAdmin(user_id) is False:
+    if await useControlMongoInc.verif_limit(user_id) is False and await isAdmin(user_id) is False and chat_id != -1002094390065:
         msg = await message.reply_text(text="Has llegado al límite de uso diario!")
         await asyncio.sleep(3)
         await app.delete_messages(chat_id, msg.id)
@@ -149,7 +153,7 @@ user_message: '{message.text}'
         print(mentions)
     
     try:
-        response = await generate_text(input_text)
+        response = await generate_text(input_text, chat_id)
         parts = response.parts
         if parts:
             response = response.candidates[0].content.parts[0].text
