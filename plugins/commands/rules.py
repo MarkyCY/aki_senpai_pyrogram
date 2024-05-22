@@ -7,6 +7,9 @@ from pyrogram import enums
 @Client.on_message(filters.command('rules'))
 async def rules_command(app: Client, message: Message):
 
+    if message.chat.id == -1002094390065:
+        return
+
     text= """<b>Normas del Grupo </b>
 
 1. Mantener en todo momento un comportamiento respetuoso con el resto de usuarios del grupo.
