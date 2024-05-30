@@ -40,37 +40,37 @@ async def is_player(user_id):
     return concursos_usuario
 
 
-async def contest_word_filter(_, __, message):
-    try:
-        words = message.text.lower().split()
-    except AttributeError:
-        return False
-    
-    if 'concurso' in words:
-        return True
-    if 'amv' in words:
-        return True
-    return False
-    
-concurso_word_filter_detect = filters.create(contest_word_filter)
+#async def contest_word_filter(_, __, message):
+#    try:
+#        words = message.text.lower().split()
+#    except AttributeError:
+#        return False
+#    
+#    if 'concurso' in words:
+#        return True
+#    if 'amv' in words:
+#        return True
+#    return False
+#    
+#concurso_word_filter_detect = filters.create(contest_word_filter)
 
 
-@Client.on_message(filters.group & concurso_word_filter_detect & (filters.text))
-async def detect_concurso_word(app: Client, message: Message):
-    user_id = message.from_user.id
-    current_time = datetime.now()
-
-    # Verifica si el usuario ya ha recibido el mensaje hoy
-    if user_id in last_message_time:
-        last_time = last_message_time[user_id]
-        # Si no ha pasado un día completo, no envía el mensaje
-        if (current_time - last_time) < timedelta(days=1):
-            return
-
-    # Guarda la hora actual como la última vez que se envió el mensaje
-    last_message_time[user_id] = current_time
-    # Envía el mensaje
-    return await message.reply_text("Respecto al concurso de AMV: Ya todos están publicados y listos para ver. Diganle a sus amigos y hagan spam de sus concursos para obtener más vistas y likes, recuerden el concurso con más likes y vistas Gana!")
+#@Client.on_message(filters.group & concurso_word_filter_detect & (filters.text))
+#async def detect_concurso_word(app: Client, message: Message):
+#    user_id = message.from_user.id
+#    current_time = datetime.now()
+#
+#    # Verifica si el usuario ya ha recibido el mensaje hoy
+#    if user_id in last_message_time:
+#        last_time = last_message_time[user_id]
+#        # Si no ha pasado un día completo, no envía el mensaje
+#        if (current_time - last_time) < timedelta(days=1):
+#            return
+#
+#    # Guarda la hora actual como la última vez que se envió el mensaje
+#    last_message_time[user_id] = current_time
+#    # Envía el mensaje
+#    return await message.reply_text("Respecto al concurso de AMV: Ya todos están publicados y listos para ver. Diganle a sus amigos y hagan spam de sus concursos para obtener más vistas y likes, recuerden el concurso con más likes y vistas Gana!")
 
 async def contest_filter(_, __, message):
     isplayer = await is_player(message.from_user.id)
