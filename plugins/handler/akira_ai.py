@@ -161,7 +161,6 @@ user_message: '{message.text}'
             response = response.text
 
     except Exception as e:
-        await message.reply_text(text="Lo siento no puedo atenderte ahora", parse_mode=enums.ParseMode.HTML)
         print(f"An error occurred: {e}")
         print(f"response: {response}")
         return
