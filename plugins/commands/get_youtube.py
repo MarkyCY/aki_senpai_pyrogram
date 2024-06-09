@@ -9,7 +9,7 @@ import asyncio
 
 from datetime import datetime
 from database.mongodb import get_db
-from API.YouTube.youtube_api import *
+from API.Google.google_api import *
 
 def convert_duration_iso(duracion_iso):
     # Extraer los minutos y segundos con expresiones regulares
@@ -52,11 +52,11 @@ async def get_video_command(app: Client = None, message: Message = None):
     db = await get_db()
     youtube = db.youtube
 
-    youtube_client = await authenticate()
+    service = await authenticate()
     channel_id = "UCftYv-uM9iItUY4eJp2zerg"
 
     print("Buscando Videos...")
-    videos = await get_latest_videos(youtube_client, channel_id)
+    videos = await get_latest_videos(service["youtube"], channel_id)
     print("Busqueda Finalizada.")
     for video in videos:
         vid_id = None
