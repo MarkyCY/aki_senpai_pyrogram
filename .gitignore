@@ -7,7 +7,5 @@ stealsticker.webp
 AkiraS.session-shm
 AkiraS.session-wal
 image.jpg
-API/YouTube/youtube_token.pickle
-API/GoogleCalendar/calendar_credentials.json
-API/GoogleCalendar/calendar_token.pickle
-API/YouTube/youtube_credentials.json
+API/Google/google_token.pickle
+API/Google/google_credentials.json
