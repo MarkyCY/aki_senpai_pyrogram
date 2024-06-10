@@ -28,6 +28,7 @@ async def up_contest(app: Client, call: CallbackQuery):
     contest_id = ObjectId(parts[2])
     message_id = int(parts[3])
     user_id = call.from_user.id
+    
 
     db = await get_db()
     contest = db.contest
@@ -35,39 +36,51 @@ async def up_contest(app: Client, call: CallbackQuery):
 
     contest_sel = await contest.find_one({'_id': contest_id})
 
+    contest_data = await Contest_Data.find_one({'contest_id': contest_id, 'user_id': user_id})
+    if contest_data:
+        contest_data_id = contest_data['_id']
+    else:
+        contest_data_id = ObjectId()
+
     msg = await app.get_messages(chat_id=chat_id, message_ids=message_id)
 
-    text = f"Esta obra es envíada por <a href='tg://user?id={call.from_user.id}'>{call.from_user.first_name}</a> participando en el concurso: {contest_sel['title']}"
+    # Buttons
+    markup = InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton(str(i), callback_data=f"vote_{i}_{call.from_user.id}_{contest_data_id}") for i in range(1, 6)],
+            [InlineKeyboardButton(str(i), callback_data=f"vote_{i}_{call.from_user.id}_{contest_data_id}") for i in range(6, 11)]
+        ]
+    )
+
+    text = f"Esta obra es envíada por <a href='tg://user?id={call.from_user.id}'>{call.from_user.first_name}</a> participando en el concurso: {contest_sel['title']}\n\nVoto:\n"
     match contest_sel['type']:
         case 'text':
             msg_text = msg.text
             msg_text += "\n\n", text
             try:
-                sent_message = await app.send_message(principal_chat_id, msg.text, message_thread_id=principal_thread_id, reply_markup=None)
-                data = {'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'text': msg.text}
+                sent_message = await app.send_message(principal_chat_id, msg.text, message_thread_id=principal_thread_id, reply_markup=markup)
+                data = {'_id': contest_data_id, 'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'text': msg.text}
             except Exception as e:
                 await app.send_message(chat_id, text="Ha ocurrido un error")
                 print(e)
                 return
         case 'photo':
             try:
-                sent_message = await app.send_photo(principal_chat_id, msg.photo.file_id, caption=text, message_thread_id=principal_thread_id, reply_markup=None)
-                data = {'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'file_id': msg.photo.file_id}
+                sent_message = await app.send_photo(principal_chat_id, msg.photo.file_id, caption=text, message_thread_id=principal_thread_id, reply_markup=markup)
+                data = {'_id': contest_data_id, 'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'file_id': msg.photo.file_id}
             except Exception as e:
                 await app.send_message(chat_id, text="Ha ocurrido un error")
                 print(e)
                 return
         case 'video':
             try:
-                sent_message = await app.send_video(principal_chat_id, msg.video.file_id, caption=text, message_thread_id=principal_thread_id, reply_markup=None)
-                data = {'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'file_id': msg.video.file_id}
+                sent_message = await app.send_video(principal_chat_id, msg.video.file_id, caption=text, message_thread_id=principal_thread_id, reply_markup=markup)
+                data = {'_id': contest_data_id, 'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'file_id': msg.video.file_id}
             except Exception as e:
                 await app.send_message(chat_id, text="Ha ocurrido un error")
                 print(e)
                 return
             
-    contest_data = await Contest_Data.find_one({'contest_id': contest_id, 'user_id': user_id})
-    print(sent_message.id)
     if contest_data:
         try:
             await app.unpin_chat_message(principal_chat_id, contest_data['m_id'])
