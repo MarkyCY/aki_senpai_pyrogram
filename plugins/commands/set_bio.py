@@ -27,16 +27,17 @@ async def set_bio_command(app: Client, message: Message):
         await message.reply_text(text="Proporcionar una descripción para el usuario.")
         return
 
-    #if user_id not in [873919300, 5579842331, 1881435398, 6811585914]:
-    #    await message.reply_text(text="Solo mi padre puede usar ese comando por ahora :(")
-    #    return
+    if user_id not in [873919300]:
+        await message.reply_text(text="Solo mi padre puede usar ese comando por ahora :(")
+        return
 
     description = args[1]
+    notice = "Descripción actualizada correctamente."
     username = message.reply_to_message.from_user.username
     if len(description) > 100:
         description = description[:100]
-        notice = "\nSu motivo de afk se redujo a 100 caracteres."
+        notice += "\n\nEsta descripción se redujo a 100 caracteres."
 
     user_id = message.reply_to_message.from_user.id
     await users.update_one({"user_id": user_id}, {"$set": {"username": username, "description": description}}, upsert=True)
-    await message.reply(text="Descripción actualizada correctamente.", reply_parameters=ReplyParameters(message_id=message.reply_to_message_id))
+    await message.reply(text=notice, reply_parameters=ReplyParameters(message_id=message.reply_to_message_id))
