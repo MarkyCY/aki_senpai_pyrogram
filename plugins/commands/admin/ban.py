@@ -1,20 +1,37 @@
 from datetime import datetime, timedelta
+from pyrogram import utils
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
 #from database.mongodb import get_db
 
-async def BanUser(app, message, chat_id, user_id, name, until_date):
+async def BanUser(app, chat_id, user_id, message=None, name=None, until_date=utils.zero_datetime()):
     # Banear al usuario
-    await app.ban_chat_member(chat_id, user_id, until_date=until_date)
+    try:
+        await app.ban_chat_member(chat_id, user_id, until_date=until_date)
+    except Exception as e:
+        print(e)
+        return False
+    
+    if message:
+        await message.reply(f"El usuario {name} ha sido baneado.")
+        return
+    
+    return True
 
-    await message.reply(f"El usuario {name} ha sido baneado.")
-
-async def UnbanUser(app, message, chat_id, user_id, name):
+async def UnbanUser(app, chat_id, user_id, name=None, message=None):
     # Desbanear al usuario
-    await app.unban_chat_member(chat_id, user_id)
+    try:
+        await app.unban_chat_member(chat_id, user_id)
+    except Exception as e:
+        print(e)
+        return False
 
-    await message.reply(f"El usuario {name} ha sido desbaneado.")
+    if message:
+        await message.reply(f"El usuario {name} ha sido desbaneado.")
+        return
+    
+    return True
 
 @Client.on_message(filters.command('aki_ban'))
 async def ban_command(app: Client, message: Message):
@@ -36,7 +53,7 @@ async def ban_command(app: Client, message: Message):
         await message.reply("No tienes permisos para usar este comando.")
         return
     
-    await BanUser(app, message, chat_id, user_mute_id, name, until_date=None)
+    await BanUser(app, chat_id, user_mute_id, message=message, name=name)
 
 
 @Client.on_message(filters.command('aki_unban'))
@@ -59,4 +76,4 @@ async def unban_command(app: Client, message: Message):
         await message.reply("No tienes permisos para usar este comando.")
         return
 
-    await UnbanUser(app, message, chat_id, user_mute_id, name)
+    await UnbanUser(app, chat_id, user_mute_id, name, message)

@@ -1,30 +1,75 @@
 from datetime import datetime, timedelta
+from pyrogram import utils
 from pyrogram import Client, filters
 from pyrogram.types import ChatPermissions, Message
 
 from database.mongodb import get_db
 from plugins.others.admin_func import isModerator
 
-async def MuteUser(app, message, chat_id, user_id, name, until_date):
+async def MuteUser(app, chat_id, user_id, message=None, name=None, until_date=utils.zero_datetime()):
     # Configurar los permisos de restricción (mutear al usuario)
-    permissions = ChatPermissions(can_send_messages=False)
-
-    # Calcular la fecha hasta la cual el usuario estará muteado (24 horas desde ahora)
-    until_date = datetime.now() + timedelta(days=1)
+    permissions = ChatPermissions(
+        can_send_messages = False,
+        can_send_audios = False,
+        can_send_documents = False,
+        can_send_photos = False,
+        can_send_videos = False,
+        can_send_video_notes = False,
+        can_send_voice_notes = False,
+        can_send_polls = False,
+        can_send_other_messages = False,
+        can_add_web_page_previews = False,
+        can_change_info = False,
+        can_invite_users = False,
+        can_pin_messages = False,
+        can_manage_topics = False,
+        can_send_media_messages = False
+        )
 
     # Mutear al usuario
-    await app.restrict_chat_member(chat_id, user_id, permissions, until_date=until_date)
+    try:
+        await app.restrict_chat_member(chat_id, user_id, permissions, until_date=until_date)
+    except Exception as e:
+        print(e)
+        return False
     
-    await message.reply(f"El usuario {name} ha sido muteado por 24 horas.")
+    if message:
+        await message.reply(f"El usuario {name} ha sido muteado por 24 horas.")
 
-async def UnmuteUser(app, message, chat_id, user_id, name):
+    return True
+
+async def UnmuteUser(app, chat_id, user_id, name=None, message=None):
     # Configurar los permisos de restricción (desmutear al usuario)
-    permissions = ChatPermissions(can_send_messages=True, can_send_media_messages=True, can_send_polls=True, can_send_other_messages=True, can_add_web_page_previews=True)
+    permissions = ChatPermissions(
+        can_send_messages = True,
+        can_send_audios = True,
+        can_send_documents = True,
+        can_send_photos = True,
+        can_send_videos = True,
+        can_send_video_notes = True,
+        can_send_voice_notes = True,
+        can_send_polls = True,
+        can_send_other_messages = True,
+        can_add_web_page_previews = True,
+        can_change_info = True,
+        can_invite_users = True,
+        can_pin_messages = True,
+        can_manage_topics = True,
+        can_send_media_messages = True
+        )
 
     # Desmutear al usuario
-    await app.restrict_chat_member(chat_id, user_id, permissions)
+    try:
+        await app.restrict_chat_member(chat_id, user_id, permissions)
+    except Exception as e:
+        print(e)
+        return False
 
-    await message.reply(f"El usuario {name} ha sido desmuteado.")
+    if message:
+        await message.reply(f"El usuario {name} ha sido desmuteado.")
+        return
+    
+    return True
 
 @Client.on_message(filters.command('aki_mute'))
 async def mute_command(app: Client, message: Message):
@@ -46,7 +91,7 @@ async def mute_command(app: Client, message: Message):
         await message.reply("No tienes permisos para usar este comando.")
         return
     
-    await MuteUser(app, message, chat_id, user_mute_id, name, until_date=None)
+    await MuteUser(app, chat_id, user_mute_id, message=message, name=name)
 
 
 
@@ -70,4 +115,4 @@ async def unmute_command(app: Client, message: Message):
         await message.reply("No tienes permisos para usar este comando.")
         return
     
-    await UnmuteUser(app, message, chat_id, user_mute_id, name)
+    await UnmuteUser(app, chat_id, user_mute_id, name, message)
