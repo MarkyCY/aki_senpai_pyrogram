@@ -42,7 +42,7 @@ async def generate_text(input_text, chat_id):
         print(f"Error al generar contenido: {e}")
         return None
 
-@Client.on_message(akira_filter_detect | filters.reply & akira_detect)
+@Client.on_message(akira_filter_detect | filters.reply & akira_detect & filters.group)
 async def manejar_mensaje(app: Client, message: Message):
     db = await get_db()
     users = db.users
