@@ -37,6 +37,9 @@ async def info_command(app: Client, message: Message, user_data=None):
     chat_member = await app.get_chat_member(message.chat.id, user.id)
     role_name = str(chat_member.status).split('.')[1]
     role = role_name.capitalize()
+
+    if role_name == "administrator":
+        markup = None
     
     user_db = await users.find_one({"user_id": user.id})
     
