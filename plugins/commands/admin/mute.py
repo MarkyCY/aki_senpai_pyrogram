@@ -94,7 +94,7 @@ async def mute_command(app: Client, message: Message):
 
     chat_member = await app.get_chat_member(chat_id, user_mute_id)
     role_name = str(chat_member.status).split('.')[1]
-    if role_name.lower() not in ['administrator', 'owner']:
+    if role_name.lower() in ['administrator', 'owner']:
         await message.reply("No puedes usar este comando con administradores.")
         return
     
