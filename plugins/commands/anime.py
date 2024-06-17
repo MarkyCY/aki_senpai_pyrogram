@@ -4,7 +4,7 @@ from pyrogram import filters
 from pyrogram import enums
 
 from database.mongodb import get_db
-from plugins.others.admin_func import isModerator
+from plugins.others.admin_func import isCollaborator
 
 import asyncio
 
@@ -37,7 +37,7 @@ async def add_anime_command(app: Client, message: Message):
 
     chat_member = await app.get_chat_member(chat_id, user_id)
     role_name = str(chat_member.status).split('.')[1]
-    if role_name.lower() not in ['administrator', 'owner'] and await isModerator(user_id) is False:
+    if role_name.lower() not in ['administrator', 'owner'] and await isCollaborator(user_id) is False:
         await message.reply_text(text="Solo los administradores o colaboradores pueden usar este comando.")
         return
 
@@ -94,7 +94,7 @@ async def del_anime_command(app: Client, message: Message):
 
     chat_member = await app.get_chat_member(chat_id, user_id)
     role_name = str(chat_member.status).split('.')[1]
-    if role_name.lower() not in ['administrator', 'owner'] and await isModerator(user_id) is False:
+    if role_name.lower() not in ['administrator', 'owner'] and await isCollaborator(user_id) is False:
         await message.reply_text(text="Solo los administradores o colaboradores pueden usar este comando.")
         return
 
