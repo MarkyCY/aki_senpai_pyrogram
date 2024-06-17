@@ -110,4 +110,5 @@ async def send_welcome_event(app: Client, message: Message):
 
     user = await users.find_one({"user_id": new_user_id})
     if user is None:
-        await users.insert_one({"user_id": new_user_id})
+        timestamp = datetime.now().timestamp()
+        await users.insert_one({"user_id": new_user_id, "enter_date": timestamp})
