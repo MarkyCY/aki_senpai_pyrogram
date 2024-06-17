@@ -67,7 +67,7 @@ async def staff_command(app: Client, message: Message):
                 get_user = await app.get_chat_member(chat_id, int(user_id))
             except Exception as e:
                 pass
-            message_text += f"\n└<a href='https://t.me/{get_user.user.username}'>{get_user.user.first_name}</a>"
+            message_text += f"\n└<a href='https://t.me/{get_user.user.username}'>{get_user.user.first_name}</a>\n"
 
     if message.chat.id == -1001485529816:
         mods = [doc async for doc in users.find({"is_col": True})]
