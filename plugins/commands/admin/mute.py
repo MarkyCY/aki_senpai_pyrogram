@@ -3,8 +3,8 @@ from pyrogram import utils
 from pyrogram import Client, filters
 from pyrogram.types import ChatPermissions, Message
 
-from database.mongodb import get_db
-from plugins.others.admin_func import isModerator
+#from database.mongodb import get_db
+#from plugins.others.admin_func import isModerator
 
 async def MuteUser(app, chat_id, user_id, message=None, name=None, until_date=utils.zero_datetime()):
     # Configurar los permisos de restricción (mutear al usuario)
