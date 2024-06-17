@@ -16,8 +16,19 @@ async def isModerator(user_id):
     users = db.users
 
     isModerator = False
-    Users = users.find({"is_col": True})
+    Users = users.find({"is_mod": True})
     async for user in Users:
         if user['user_id'] == user_id:
             isModerator = True
     return isModerator
+
+async def isCollaborator(user_id):
+    db = await get_db()
+    users = db.users
+
+    isCollaborator = False
+    Users = users.find({"is_col": True})
+    async for user in Users:
+        if user['user_id'] == user_id:
+            isCollaborator = True
+    return isCollaborator
