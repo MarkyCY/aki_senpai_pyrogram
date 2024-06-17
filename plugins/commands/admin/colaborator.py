@@ -46,9 +46,9 @@ async def set_mod_command(app: Client, message: Message):
         await message.reply_text(text="Solo los administradores pueden usar este comando.")
         return
 
-    #if chat_id != -1001485529816:
-    #    await message.reply_text(text="Este comando solo puede ser usado en el grupo de OtakuSenpai.")
-    #    return
+    if chat_id != -1001485529816:
+        await message.reply_text(text="Este comando solo puede ser usado en el grupo de OtakuSenpai.")
+        return
     
     reply_user_id = message.reply_to_message.from_user.id
 
@@ -78,9 +78,9 @@ async def del_mod_command(app: Client, message: Message):
         await message.reply_text(text="Solo los administradores pueden usar este comando.")
         return
 
-    #if chat_id != -1001485529816:
-    #    await message.reply_text(text="Este comando solo puede ser usado en el grupo de OtakuSenpai.")
-    #    return
+    if chat_id != -1001485529816:
+        await message.reply_text(text="Este comando solo puede ser usado en el grupo de OtakuSenpai.")
+        return
     
     reply_user_id = message.reply_to_message.from_user.id
 
