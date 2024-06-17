@@ -76,9 +76,6 @@ async def send_welcome_event(app: Client, message: Message):
     chat_id = message.chat.id
     #message_id = message.id
     new_user_id = message.new_chat_members[0].id
-    user = await users.find_one({"user_id": new_user_id})
-    if user is None:
-        await users.insert_one({"user_id": new_user_id})
 
     current_date = datetime.today()
     current_month = current_date.month
@@ -110,3 +107,7 @@ async def send_welcome_event(app: Client, message: Message):
                     )
     msg = await message.reply_text(text=f"{welcome_message}", reply_markup=reply_markup)
     await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="😁")])
+
+    user = await users.find_one({"user_id": new_user_id})
+    if user is None:
+        await users.insert_one({"user_id": new_user_id})
