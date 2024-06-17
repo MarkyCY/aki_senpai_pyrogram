@@ -11,11 +11,29 @@ async def info_command(app: Client, message: Message, user_data=None):
     db = await get_db()
     users = db.users
 
-    if user_data is None:
+
+    # Obtener el elemento del comando
+    if message.command and len(message.command) > 1:
+        elemento = message.command[1]
+
+        # Si el elemento es un ID de usuario
+        if elemento.isdigit() and 8 <= len(elemento) <= 11:
+            user_id = int(elemento)
+            get_user = await app.get_chat_member(message.chat.id, user_id)
+            user = get_user.user
+
+        # Si el elemento es un nombre de usuario
+        elif elemento.startswith('@'):
+                username = elemento.replace('@', '')
+                get_user = await app.get_chat_member(message.chat.id, username)
+                user = get_user.user
+    
+    elif user_data is None:
         user = message.reply_to_message.from_user
         if message.reply_to_message is None:
             await message.reply_text('Por favor, responde a un mensaje')
             return
+
     else:
         user = user_data
     
