@@ -6,6 +6,7 @@ from plugins.commands.admin.ban import BanUser, UnbanUser
 from plugins.commands.admin.mute import MuteUser, UnmuteUser
 from plugins.commands.admin.warn import add_warning, remove_warning
 from plugins.commands.admin.colaborator import add_collaborator, remove_collaborator
+from plugins.commands.admin.moderator import add_moderator, remove_moderator
 from plugins.commands.info import info_command
 
 from database.mongodb import get_db
@@ -413,13 +414,45 @@ async def add_col_user(app: Client, call: CallbackQuery):
 
     await app.answer_callback_query(call.id, add_col)
     
-
 @Client.on_callback_query(filters.regex(r"^rem_mod_\d{8,11}$"))
 async def rem_mod_user(app: Client, call: CallbackQuery):
 
-    await app.answer_callback_query(call.id, "Me pesa programar esto...")
+    db = await get_db()
+    users = db.users
 
+    chat_id = call.message.chat.id
+    user_id = call.from_user.id
+
+    parts = call.data.split('_')
+    user_sel_id = int(parts[2])
+
+    chat_member = await app.get_chat_member(chat_id, user_id)
+    role_name = str(chat_member.status).split('.')[1]
+    if role_name.lower() not in ['administrator', 'owner']:
+        return await app.answer_callback_query(call.id, "No tienes permisos para usar este comando.")
+
+    rem_col = await remove_moderator(user_sel_id)
+
+    await show_roles_user(app, call, user_sel_id)
+
+    await app.answer_callback_query(call.id, rem_col)
 @Client.on_callback_query(filters.regex(r"^add_mod_\d{8,11}$"))
 async def add_mod_user(app: Client, call: CallbackQuery):
 
-    await app.answer_callback_query(call.id, "Me pesa programar esto...")
+    chat_id = call.message.chat.id
+    user_id = call.from_user.id
+
+    parts = call.data.split('_')
+    user_sel_id = int(parts[2])
+
+    chat_member = await app.get_chat_member(chat_id, user_id)
+    role_name = str(chat_member.status).split('.')[1]
+    if role_name.lower() not in ['administrator', 'owner']:
+        return await app.answer_callback_query(call.id, "No tienes permisos para usar este comando.")
+
+    add_col = await add_moderator(user_sel_id)
+
+    await show_roles_user(app, call, user_sel_id)
+
+    await app.answer_callback_query(call.id, add_col)
+    
