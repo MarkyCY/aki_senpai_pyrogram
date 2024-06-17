@@ -329,11 +329,11 @@ async def show_roles_user(app: Client, call: CallbackQuery, user_sel_id=None):
         col = user['is_col']
 
     mod_btn = [
-        InlineKeyboardButton("Colaborador", callback_data=f"info_col")
+        InlineKeyboardButton("Moderador", callback_data=f"info_col")
     ]
 
     col_btn = [
-        InlineKeyboardButton("Moderador", callback_data=f"info_mod")
+        InlineKeyboardButton("Colaborador", callback_data=f"info_mod")
     ]
 
     if mod is True:
