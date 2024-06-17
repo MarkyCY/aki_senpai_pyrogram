@@ -49,7 +49,7 @@ async def staff_command(app: Client, message: Message):
         message_text += f"\n└ <a href='https://t.me/{other_admins[-1].user.username}'>{other_admins[-1].custom_title}</a>\n"
 
     if message.chat.id == -1001485529816:
-        mods = [doc async for doc in users.find({"is_mod": True})]
+        mods = [doc async for doc in users.find({"is_col": True})]
         for i, user in enumerate(mods[:-1]):
             user_id = user['user_id']
             try:
@@ -93,7 +93,7 @@ async def isModerator(user_id):
     users = db.users
 
     isModerator = False
-    Users = await users.find({"is_mod": True})
+    Users = await users.find({"is_col": True})
     for user in Users:
         if user['user_id'] == user_id:
             isModerator = True
@@ -127,7 +127,7 @@ async def set_mod(message, app):
     filter = {"user_id": reply_user_id}
 
     try:
-        users.update_one(filter, {"$set": {"is_mod": True}}, upsert=True)
+        users.update_one(filter, {"$set": {"is_col": True}}, upsert=True)
     except Exception as e:
         await message.reply_text(text="Error en la acción.")
         print(f"Error: {e}")
@@ -160,7 +160,7 @@ async def del_mod(message, app):
     filter = {"user_id": reply_user_id}
 
     try:
-        await users.update_one(filter, {"$set": {"is_mod": False}}, upsert=True)
+        await users.update_one(filter, {"$set": {"is_col": False}}, upsert=True)
     except Exception as e:
         await message.reply_text(text="Error en la acción.")
         print(f"Error: {e}")
