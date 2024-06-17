@@ -16,7 +16,7 @@ async def isModerator(user_id):
     users = db.users
 
     isModerator = False
-    Users = users.find({"is_mod": True})
+    Users = users.find({"is_col": True})
     async for user in Users:
         if user['user_id'] == user_id:
             isModerator = True

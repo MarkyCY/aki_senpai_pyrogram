@@ -10,7 +10,7 @@ async def add_collaborator(reply_user_id: int):
     users = db.users
 
     try:
-        await users.update_one({"user_id": reply_user_id}, {"$set": {"is_mod": True}}, upsert=True)
+        await users.update_one({"user_id": reply_user_id}, {"$set": {"is_col": True}}, upsert=True)
         return "Usuario agregado como colaborador."
     except Exception as e:
         print(f"Error: {e}")
@@ -21,7 +21,7 @@ async def remove_collaborator(reply_user_id: int):
     users = db.users
 
     try:
-        await users.update_one({"user_id": reply_user_id}, {"$set": {"is_mod": False}}, upsert=True)
+        await users.update_one({"user_id": reply_user_id}, {"$set": {"is_col": False}}, upsert=True)
         return "Usuario eliminado de colaborador."
     except Exception as e:
         print(f"Error: {e}")
@@ -53,7 +53,7 @@ async def set_mod_command(app: Client, message: Message):
     reply_user_id = message.reply_to_message.from_user.id
 
     user = await users.find_one({'user_id': reply_user_id})
-    if user and 'is_mod' in user and user['is_mod'] is True:
+    if user and 'is_col' in user and user['is_col'] is True:
         await message.reply_text(text="Este usuario ya es colaborador.")
         return
 
@@ -85,7 +85,7 @@ async def del_mod_command(app: Client, message: Message):
     reply_user_id = message.reply_to_message.from_user.id
 
     user = await users.find_one({'user_id': reply_user_id})
-    if not user or ('is_mod' in user and user['is_mod'] is False):
+    if not user or ('is_col' in user and user['is_col'] is False):
         await message.reply_text(text="Este usuario no es colaborador.")
         return
 
