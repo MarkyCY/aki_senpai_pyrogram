@@ -41,7 +41,7 @@ async def ban_command(app: Client, message: Message):
         return
 
     # ID del usuario a mutear
-    user_mute_id = message.reply_to_message.from_user.id
+    user_ban_id = message.reply_to_message.from_user.id
     name = message.reply_to_message.from_user.first_name
 
     # Obtener la ID del chat
@@ -54,13 +54,13 @@ async def ban_command(app: Client, message: Message):
         await message.reply("No tienes permisos para usar este comando.")
         return
 
-    chat_member = await app.get_chat_member(chat_id, user_mute_id)
+    chat_member = await app.get_chat_member(chat_id, user_ban_id)
     role_name = str(chat_member.status).split('.')[1]
-    if role_name.lower() not in ['administrator', 'owner']:
+    if role_name.lower() in ['administrator', 'owner']:
         await message.reply("No puedes usar este comando con administradores.")
         return
     
-    await BanUser(app, chat_id, user_mute_id, message=message, name=name)
+    await BanUser(app, chat_id, user_ban_id, message=message, name=name)
 
 
 @Client.on_message(filters.command('aki_unban'))
@@ -71,7 +71,7 @@ async def unban_command(app: Client, message: Message):
         return
 
     # ID del usuario a mutear
-    user_mute_id = message.reply_to_message.from_user.id
+    user_unban_id = message.reply_to_message.from_user.id
     name = message.reply_to_message.from_user.first_name
 
     # Obtener la ID del chat
@@ -84,10 +84,10 @@ async def unban_command(app: Client, message: Message):
         await message.reply("No tienes permisos para usar este comando.")
         return
 
-    chat_member = await app.get_chat_member(chat_id, user_mute_id)
+    chat_member = await app.get_chat_member(chat_id, user_unban_id)
     role_name = str(chat_member.status).split('.')[1]
     if role_name.lower() not in ['administrator', 'owner']:
         await message.reply("No puedes usar este comando con administradores.")
         return
 
-    await UnbanUser(app, chat_id, user_mute_id, name, message)
+    await UnbanUser(app, chat_id, user_unban_id, name, message)
