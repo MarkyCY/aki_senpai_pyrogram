@@ -70,8 +70,8 @@ async def staff_command(app: Client, message: Message):
             message_text += f"\n└<a href='https://t.me/{get_user.user.username}'>{get_user.user.first_name}</a>\n"
 
     if message.chat.id == -1001485529816:
-        mods = [doc async for doc in users.find({"is_col": True})]
-        for i, user in enumerate(mods):
+        cols = [doc async for doc in users.find({"is_col": True})]
+        for i, user in enumerate(cols[:-1]):
             user_id = user['user_id']
             try:
                 get_user = await app.get_chat_member(int(chat_id), int(user_id))
@@ -81,8 +81,8 @@ async def staff_command(app: Client, message: Message):
                     message_text += f"\n├ <a href='https://t.me/{get_user.user.username}'>{get_user.user.first_name}</a>"
             except Exception as e:
                 print(e)
-        if mods:
-            user = mods[-1]
+        if cols:
+            user = cols[-1]
             user_id = user['user_id']
             try:
                 get_user = await app.get_chat_member(chat_id, int(user_id))
