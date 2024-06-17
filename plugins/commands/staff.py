@@ -49,8 +49,29 @@ async def staff_command(app: Client, message: Message):
         message_text += f"\n└ <a href='https://t.me/{other_admins[-1].user.username}'>{other_admins[-1].custom_title}</a>\n"
 
     if message.chat.id == -1001485529816:
-        mods = [doc async for doc in users.find({"is_col": True})]
+        mods = [doc async for doc in users.find({"is_mod": True})]
         for i, user in enumerate(mods[:-1]):
+            user_id = user['user_id']
+            try:
+                get_user = await app.get_chat_member(int(chat_id), int(user_id))
+                if i == 0:
+                    message_text += f"\n🚧Moderadores:\n├ <a href='https://t.me/{get_user.user.username}'>{get_user.user.first_name}</a>"
+                else:
+                    message_text += f"\n├ <a href='https://t.me/{get_user.user.username}'>{get_user.user.first_name}</a>"
+            except Exception as e:
+                print(e)
+        if mods:
+            user = mods[-1]
+            user_id = user['user_id']
+            try:
+                get_user = await app.get_chat_member(chat_id, int(user_id))
+            except Exception as e:
+                pass
+            message_text += f"\n└<a href='https://t.me/{get_user.user.username}'>{get_user.user.first_name}</a>"
+
+    if message.chat.id == -1001485529816:
+        mods = [doc async for doc in users.find({"is_col": True})]
+        for i, user in enumerate(mods):
             user_id = user['user_id']
             try:
                 get_user = await app.get_chat_member(int(chat_id), int(user_id))
@@ -71,33 +92,6 @@ async def staff_command(app: Client, message: Message):
      
     await message.reply_text(text=message_text, parse_mode=enums.ParseMode.HTML, link_preview_options=LinkPreviewOptions(is_disabled=True))
         
-
-
-
-async def isAdmin(user_id):
-    # Conectar a la base de datos
-    db = await get_db()
-    chat_admins = db.admins
-
-    isAdmin = None
-    admins = chat_admins.find()
-    for admin in admins:
-        if admin['user_id'] == user_id:
-            isAdmin = "Yes"
-    return isAdmin
-
-
-async def isModerator(user_id):
-    # Conectar a la base de datos
-    db = await get_db()
-    users = db.users
-
-    isModerator = False
-    Users = await users.find({"is_col": True})
-    for user in Users:
-        if user['user_id'] == user_id:
-            isModerator = True
-    return isModerator
 
 
 async def set_mod(message, app):
