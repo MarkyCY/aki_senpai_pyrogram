@@ -46,11 +46,18 @@ async def ban_command(app: Client, message: Message):
 
     # Obtener la ID del chat
     chat_id = message.chat.id
+    user_id = message.from_user.id
+
+    chat_member = await app.get_chat_member(chat_id, user_id)
+    role_name = str(chat_member.status).split('.')[1]
+    if role_name.lower() not in ['administrator', 'owner']:
+        await message.reply("No tienes permisos para usar este comando.")
+        return
 
     chat_member = await app.get_chat_member(chat_id, user_mute_id)
     role_name = str(chat_member.status).split('.')[1]
     if role_name.lower() not in ['administrator', 'owner']:
-        await message.reply("No tienes permisos para usar este comando.")
+        await message.reply("No puedes usar este comando con administradores.")
         return
     
     await BanUser(app, chat_id, user_mute_id, message=message, name=name)
@@ -69,11 +76,18 @@ async def unban_command(app: Client, message: Message):
 
     # Obtener la ID del chat
     chat_id = message.chat.id
+    user_id = message.from_user.id
+
+    chat_member = await app.get_chat_member(chat_id, user_id)
+    role_name = str(chat_member.status).split('.')[1]
+    if role_name.lower() not in ['administrator', 'owner']:
+        await message.reply("No tienes permisos para usar este comando.")
+        return
 
     chat_member = await app.get_chat_member(chat_id, user_mute_id)
     role_name = str(chat_member.status).split('.')[1]
     if role_name.lower() not in ['administrator', 'owner']:
-        await message.reply("No tienes permisos para usar este comando.")
+        await message.reply("No puedes usar este comando con administradores.")
         return
 
     await UnbanUser(app, chat_id, user_mute_id, name, message)

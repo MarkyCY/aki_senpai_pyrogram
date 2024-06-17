@@ -84,11 +84,18 @@ async def mute_command(app: Client, message: Message):
 
     # Obtener la ID del chat
     chat_id = message.chat.id
+    user_id = message.from_user.id
+
+    chat_member = await app.get_chat_member(chat_id, user_id)
+    role_name = str(chat_member.status).split('.')[1]
+    if role_name.lower() not in ['administrator', 'owner']:
+        await message.reply("No tienes permisos para usar este comando.")
+        return
 
     chat_member = await app.get_chat_member(chat_id, user_mute_id)
     role_name = str(chat_member.status).split('.')[1]
-    if not await isModerator(message.from_user.id) or role_name.lower() not in ['administrator', 'owner']:
-        await message.reply("No tienes permisos para usar este comando.")
+    if role_name.lower() not in ['administrator', 'owner']:
+        await message.reply("No puedes usar este comando con administradores.")
         return
     
     await MuteUser(app, chat_id, user_mute_id, message=message, name=name)
@@ -108,11 +115,18 @@ async def unmute_command(app: Client, message: Message):
 
     # Obtener la ID del chat
     chat_id = message.chat.id
+    user_id = message.from_user.id
+
+    chat_member = await app.get_chat_member(chat_id, user_id)
+    role_name = str(chat_member.status).split('.')[1]
+    if role_name.lower() not in ['administrator', 'owner']:
+        await message.reply("No tienes permisos para usar este comando.")
+        return
 
     chat_member = await app.get_chat_member(chat_id, user_mute_id)
     role_name = str(chat_member.status).split('.')[1]
-    if not await isModerator(message.from_user.id) or role_name.lower() not in ['administrator', 'owner']:
-        await message.reply("No tienes permisos para usar este comando.")
+    if role_name.lower() not in ['administrator', 'owner']:
+        await message.reply("No puedes usar este comando con administradores.")
         return
     
     await UnmuteUser(app, chat_id, user_mute_id, name, message)
