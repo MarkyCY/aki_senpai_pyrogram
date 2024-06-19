@@ -50,6 +50,11 @@ async def main():
         BotCommand("programas", "Próximos programas en emisión"),
         BotCommand("concursos", "Ver los concursos del grupo"),
         BotCommand("create", "Crear un concurso"),
+        BotCommand("ban", "Banear a un usuario"),
+        BotCommand("unban", "Desbanear a un usuario"),
+        BotCommand("mute", "Silenciar a un usuario"),
+        BotCommand("unmute", "Desilenciar a un usuario"),
+        BotCommand("warn", "Advertir a un usuario"),
     ])
 
 #Crear los horarios
