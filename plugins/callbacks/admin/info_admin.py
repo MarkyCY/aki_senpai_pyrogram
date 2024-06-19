@@ -49,7 +49,7 @@ async def ban_user(app: Client, call: CallbackQuery):
             InlineKeyboardButton(
                 "✅Desbanear", callback_data=f"unban_{user_mute_id}"),
             InlineKeyboardButton(
-                "🔙Atrás", callback_data=f"info_{user_mute_id}"),
+                "ℹ️ Ver info", callback_data=f"info_{user_mute_id}"),
         ]
     ]
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
@@ -79,7 +79,7 @@ async def mute_user(app: Client, call: CallbackQuery):
             InlineKeyboardButton(
                 "🔊Desilenciar", callback_data=f"unmute_{user_mute_id}"),
             InlineKeyboardButton(
-                "🔙Atrás", callback_data=f"info_{user_mute_id}"),
+                "ℹ️ Ver info", callback_data=f"info_{user_mute_id}"),
         ]
     ]
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
@@ -107,7 +107,7 @@ async def unban_user(app: Client, call: CallbackQuery):
     btns = [
         [
             InlineKeyboardButton(
-                "🔙Atrás", callback_data=f"info_{user_mute_id}"),
+                "ℹ️ Ver info", callback_data=f"info_{user_mute_id}"),
         ]
     ]
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
@@ -135,7 +135,7 @@ async def unmute_user(app: Client, call: CallbackQuery):
     btns = [
         [
             InlineKeyboardButton(
-                "🔙Atrás", callback_data=f"info_{user_mute_id}"),
+                "ℹ️ Ver info", callback_data=f"info_{user_mute_id}"),
         ]
     ]
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
@@ -191,7 +191,7 @@ async def warn_user(app: Client, call: CallbackQuery):
     btns = [btns]
 
     btns.append([InlineKeyboardButton(
-        "🔙Atrás", callback_data=f"info_{user_warn_id}")])
+        "ℹ️ Ver info", callback_data=f"info_{user_warn_id}")])
 
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
 
@@ -236,7 +236,7 @@ async def add_warn_user(app: Client, call: CallbackQuery):
     btns = [btns]
 
     btns.append([InlineKeyboardButton(
-        "🔙Atrás", callback_data=f"info_{user_sel_id}")])
+        "ℹ️ Ver info", callback_data=f"info_{user_sel_id}")])
 
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
 
@@ -288,7 +288,7 @@ async def remove_warn_user(app: Client, call: CallbackQuery):
     btns = [btns]
 
     btns.append([InlineKeyboardButton(
-        "🔙Atrás", callback_data=f"info_{user_sel_id}")])
+        "ℹ️ Ver info", callback_data=f"info_{user_sel_id}")])
 
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
 
@@ -354,7 +354,7 @@ async def show_roles_user(app: Client, call: CallbackQuery, user_sel_id=None):
     btns = [mod_btn, col_btn]
 
     btns.append([InlineKeyboardButton(
-        "🔙Atrás", callback_data=f"info_{user_sel_id}")])
+        "ℹ️ Ver info", callback_data=f"info_{user_sel_id}")])
 
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
 
