@@ -57,7 +57,7 @@ async def remove_warning(user_id):
 @Client.on_message(filters.command('warn'))
 async def warn_command(app: Client, message: Message):
 
-    if message.command and len(message.command) > 1:
+    if not message.reply_to_message and message.command and len(message.command) > 1:
         elemento = message.command[1]
         
         # Si el elemento es un ID de usuario

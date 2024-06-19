@@ -51,7 +51,7 @@ async def UnbanUser(app, chat_id, user_id, name=None, message=None):
 async def ban_command(app: Client, message: Message):
     
     until_date = utils.zero_datetime()
-    if message.command and len(message.command) > 1:
+    if not message.reply_to_message and message.command and len(message.command) > 1:
         elemento = message.command[1]
         
         # Si el elemento es un ID de usuario
@@ -108,7 +108,7 @@ async def ban_command(app: Client, message: Message):
 @Client.on_message(filters.command('unban'))
 async def unban_command(app: Client, message: Message):
     # Asegúrate de que el comando sea respondido a un mensaje
-    if message.command and len(message.command) > 1:
+    if not message.reply_to_message and message.command and len(message.command) > 1:
         elemento = message.command[1]
 
         # Si el elemento es un ID de usuario
