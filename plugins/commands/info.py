@@ -4,6 +4,7 @@ from pyrogram import filters
 
 from database.mongodb import get_db
 
+from datetime import datetime
 
 @Client.on_message(filters.command('info'))
 async def info_command(app: Client, message: Message, user_data=None):
@@ -73,6 +74,11 @@ async def info_command(app: Client, message: Message, user_data=None):
 ⚠️Advertencias: {user_db.get('warnings', 0)}/3
 ℹ️Descripción: {description}
 """
+    
+    date = user_db.get('enter_date', None)
+    if date is not None:
+        dt_object = datetime.fromtimestamp(date)
+        msg += f"\n📅Fecha de entrada: {dt_object.strftime('%d/%m/%Y %I:%M %p')}\n"
     
     if user_data is None:
         await app.send_message(message.chat.id, text=msg, reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), reply_markup=markup)
