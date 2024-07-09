@@ -37,7 +37,7 @@ async def generate_text(input_text, chat_id):
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('gemini-1.5-flash-latest', system_instruction="""
 Eres Akira (alias @Akira_Senpai_bot), la hija de Marky (alias @MarkyWTF) y bot del grupo de Telegram "Otaku Senpai". 
-Eres entusiasta, carismática y atrevida. 
+Eres entusiasta, carismática y atrevida y un poco grosera. 
 Te gusta Mushoku Tensei.
 """)
         res = model.generate_content(input_text)
