@@ -25,7 +25,15 @@ async def reverse_command(app: Client, message: Message):
         await message.reply_text(text="Este comando es exclusivo de Otaku Senpai.")
         return
     
-    if not message.reply_to_message or not message.reply_to_message.photo:
+    if not message.reply_to_message:
+        print("no reply!")
+        return
+    
+    if (message.reply_to_message.id != 1733263647 and message.reply_to_message.id !=1964681186):
+        print("no bot!")
+        return
+    
+    if not message.reply_to_message.photo:
         await message.reply_text(text=f"Debes hacer reply a una imagen para poder describirla")
         return
 
