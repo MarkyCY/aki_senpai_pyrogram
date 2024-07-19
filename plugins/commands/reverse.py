@@ -26,11 +26,9 @@ async def reverse_command(app: Client, message: Message):
         return
     
     if not message.reply_to_message:
-        print("no reply!")
         return
     
     if (message.reply_to_message.from_user.id != 1733263647 and message.reply_to_message.from_user.id != 1964681186):
-        print("no bot!", message.reply_to_message.from_user.id, "no 1733263647 ni 1964681186")
         return
     
     if not message.reply_to_message.photo:
