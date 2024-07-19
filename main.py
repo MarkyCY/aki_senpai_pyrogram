@@ -43,7 +43,6 @@ async def main():
         BotCommand("set_bio", "Poner descripción"),
         BotCommand("info", "Ver la información de un usuario"),
         BotCommand("tr", "Traducir elementos"),
-        BotCommand("reverse", "Buscar personaje"),
         BotCommand("add_anime", "Agregar anime a la base de datos"),
         BotCommand("del_anime", "Eliminar anime de la base de datos"),
         BotCommand("staff", "Listado del Staff del grupo"),
