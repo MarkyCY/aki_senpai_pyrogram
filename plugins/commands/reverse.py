@@ -17,7 +17,7 @@ async def async_post_image(url, params, image_path):
 async def progress(current, total):
     print(f"{current * 100 / total:.1f}%")
 
-@Client.on_message(filters.command('reverse'))
+@Client.on_message(filters.regex('wakamole'))
 async def reverse_command(app: Client, message: Message):
     chat_id = message.chat.id
     
