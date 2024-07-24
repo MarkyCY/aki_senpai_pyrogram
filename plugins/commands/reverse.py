@@ -39,7 +39,7 @@ async def reverse_command(app: Client, message: Message):
     params = {
         "api_key": SAUCENAO,
         "output_type": "2",
-        "testmode": "1"
+        "testmode": "0"
     }
 
     downloaded_file = await app.download_media(message.reply_to_message, file_name="image.jpg", progress=progress)
@@ -47,6 +47,8 @@ async def reverse_command(app: Client, message: Message):
     result = await async_post_image(url, params, downloaded_file)
 
     res = json.loads(result)
+    
+    print(res)
 
     await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="👨‍💻")])
 
