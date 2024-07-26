@@ -78,14 +78,14 @@ async def reverse_command(app: Client, message: Message):
             if 'source' in result['data'] and source is None:
                 source = result['data']['source']
 
-            text += f"**Título:** {title}\n**Personaje:** {characters}\n**Fuente:** {source}\n\n"
+            text += f"<strong>Título:</strong> {title}\n<strong>Personaje:</strong> {characters}\n<strong>Fuente:</strong> {source}\n\n"
 
             if characters is not None and source is not None and title is not None:
                 break
 
         if text != "Búsqueda:\n\n":
             await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="⚡")])
-            await message.reply_text(text=text, parse_mode=enums.ParseMode.MARKDOWN, reply_markup=reply_markup)
+            await message.reply_text(text=text, parse_mode=enums.ParseMode.HTML, reply_markup=reply_markup)
         else:
             msg = await message.reply_text(text="No se encontraron personajes en la respuesta de la API.")
             await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="💅")])
