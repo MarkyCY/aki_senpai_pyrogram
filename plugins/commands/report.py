@@ -23,17 +23,26 @@ async def report_command(app: Client, message: Message):
 
     chat_str_id = str(message.chat.id)[4:]
     message_id = message.reply_to_message_id
-    # obtén la lista de administradores del chat
-    admins = app.get_chat_members(chat_id, filter=enums.ChatMembersFilter.ADMINISTRATORS)
-    # crea una lista vacía para los nombres de los administradores (ignorando los bots)
-    admin_names = []
-    async for admin in admins:
-        admin_names.append(admin.user)
-    #admin_names = [admin.user for admin in admins if not admin.user.is_bot]
 
-    for admin in admin_names:
-        try:
-            await app.send_message(admin.id, text=f"Reporte de @{message.from_user.username} a @{message.reply_to_message.from_user.username}:\n" + f'<a href="https://t.me/c/{chat_str_id}/{message_id}">https://t.me/c/{chat_str_id}/{message_id}</a>', parse_mode=enums.ParseMode.HTML)
-            await app.forward_messages(admin.id, message.chat.id, message_id)
-        except Exception as e:
-            print(f"No se pudo enviar el mensaje a {admin.username}: {e}")
+    # admins = app.get_chat_members(chat_id, filter=enums.ChatMembersFilter.ADMINISTRATORS)
+    # admin_names = []
+    # async for admin in admins:
+    #     admin_names.append(admin.user)
+
+    # for admin in admin_names:
+    #     try:
+    #         await app.send_message(admin.id, text=f"Reporte de @{message.from_user.username} a @{message.reply_to_message.from_user.username}:\n" + f'<a href="https://t.me/c/{chat_str_id}/{message_id}">https://t.me/c/{chat_str_id}/{message_id}</a>', parse_mode=enums.ParseMode.HTML)
+    #         await app.forward_messages(admin.id, message.chat.id, message_id)
+    #     except Exception as e:
+    #         print(f"No se pudo enviar el mensaje a {admin.username}: {e}")
+
+    try:
+        await app.send_message(
+            -1001664356911,
+            text=f"Reporte de @{message.from_user.username} a @{message.reply_to_message.from_user.username}:\n" + f'<a href="https://t.me/c/{chat_str_id}/{message_id}">https://t.me/c/{chat_str_id}/{message_id}</a>', 
+            parse_mode=enums.ParseMode.HTML,
+            message_thread_id=82096
+            )
+        await app.forward_messages(-1001664356911, message.chat.id, message_id, message_thread_id=82096)
+    except Exception as e:
+        print(f"No se pudo enviar el mensaje de reporte a -1001664356911: {e}")
