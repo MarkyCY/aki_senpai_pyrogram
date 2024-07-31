@@ -1,5 +1,5 @@
 from pyrogram import Client
-from pyrogram.types import Message, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import Message, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
 from pyrogram import filters
 from pyrogram import enums
 
@@ -37,6 +37,8 @@ async def reverse_command(app: Client, message: Message):
     if not message.reply_to_message.photo:
         await message.reply_text(text=f"Debes hacer reply a una imagen para poder describirla")
         return
+    
+    msg = await app.send_photo(chat_id, message.reply_to_message.photo.file_id)
 
     url = "https://saucenao.com/search.php"
     params = {
@@ -85,10 +87,16 @@ async def reverse_command(app: Client, message: Message):
 
         if text != "Búsqueda:\n\n":
             await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="⚡")])
-            await message.reply_text(text=text, parse_mode=enums.ParseMode.HTML, reply_markup=reply_markup)
+            add_media = InputMediaPhoto(message.reply_to_message.photo.file_id, text, parse_mode=enums.ParseMode.HTML)
+            await app.edit_message_media(chat_id, msg.id, add_media, reply_markup=reply_markup)
+            #await message.reply_text(text=text, parse_mode=enums.ParseMode.HTML, reply_markup=reply_markup)
         else:
-            msg = await message.reply_text(text="No se encontraron personajes en la respuesta de la API.")
-            await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="💅")])
+            add_media = InputMediaPhoto(message.reply_to_message.photo.file_id, "No se encontraron personajes en la respuesta de la API.")
+            await app.edit_message_media(chat_id, msg.id, add_media)
+            #msg = await message.reply_text(text="No se encontraron personajes en la respuesta de la API.")
+            #await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="💅")])
     else:
-        msg = await message.reply_text(text="No se encontraron resultados en la API.")
-        await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="💅")])
+        add_media = InputMediaPhoto(message.reply_to_message.photo.file_id, "No se encontraron resultados en la API.")
+        await app.edit_message_media(chat_id, msg.id, add_media)
+        #msg = await message.reply_text(text="No se encontraron resultados en la API.")
+        #await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="💅")])
