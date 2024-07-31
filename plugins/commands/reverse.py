@@ -20,7 +20,7 @@ async def progress(current, total):
     print(f"{current * 100 / total:.1f}%")
 
 
-@Client.on_message(filters.regex('wakamole'))
+@Client.on_message(filters.regex(r'(?i)waka'))
 async def reverse_command(app: Client, message: Message):
     chat_id = message.chat.id
 
