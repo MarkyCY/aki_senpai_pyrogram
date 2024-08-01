@@ -24,14 +24,14 @@ async def progress(current, total):
 async def reverse_command(app: Client, message: Message):
     chat_id = message.chat.id
 
-    if chat_id != -1001485529816 and message.from_user.id != 873919300:
-        await message.reply_text(text="Este comando es exclusivo de Otaku Senpai.")
-        return
-
     if not message.reply_to_message:
         return
 
     if (message.reply_to_message.from_user.id != 1733263647 and message.reply_to_message.from_user.id != 1964681186):
+        return
+    
+    if chat_id != -1001485529816 and message.from_user.id != 873919300:
+        await message.reply_text(text="Este comando es exclusivo de Otaku Senpai.")
         return
 
     if not message.reply_to_message.photo:
