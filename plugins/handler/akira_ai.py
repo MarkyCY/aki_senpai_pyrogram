@@ -65,6 +65,7 @@ async def manejar_mensaje(app: Client, message: Message):
 
     if message.chat.id not in group_perm and message.from_user.id != 873919300:
         await message.reply_text(text="Esta función es exclusiva de Otaku Senpai.")
+        await app.leave_chat(message.chat.id, True)
         return
     
     async def isAdmin(user_id):
