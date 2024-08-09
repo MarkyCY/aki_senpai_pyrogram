@@ -108,6 +108,8 @@ async def send_welcome_event(app: Client, message: Message):
     msg = await message.reply_text(text=f"{welcome_message}", reply_markup=reply_markup)
     await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="😁")])
 
+    await app.restrict_chat_member(chat_id, new_user_id, until_date=None, can_send_messages=False)
+
     user = await users.find_one({"user_id": new_user_id})
     if user is None:
         timestamp = datetime.now().timestamp()
