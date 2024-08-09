@@ -1,6 +1,7 @@
 from pyrogram import Client
 from pyrogram.types import Message, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import filters
+from pyrogram import utils
 
 import os
 import random
@@ -103,12 +104,19 @@ async def send_welcome_event(app: Client, message: Message):
                                     url="https://t.me/Akira_Senpai_bot?start=contests"
                                 )
                             ],
+                            [
+                                InlineKeyboardButton(
+                                    "✅ Empezar a escribir",
+                                    url="https://t.me/MarkyWTF"
+                                ),
+                            ],
                         ]
                     )
     msg = await message.reply_text(text=f"{welcome_message}", reply_markup=reply_markup)
     await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="😁")])
 
-    await app.restrict_chat_member(chat_id, new_user_id, until_date=None, can_send_messages=False)
+    until_date=utils.zero_datetime()
+    await app.restrict_chat_member(chat_id, new_user_id, until_date=until_date, can_send_messages=False)
 
     user = await users.find_one({"user_id": new_user_id})
     if user is None:
