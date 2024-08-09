@@ -1,5 +1,5 @@
 from pyrogram import Client
-from pyrogram.types import Message, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import Message, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup, ChatPermissions
 from pyrogram import filters
 from pyrogram import utils
 
@@ -68,6 +68,25 @@ DECEMBER = 12
 MONDAY = 0
 WEEKEND_START = 5
 
+
+permissions = ChatPermissions(
+        can_send_messages = False,
+        can_send_audios = False,
+        can_send_documents = False,
+        can_send_photos = False,
+        can_send_videos = False,
+        can_send_video_notes = False,
+        can_send_voice_notes = False,
+        can_send_polls = False,
+        can_send_other_messages = False,
+        can_add_web_page_previews = False,
+        can_change_info = False,
+        can_invite_users = False,
+        can_pin_messages = False,
+        can_manage_topics = False,
+        can_send_media_messages = False
+        )
+
 @Client.on_message(filters.new_chat_members)
 async def send_welcome_event(app: Client, message: Message):
     # Conectar a la base de datos
@@ -116,7 +135,7 @@ async def send_welcome_event(app: Client, message: Message):
     await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="😁")])
 
     until_date=utils.zero_datetime()
-    await app.restrict_chat_member(chat_id, new_user_id, until_date=until_date, can_send_messages=False)
+    await app.restrict_chat_member(chat_id, new_user_id, permissions, until_date=until_date)
 
     user = await users.find_one({"user_id": new_user_id})
     if user is None:
