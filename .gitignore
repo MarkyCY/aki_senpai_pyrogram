@@ -7,5 +7,7 @@ stealsticker.webp
 AkiraS.session-shm
 AkiraS.session-wal
 image.jpg
+revise.jpg
 API/Google/google_token.pickle
 API/Google/google_credentials.json
+API/Google/google_vision_credentials.json
