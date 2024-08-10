@@ -43,7 +43,10 @@ async def revise_command(app: Client, message: Message):
         await message.reply_text(text=f"Debes hacer reply a una imagen o sticker para poder revisarla")
         return
     
-    downloaded_file = await app.download_media(message.reply_to_message, file_name="revise.jpg", progress=progress)
+    if message.sticker:
+        downloaded_file = await app.download_media(message.sticker.thumbs[0].file_id, file_name="revise.jpg")
+    if message.photo:
+        downloaded_file = await app.download_media(message.photo.file_id, file_name="revise.jpg")
 
     safe = detect_safe_search(downloaded_file)
 
