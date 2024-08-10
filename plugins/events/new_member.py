@@ -99,6 +99,3 @@ async def detect_new_user(app: Client, message: Message):
             )
 
         await app.delete_messages(chat_id, message.id)
-
-    else:
-        await message.reply_text(f"Esta imagen está permitida\n {explain}")
