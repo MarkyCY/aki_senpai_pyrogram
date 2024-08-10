@@ -59,7 +59,7 @@ async def antispam(app: Client, message: Message):
     if message.sticker:
         # Contar cuántas veces se ha enviado el mismo sticker
         repeated_stickers = sum(1 for activity in user_activity[user_id] if activity['type'] == 'sticker')
-        if repeated_stickers >= 2:
+        if repeated_stickers >= 1:
             print(f"[ANTISPAM] Usuario {message.from_user.first_name} está enviando stickers repetidos más de 3 veces.")
             downloaded_file = await app.download_media(message.sticker.thumbs[0].file_id)
     
@@ -67,12 +67,12 @@ async def antispam(app: Client, message: Message):
     if message.photo:
         # Contar cuántas veces se ha enviado la misma imagen
         repeated_photos = sum(1 for activity in user_activity[user_id] if activity['type'] == 'photo')
-        if repeated_photos >= 2:
+        if repeated_photos >= 1:
             print(f"[ANTISPAM] Usuario {message.from_user.first_name} está enviando la misma imagen más de 3 veces.")
             downloaded_file2 = await app.download_media(message.photo.file_id)
     
     # Verificar si envió demasiadas actividades (mensajes/stickers/imagenes) en un corto período de tiempo
-    if len(user_activity[user_id]) >= 2:
+    if len(user_activity[user_id]) >= 1:
         print(f"[ANTISPAM] Usuario {message.from_user.first_name} está enviando demasiados mensajes, stickers o imágenes en poco tiempo.")
         if downloaded_file:
             safe, explain = detect_safe_search(downloaded_file)
