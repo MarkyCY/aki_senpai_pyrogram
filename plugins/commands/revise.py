@@ -64,7 +64,7 @@ async def revise_command(app: Client, message: Message):
 
         until_date=utils.zero_datetime()
         try:
-            await app.restrict_chat_member(chat_id, message.from_user.id, permissions, until_date=until_date)
+            await app.restrict_chat_member(chat_id, message.reply_to_message.from_user.id, permissions, until_date=until_date)
         except Exception as e:
             pass
 
