@@ -2,7 +2,6 @@ from pyrogram import Client
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import filters
 
-from datetime import datetime, timedelta
 from database.mongodb import get_db
 
 # Diccionario para rastrear cuándo un usuario recibió el mensaje por última vez
