@@ -7,6 +7,7 @@ from datetime import datetime
 from plugins.others.safe_file import detect_safe_search
 from plugins.others.compare_img import compare_images
 
+import os
 
 permissions = ChatPermissions(
 can_send_messages = False,
@@ -61,19 +62,21 @@ async def detect_new_user(app: Client, message: Message):
 
     group_perm = [-1001485529816, -1001664356911]
 
-    if message.chat.id not in group_perm:
+    if chat_id not in group_perm:
         return
     
     ban = None
 
     if message.sticker:
-        downloaded_file = await app.download_media(message.sticker.thumbs[0].file_id, file_name="revise.jpg")
+        downloaded_file = await app.download_media(message.sticker.thumbs[0].file_id)
     if message.photo:
-        downloaded_file = await app.download_media(message.photo.file_id, file_name="revise.jpg")
+        downloaded_file = await app.download_media(message.photo.file_id)
 
     safe, explain = detect_safe_search(downloaded_file)
 
     resul_comp = await compare_images(downloaded_file)
+
+    os.remove(downloaded_file)
 
     if resul_comp is True:
         ban = True
