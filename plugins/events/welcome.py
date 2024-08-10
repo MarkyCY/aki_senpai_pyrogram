@@ -70,22 +70,22 @@ WEEKEND_START = 5
 
 
 permissions = ChatPermissions(
-        can_send_messages = False,
-        can_send_audios = False,
-        can_send_documents = False,
-        can_send_photos = False,
-        can_send_videos = False,
-        can_send_video_notes = False,
-        can_send_voice_notes = False,
-        can_send_polls = False,
-        can_send_other_messages = False,
-        can_add_web_page_previews = False,
-        can_change_info = False,
-        can_invite_users = False,
-        can_pin_messages = False,
-        can_manage_topics = False,
-        can_send_media_messages = False
-        )
+can_send_messages = True,
+can_send_audios = True,
+can_send_documents = False,
+can_send_photos = True,
+can_send_videos = False,
+can_send_video_notes = False,
+can_send_voice_notes = False,
+can_send_polls = False,
+can_send_other_messages = False, #Stickers, Juegos Etc.
+can_add_web_page_previews = False,
+can_change_info = False,
+can_invite_users = True,
+can_pin_messages = False,
+can_manage_topics = False,
+can_send_media_messages = False,
+)
 
 @Client.on_message(filters.new_chat_members)
 async def send_welcome_event(app: Client, message: Message):
@@ -123,12 +123,12 @@ async def send_welcome_event(app: Client, message: Message):
                                     url="https://t.me/Akira_Senpai_bot?start=contests"
                                 )
                             ],
-                            [
-                                InlineKeyboardButton(
-                                    "✅ Empezar a escribir",
-                                    url="https://t.me/MarkyWTF"
-                                ),
-                            ],
+                            # [
+                            #     InlineKeyboardButton(
+                            #         "✅ Empezar a escribir",
+                            #         url="https://t.me/MarkyWTF"
+                            #     ),
+                            # ],
                         ]
                     )
     msg = await message.reply_text(text=f"{welcome_message}", reply_markup=reply_markup)
