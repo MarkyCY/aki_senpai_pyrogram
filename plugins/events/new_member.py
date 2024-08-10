@@ -71,7 +71,7 @@ async def detect_new_user(app: Client, message: Message):
     if message.photo:
         downloaded_file = await app.download_media(message.photo.file_id, file_name="revise.jpg")
 
-    safe = detect_safe_search(downloaded_file)
+    safe, explain = detect_safe_search(downloaded_file)
 
     resul_comp = await compare_images(downloaded_file)
 
@@ -100,6 +100,5 @@ async def detect_new_user(app: Client, message: Message):
 
         await app.delete_messages(chat_id, message.id)
 
-    
-
-    #revise = detect_safe_search(downloaded_file)
+    else:
+        await message.reply_text(f"Esta imagen está permitida\n {explain}")

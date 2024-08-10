@@ -50,7 +50,7 @@ async def revise_command(app: Client, message: Message):
     else:
         return await message.reply_text(text=f"Esto solo funciona con imagenes o stickers.")
 
-    safe = detect_safe_search(downloaded_file)
+    safe, explain = detect_safe_search(downloaded_file)
 
     resul_comp = await compare_images(downloaded_file)
 
@@ -78,4 +78,7 @@ async def revise_command(app: Client, message: Message):
             )
 
         await app.delete_messages(chat_id, message.reply_to_message.id)
+
+    else:
+        await message.reply_text(f"Esta imagen está permitida\n {explain}")
     

@@ -22,7 +22,15 @@ def detect_safe_search(path):
     #   violencia {comp.violence}
     #   sexual: {comp.racy}
 
-    print("adult", comp.adult, "medical", comp.medical, "violence", comp.violence, "racy", comp.racy)
+    text = f"""
+Adulto {comp.adult} 
+Médico {comp.medical} 
+Violencia {comp.violence} 
+Subido de tono {comp.racy}
+"""
+    
+    
+    "adult", comp.adult, "medical", comp.medical, "violence", comp.violence, "racy", comp.racy
 
     safe = True
     
@@ -38,4 +46,4 @@ def detect_safe_search(path):
     if response.error.message:
         return "Error"
     
-    return safe
+    return safe, text
