@@ -118,7 +118,8 @@ async def antispam(app: Client, message: Message):
     if ban is True:
         until_date=utils.zero_datetime()
         try:
-            await app.restrict_chat_member(chat_id, message.from_user.id, permissions, until_date=until_date)
+            #await app.restrict_chat_member(chat_id, message.from_user.id, permissions, until_date=until_date)
+            await app.ban_chat_member(chat_id, message.from_user.id, until_date=until_date)
         except Exception as e:
             pass
              
