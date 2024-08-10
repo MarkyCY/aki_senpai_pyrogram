@@ -1,6 +1,6 @@
 import os
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ".\API\Google\google_vision_credentials.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "API/Google/google_vision_credentials.json"
 
 def detect_safe_search(path):
     """Detects unsafe features in the file."""
