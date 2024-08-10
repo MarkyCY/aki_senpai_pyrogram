@@ -72,5 +72,5 @@ async def revise_command(app: Client, message: Message):
             message_thread_id=82096
             )
 
-        await app.delete_messages(chat_id, message.id)
+        await app.delete_messages(chat_id, message.reply_to_message.id)
     
