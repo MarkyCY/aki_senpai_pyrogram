@@ -4,6 +4,8 @@ from pyrogram.types import Message, ChatPermissions
 from plugins.others.safe_file import detect_safe_search
 from plugins.others.compare_img import compare_images
 
+import os
+
 async def progress(current, total):
     print(f"{current * 100 / total:.1f}%")
 
@@ -44,15 +46,17 @@ async def revise_command(app: Client, message: Message):
         return
     
     if message.reply_to_message.sticker:
-        downloaded_file = await app.download_media(message.reply_to_message.sticker.thumbs[0].file_id, file_name="revise.jpg")
+        downloaded_file = await app.download_media(message.reply_to_message.sticker.thumbs[0].file_id)
     elif message.reply_to_message.photo:
-        downloaded_file = await app.download_media(message.reply_to_message.photo.file_id, file_name="revise.jpg")
+        downloaded_file = await app.download_media(message.reply_to_message.photo.file_id)
     else:
         return await message.reply_text(text=f"Esto solo funciona con imagenes o stickers.")
 
     safe, explain = detect_safe_search(downloaded_file)
 
     resul_comp = await compare_images(downloaded_file)
+    
+    os.remove(downloaded_file)
 
     if resul_comp is True:
         ban = True
