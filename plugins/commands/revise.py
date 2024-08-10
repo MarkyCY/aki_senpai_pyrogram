@@ -2,6 +2,7 @@ from pyrogram import Client, filters, utils, enums
 from pyrogram.types import Message, ChatPermissions
 
 from plugins.others.safe_file import detect_safe_search
+from plugins.others.compare_img import compare_images
 
 async def progress(current, total):
     print(f"{current * 100 / total:.1f}%")
@@ -45,6 +46,11 @@ async def revise_command(app: Client, message: Message):
     downloaded_file = await app.download_media(message.reply_to_message, file_name="revise.jpg", progress=progress)
 
     safe = detect_safe_search(downloaded_file)
+
+    resul_comp = await compare_images(downloaded_file)
+
+    if resul_comp is True:
+        ban = True
 
     if safe is False:
         ban = True
