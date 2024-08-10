@@ -22,11 +22,11 @@ def detect_safe_search(path):
     #   violencia {comp.violence}
     #   sexual: {comp.racy}
 
-    #print("adult", comp.adult, "medical", comp.medical, "violence", comp.violence, "racy", comp.racy)
+    print("adult", comp.adult, "medical", comp.medical, "violence", comp.violence, "racy", comp.racy)
 
     safe = True
     
-    if comp.adult >= 4:
+    if comp.adult >= 5:
         safe = False
 
     if comp.medical >= 4:
