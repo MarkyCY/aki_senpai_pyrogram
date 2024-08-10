@@ -72,7 +72,7 @@ async def revise_command(app: Client, message: Message):
         await app.forward_messages(-1001664356911, message.chat.id, message.reply_to_message.id, message_thread_id=82096)
         await app.send_message(
             -1001664356911,
-            text=f"Contenido no deseado de <a href='tg://user?id={message.reply_to_message.from_user.id}'>{message.reply_to_message.from_user.first_name}</a>", 
+            text=f"Contenido no deseado de <a href='tg://user?id={message.reply_to_message.from_user.id}'>{message.reply_to_message.from_user.first_name}</a>{explain}", 
             parse_mode=enums.ParseMode.HTML,
             message_thread_id=82096
             )
