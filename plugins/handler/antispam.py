@@ -46,7 +46,7 @@ async def antispam(app: Client, message: Message):
     ban = None
     
     # Limpiar actividades antiguas
-    user_activity[user_id] = [activity for activity in user_activity[user_id] if current_time - activity['time'] <= 5]
+    user_activity[user_id] = [activity for activity in user_activity[user_id] if current_time - activity['time'] <= 10]
     
     # # Verificar si es un mensaje de texto
     # if message.text:
