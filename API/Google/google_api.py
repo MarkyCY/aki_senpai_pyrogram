@@ -59,7 +59,10 @@ async def get_latest_videos(youtube, channel_id):
         maxResults=10
     )
     
-    response = await asyncio.get_event_loop().run_in_executor(None, request.execute)
+    try:
+        response = await asyncio.get_event_loop().run_in_executor(None, request.execute)
+    except Exception as e:
+        return None
 
     # Imprimir los títulos de los últimos videos
     for item in response["items"]:
@@ -100,7 +103,8 @@ async def get_latest_videos(youtube, channel_id):
 async def list_events(service):
     now = datetime.now(tz=pytz.utc).isoformat()
 
-    event_list = await asyncio.get_event_loop().run_in_executor(
+    try:
+        event_list = await asyncio.get_event_loop().run_in_executor(
         None,
         service.events().list(
             calendarId='5973845fcbada1fcf6c7fc498948df9091a15b37de9a014772641164c9e05db8@group.calendar.google.com',
@@ -110,6 +114,9 @@ async def list_events(service):
             orderBy='startTime'  # Ordenar los eventos por su hora de inicio
         ).execute
     )
+    except Exception as e:
+        return None
+    
     data = "<b>Próximos programas:</b>\n"
     # Iterar sobre todos los calendarios y imprimir sus detalles
     for event in event_list.get('items', []):
