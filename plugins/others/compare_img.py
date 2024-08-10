@@ -27,7 +27,7 @@ async def comparar_imagenes(imagen1, imagen2):
     umbral_similitud = 90
 
     # Devolver True si el porcentaje de similitud supera el umbral, False en caso contrario
-    #print("Similaridad en porciento: ",porcentaje_similitud)
+    print("Similaridad en porciento: ",porcentaje_similitud)
     
     if porcentaje_similitud >= umbral_similitud:
         return True
