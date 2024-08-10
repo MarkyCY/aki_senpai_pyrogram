@@ -14,4 +14,7 @@ async def programs_command(app: Client, message: Message):
     # Luego, llamar a list_calendars() para obtener y mostrar la lista de calendarios
     text = await list_events(service["calendar"])
 
+    if text is None:
+        return
+    
     await message.reply_text(text=text, parse_mode=enums.ParseMode.HTML)

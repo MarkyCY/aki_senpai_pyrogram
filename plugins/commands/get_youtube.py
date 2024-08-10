@@ -57,6 +57,10 @@ async def get_video_command(app: Client = None, message: Message = None):
 
     print("Buscando Videos...")
     videos = await get_latest_videos(service["youtube"], channel_id)
+    
+    if videos is None:
+        return
+    
     print("Busqueda Finalizada.")
     for video in videos:
         vid_id = None
