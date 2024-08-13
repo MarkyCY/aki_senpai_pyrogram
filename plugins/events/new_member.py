@@ -30,7 +30,7 @@ can_send_media_messages = False,
 async def progress(current, total):
     print(f"{current * 100 / total:.1f}%")
 
-def compare_dates(enter_timestamp, days=30):
+def compare_dates(enter_timestamp, days=15):
     enter_date = datetime.fromtimestamp(enter_timestamp)  # Convertimos el timestamp a datetime
     today = datetime.now()  # Obtenemos la fecha actual
 
