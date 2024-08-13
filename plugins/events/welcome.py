@@ -88,6 +88,10 @@ can_send_media_messages = True,
 
 @Client.on_message(filters.new_chat_members)
 async def send_welcome_event(app: Client, message: Message):
+    
+    if message.chat.id != -1001485529816:
+        return
+    
     # Conectar a la base de datos
     db = await get_db()
     users = db.users
