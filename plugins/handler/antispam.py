@@ -51,8 +51,9 @@ async def antispam(app: Client, message: Message):
         time_limit = 10
         times = 1
     else:
-        time_limit = 5
-        times = 2
+        # time_limit = 5
+        # times = 2
+        return
 
     # Limpiar actividades antiguas
     user_activity[user_id] = [activity for activity in user_activity[user_id] if current_time - activity['time'] <= time_limit]
