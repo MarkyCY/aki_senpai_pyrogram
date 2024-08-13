@@ -135,7 +135,10 @@ async def send_welcome_event(app: Client, message: Message):
     await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="😁")])
 
     until_date=utils.zero_datetime()
-    await app.restrict_chat_member(chat_id, new_user_id, permissions, until_date=until_date)
+    try:
+        await app.restrict_chat_member(chat_id, new_user_id, permissions, until_date=until_date)
+    except Exception as e:
+        print(e)
 
     user = await users.find_one({"user_id": new_user_id})
     if user is None:
