@@ -1,9 +1,8 @@
 from pyrogram import Client
 from pyrogram.types import Message, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup, ChatPermissions
 from pyrogram import filters
-from pyrogram import utils
+from datetime import datetime, timedelta
 
-import os
 import random
 from datetime import datetime
 from database.mongodb import get_db
@@ -78,13 +77,13 @@ can_send_videos = False,
 can_send_video_notes = False,
 can_send_voice_notes = False,
 can_send_polls = False,
-can_send_other_messages = False, #Stickers, Juegos Etc.
+can_send_other_messages = True, #Stickers, Juegos Etc.
 can_add_web_page_previews = False,
 can_change_info = False,
 can_invite_users = True,
 can_pin_messages = False,
 can_manage_topics = False,
-can_send_media_messages = False,
+can_send_media_messages = True,
 )
 
 @Client.on_message(filters.new_chat_members)
@@ -134,7 +133,8 @@ async def send_welcome_event(app: Client, message: Message):
     msg = await message.reply_text(text=f"{welcome_message}", reply_markup=reply_markup)
     await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="😁")])
 
-    until_date=utils.zero_datetime()
+    #until_date=utils.zero_datetime()
+    until_date = datetime.now() + timedelta(days=10) # Establecer until_date a 10 días a partir del momento actual
     try:
         await app.restrict_chat_member(chat_id, new_user_id, permissions, until_date=until_date)
     except Exception as e:
