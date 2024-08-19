@@ -76,7 +76,7 @@ async def warn_command(app: Client, message: Message):
                 name = get_user.user.first_name
     
     elif not message.reply_to_message:
-        await message.reply("Por favor, responde al mensaje del usuario que deseas mutear.")
+        await message.reply("Por favor, responde al mensaje del usuario que deseas advertir.")
         return
     
     else:

@@ -28,8 +28,8 @@ async def remove_collaborator(reply_user_id: int):
         return "Error en la acción."
 
 
-@Client.on_message(filters.command('set_mod'))
-async def set_mod_command(app: Client, message: Message):
+@Client.on_message(filters.command('set_col'))
+async def set_col_command(app: Client, message: Message):
     if not message.reply_to_message:
         await message.reply_text(text="Debes hacer reply a un usuario")
         return
@@ -60,8 +60,8 @@ async def set_mod_command(app: Client, message: Message):
     result = await add_collaborator(reply_user_id)
     await message.reply_text(text=result)
 
-@Client.on_message(filters.command('del_mod'))
-async def del_mod_command(app: Client, message: Message):
+@Client.on_message(filters.command('del_col'))
+async def del_col_command(app: Client, message: Message):
     if not message.reply_to_message:
         await message.reply_text(text="Debes hacer reply a un usuario")
         return

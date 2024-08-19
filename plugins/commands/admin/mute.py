@@ -163,7 +163,7 @@ async def unmute_command(app: Client, message: Message):
                 name = get_user.user.first_name
     
     elif not message.reply_to_message:
-        await message.reply("Por favor, responde al mensaje del usuario que deseas banear.")
+        await message.reply("Por favor, responde al mensaje del usuario que deseas mutear.")
 
         user_unmute_id = message.reply_to_message.from_user.id
         name = message.reply_to_message.from_user.first_name

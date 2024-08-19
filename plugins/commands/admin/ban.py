@@ -76,7 +76,7 @@ async def ban_command(app: Client, message: Message):
                     until_date = get_until_date(time)
     
     elif not message.reply_to_message:
-        await message.reply("Por favor, responde al mensaje del usuario que deseas mutear.")
+        await message.reply("Por favor, responde al mensaje del usuario que deseas banear.")
         return
     
     else:
