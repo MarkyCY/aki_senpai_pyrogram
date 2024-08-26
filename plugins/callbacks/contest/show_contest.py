@@ -177,8 +177,11 @@ Puedes enviarme hasta un total de <strong>{contest_sel['amount_video']} video(s)
         
         await app.send_message(chat_id, text, enums.ParseMode.HTML)
 
-        await app.edit_message_text(chat_id, mid, text=f'Bien acabo de registrarte en el concurso {name}.', reply_markup=markup)
-        
+        try:
+            await app.edit_message_text(chat_id, mid, text=f'Bien acabo de registrarte en el concurso {name}.', reply_markup=markup)
+        except Exception as e:
+            print(e)
+
         return
 
 
