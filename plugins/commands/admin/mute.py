@@ -194,6 +194,7 @@ async def unmute_command(app: Client, message: Message):
     
     else:
         user_unmute_id = message.reply_to_message.from_user.id
+        name = message.reply_to_message.from_user.first_name
 
     # Obtener la ID del chat
     chat_id = message.chat.id
