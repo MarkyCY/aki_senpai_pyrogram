@@ -1,4 +1,4 @@
-from pyrogram import Client
+from pyrogram import Client, enums
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import filters
 
@@ -10,6 +10,7 @@ from plugins.commands.admin.moderator import add_moderator, remove_moderator
 from plugins.commands.info import info_command
 
 from database.mongodb import get_db
+from plugins.others.admin_func import isModerator
 
 
 @Client.on_callback_query(filters.regex(r"^info_\d{8,11}$"))
@@ -31,6 +32,8 @@ async def info_user(app: Client, call: CallbackQuery):
     return
 
 # region Ban y Mute
+
+
 @Client.on_callback_query(filters.regex(r"^ban_\d{8,11}$"))
 async def ban_user(app: Client, call: CallbackQuery):
     chat_id = call.message.chat.id
@@ -69,27 +72,65 @@ async def mute_user(app: Client, call: CallbackQuery):
     parts = call.data.split('_')
     user_mute_id = int(parts[1])
 
+    isMod = await isModerator(user_id)
+
     chat_member = await app.get_chat_member(chat_id, user_id)
     role_name = str(chat_member.status).split('.')[1]
-    if role_name.lower() not in ['administrator', 'owner']:
+    if role_name.lower() not in ['administrator', 'owner'] and isMod is False:
         return await app.answer_callback_query(call.id, "No tienes permisos para usar este comando.")
+
+    if role_name.lower() in ['administrator', 'owner']:
+        btns = [
+            [
+                InlineKeyboardButton(
+                    "🔊Desilenciar", callback_data=f"unmute_{user_mute_id}"),
+                InlineKeyboardButton(
+                    "ℹ️ Ver info", callback_data=f"info_{user_mute_id}"),
+            ]
+        ]
+        markup = InlineKeyboardMarkup(inline_keyboard=btns)
+
+        mute = await MuteUser(app, chat_id, user_mute_id)
+        if mute is True:
+            return await app.edit_message_text(chat_id, call.message.id, "El usuario ha sido muteado con exito.", reply_markup=markup)
+        
+        return await app.answer_callback_query(call.id, "No se ha podido mutear al usuario.")
 
     btns = [
         [
             InlineKeyboardButton(
-                "🔊Desilenciar", callback_data=f"unmute_{user_mute_id}"),
-            InlineKeyboardButton(
-                "ℹ️ Ver info", callback_data=f"info_{user_mute_id}"),
+                "🔇Silenciar", callback_data=f"mod_mute_{user_mute_id}_{user_id}"),
         ]
     ]
-    markup = InlineKeyboardMarkup(inline_keyboard=btns)
 
+    markup = InlineKeyboardMarkup(inline_keyboard=btns)
+    return await app.edit_message_text(chat_id, call.message.id, "Es necesario que otro moderador apoye esta acción.", reply_markup=markup)
+
+@Client.on_callback_query(filters.regex(r"^mod_mute_\d{8,11}_\d{8,11}$"))
+async def mod_mute_user(app: Client, call: CallbackQuery):
+    chat_id = call.message.chat.id
+    user_id = call.from_user.id
+    userfname = call.from_user.first_name
+
+    parts = call.data.split('_')
+    user_mute_id = int(parts[2])
+    user_mod = int(parts[3])
+
+    isMod = await isModerator(user_id)
+
+    chat_member = await app.get_chat_member(chat_id, user_id)
+    role_name = str(chat_member.status).split('.')[1]
+    if role_name.lower() not in ['administrator', 'owner'] and isMod is False:
+        return await app.answer_callback_query(call.id, "No tienes permisos para usar este comando.")
+    
+    if user_id == user_mod:
+        return await app.answer_callback_query(call.id, "Debe ser otro moderador o administrador quien apruebe esto.")
+    
     mute = await MuteUser(app, chat_id, user_mute_id)
     if mute is True:
-        await app.edit_message_text(chat_id, call.message.id, "El usuario ha sido muteado con exito.", reply_markup=markup)
-    else:
-        await app.answer_callback_query(call.id, "No se ha podido mutear al usuario.")
-
+        return await app.edit_message_text(chat_id, call.message.id, f"El usuario ha sido muteado con exito. Aprobado por <a href='tg://user?id={user_id}'>{userfname}</a>", parse_mode=enums.ParseMode.HTML)
+    
+    return await app.answer_callback_query(call.id, "No se ha podido mutear al usuario.")
 
 @Client.on_callback_query(filters.regex(r"^unban_\d{8,11}$"))
 async def unban_user(app: Client, call: CallbackQuery):
@@ -114,9 +155,9 @@ async def unban_user(app: Client, call: CallbackQuery):
 
     unban = await UnbanUser(app, chat_id, user_mute_id)
     if unban is True:
-        await app.edit_message_text(chat_id, call.message.id, "El usuario ha sido desbaneado con exito.", reply_markup=markup)
-    else:
-        await app.answer_callback_query(call.id, "No se ha podido desbanear al usuario.")
+        return await app.edit_message_text(chat_id, call.message.id, "El usuario ha sido desbaneado con exito.", reply_markup=markup)
+    
+    return await app.answer_callback_query(call.id, "No se ha podido desbanear al usuario.")
 
 
 @Client.on_callback_query(filters.regex(r"^unmute_\d{8,11}$"))
@@ -147,6 +188,8 @@ async def unmute_user(app: Client, call: CallbackQuery):
         await app.answer_callback_query(call.id, "No se ha podido desmutear al usuario.")
 
 # region Warn
+
+
 @Client.on_callback_query(filters.regex(r"^warn_\d{8,11}$"))
 async def warn_user(app: Client, call: CallbackQuery):
 
@@ -299,6 +342,8 @@ async def remove_warn_user(app: Client, call: CallbackQuery):
     await app.edit_message_text(chat_id, call.message.id, f"Usuario {user_data.user.first_name} [`{user_sel_id}`] tiene {warnings} warns.", reply_markup=markup)
 
 # region Roles
+
+
 @Client.on_callback_query(filters.regex(r"^show_roles_\d{8,11}$"))
 async def show_roles_user(app: Client, call: CallbackQuery, user_sel_id=None):
 
@@ -343,7 +388,7 @@ async def show_roles_user(app: Client, call: CallbackQuery, user_sel_id=None):
     else:
         mod_btn.append(InlineKeyboardButton(
             "❌", callback_data=f"add_mod_{user_sel_id}"))
-        
+
     if col is True:
         col_btn.append(InlineKeyboardButton(
             "✅", callback_data=f"rem_col_{user_sel_id}"))
@@ -361,15 +406,14 @@ async def show_roles_user(app: Client, call: CallbackQuery, user_sel_id=None):
     await app.edit_message_text(chat_id, call.message.id, f"Roles del usuario {user_data.user.first_name} [`{user_sel_id}`].", reply_markup=markup)
 
 
-
 @Client.on_callback_query(filters.regex(r"^info_col$"))
 async def info_col(app: Client, call: CallbackQuery):
     return await app.answer_callback_query(call.id, "Usando el boton de al lado puedes modificar el rol de Colaborador.", show_alert=True)
 
+
 @Client.on_callback_query(filters.regex(r"^info_mod$"))
 async def info_mod(app: Client, call: CallbackQuery):
     return await app.answer_callback_query(call.id, "Usando el boton de al lado puedes modificar el rol de Moderador.", show_alert=True)
-
 
 
 @Client.on_callback_query(filters.regex(r"^rem_col_\d{8,11}$"))
@@ -394,6 +438,8 @@ async def rem_col_user(app: Client, call: CallbackQuery):
     await show_roles_user(app, call, user_sel_id)
 
     await app.answer_callback_query(call.id, rem_col)
+
+
 @Client.on_callback_query(filters.regex(r"^add_col_\d{8,11}$"))
 async def add_col_user(app: Client, call: CallbackQuery):
 
@@ -413,7 +459,8 @@ async def add_col_user(app: Client, call: CallbackQuery):
     await show_roles_user(app, call, user_sel_id)
 
     await app.answer_callback_query(call.id, add_col)
-    
+
+
 @Client.on_callback_query(filters.regex(r"^rem_mod_\d{8,11}$"))
 async def rem_mod_user(app: Client, call: CallbackQuery):
 
@@ -436,6 +483,8 @@ async def rem_mod_user(app: Client, call: CallbackQuery):
     await show_roles_user(app, call, user_sel_id)
 
     await app.answer_callback_query(call.id, rem_col)
+
+
 @Client.on_callback_query(filters.regex(r"^add_mod_\d{8,11}$"))
 async def add_mod_user(app: Client, call: CallbackQuery):
 
@@ -455,4 +504,3 @@ async def add_mod_user(app: Client, call: CallbackQuery):
     await show_roles_user(app, call, user_sel_id)
 
     await app.answer_callback_query(call.id, add_col)
-    

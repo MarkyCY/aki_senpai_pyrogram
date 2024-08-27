@@ -4,6 +4,9 @@ from pyrogram.types import ChatPermissions, Message, InlineKeyboardButton, Inlin
 
 #from database.mongodb import get_db
 from plugins.others.admin_func import get_until_date
+from plugins.others.admin_func import isModerator
+
+group_perm = [-1001485529816, -1001664356911]
 
 async def MuteUser(app, chat_id, user_id, message=None, name=None, until_date=utils.zero_datetime()):
     # Configurar los permisos de restricción (mutear al usuario)
@@ -126,21 +129,42 @@ async def mute_command(app: Client, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
 
+    isMod = await isModerator(user_id)
+
     chat_member = await app.get_chat_member(chat_id, user_id)
     role_name = str(chat_member.status).split('.')[1]
-    if role_name.lower() not in ['administrator', 'owner']:
-        await message.reply("No tienes permisos para usar este comando.")
-        return
+    if role_name.lower() not in ['administrator', 'owner'] and isMod is False:
+        return await message.reply("No tienes permisos para usar este comando.")
 
+    if role_name.lower() in ['administrator', 'owner']:
+        chat_member = await app.get_chat_member(chat_id, user_mute_id)
+        role_name = str(chat_member.status).split('.')[1]
+        if role_name.lower() in ['administrator', 'owner']:
+            await message.reply("No puedes usar este comando con administradores.")
+            return
+
+        await MuteUser(app, chat_id, user_mute_id, message=message, name=name, until_date=until_date)
+        return
+    
+    #Moderadores de Otaku Senpai en otros grupos
+    if chat_id not in group_perm:
+        return await message.reply("No tienes permisos para usar este comando.")
+    
     chat_member = await app.get_chat_member(chat_id, user_mute_id)
     role_name = str(chat_member.status).split('.')[1]
     if role_name.lower() in ['administrator', 'owner']:
         await message.reply("No puedes usar este comando con administradores.")
         return
-    
-    await MuteUser(app, chat_id, user_mute_id, message=message, name=name, until_date=until_date)
 
+    btns = [
+        [
+            InlineKeyboardButton(
+                "🔇Silenciar", callback_data=f"mod_mute_{user_mute_id}_{user_id}"),
+        ]
+    ]
 
+    markup = InlineKeyboardMarkup(inline_keyboard=btns)
+    return await message.reply("Es necesario que otro moderador o administrador apoye esta acción.", reply_markup=markup)
 
 @Client.on_message(filters.command('unmute'))
 async def unmute_command(app: Client, message: Message):
