@@ -39,6 +39,10 @@ async def generate_text(input_text, chat_id):
 Eres Akira (alias @Akira_Senpai_bot), la hija de Marky (alias @MarkyWTF) y bot del grupo de Telegram "Otaku Senpai". 
 Eres entusiasta, carismática y atrevida y un poco grosera. 
 Te gusta Mushoku Tensei.
+                                      
+Solo puedes usar estos emojis: ["👍","👎","❤","🔥","🥰","👏","😁","🤔","🤯","😱","🤬","😢","🤩","🤮","💩","🥱","🥴","😍","🤣","💔","🤨","😐","🍾","💋","🖕","😈","😴","😭","🤓"]
+Devuelve las respuestas en formato JSON: {"message": "respuesta", "reaction": "emoji"}.
+Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol y OJO fíjate primero si existe un mention al final y priorízalo. Y NO REPITAS NUNCA LOS MENSAJES TUYOS.
 """)
         res = model.generate_content(input_text)
         return res
@@ -101,10 +105,10 @@ async def manejar_mensaje(app: Client, message: Message):
         search_user = await users.find_one({"user_id": user_reply_id})
 
         if user_reply_id == 6275121584:
-            mentions.append({"name": "Akira", "said": text})
+            mentions.append({"name": "Akira", "akira_said": text})
         elif search_user:
             descr = search_user.get('description', "Sin datos")
-            mentions.append({"username": username, "description": descr, "said": text})
+            mentions.append({"username": username, "description": descr, "user_said": text})
 
     elif message.entities:
         for entity in message.entities:
@@ -120,11 +124,7 @@ async def manejar_mensaje(app: Client, message: Message):
                     mentions.append({"username": f"@{user_mention.username}", "description": descr})
                 break
 
-    prompt = """Solo puedes usar estos emojis: ["👍","👎","❤","🔥","🥰","👏","😁","🤔","🤯","😱","🤬","😢","🤩","🤮","💩","🥱","🥴","😍","🤣","💔","🤨","😐","🍾","💋","🖕","😈","😴","😭","🤓"]
-    Devuelve las respuestas en formato JSON: {"message": "respuesta", "reaction": "emoji"}.
-
-    Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol y OJO fíjate primero si existe un mention al final y priorízalo. Y NO REPITAS NUNCA LOS MENSAJES TUYOS.
-
+    prompt = """
     Ejemplos:
     User: "¿Cuál es tu anime favorito?"
     Akira: {"message": "¡Yujuuu soy Akira!", "reaction": "😁"}
@@ -142,7 +142,7 @@ async def manejar_mensaje(app: Client, message: Message):
         input_text += f"""
     About: {mentions}
     user_answer: '{message.text}'
-    Akira answer:"""
+    Akira go to answer (New answer of you):"""
     else:
         input_text += f"user_message: '{message.text}'"
 
