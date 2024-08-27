@@ -104,7 +104,7 @@ async def mute_user(app: Client, call: CallbackQuery):
     ]
 
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
-    return await app.edit_message_text(chat_id, call.message.id, "Es necesario que otro moderador apoye esta acción.", reply_markup=markup)
+    return await app.edit_message_text(chat_id, call.message.id, "Es necesario que otro moderador o administrador apoye esta acción.", reply_markup=markup)
 
 @Client.on_callback_query(filters.regex(r"^mod_mute_\d{8,11}_\d{8,11}$"))
 async def mod_mute_user(app: Client, call: CallbackQuery):
