@@ -6,11 +6,14 @@ from database.mongodb import get_db
 
 from datetime import datetime
 
+group_perm = [-1001485529816, -1001664356911]
+
 @Client.on_message(filters.command('info'))
 async def info_command(app: Client, message: Message, user_data=None):
     # Conectar a la base de datos
     db = await get_db()
     users = db.users
+    chat_id = message.chat.id
 
     if message.command and len(message.command) > 1:
         elemento = message.command[1]
@@ -62,7 +65,7 @@ async def info_command(app: Client, message: Message, user_data=None):
     except:
         return
     role_name = str(chat_member.status).split('.')[1]
-    if role_name.lower() in ['administrator', 'owner']:
+    if role_name.lower() in ['administrator', 'owner'] or chat_id not in group_perm:
         markup = None
     role = role_name.capitalize()
     
