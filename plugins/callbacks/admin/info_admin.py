@@ -128,8 +128,14 @@ async def mod_mute_user(app: Client, call: CallbackQuery):
     
     mute = await MuteUser(app, chat_id, user_mute_id)
     if mute is True:
-        return await app.edit_message_text(chat_id, call.message.id, f"El usuario ha sido muteado con exito. Aprobado por <a href='tg://user?id={user_id}'>{userfname}</a>", parse_mode=enums.ParseMode.HTML)
-    
+        await app.edit_message_text(chat_id, call.message.id, f"El usuario ha sido muteado con exito. Aprobado por <a href='tg://user?id={user_id}'>{userfname}</a>", parse_mode=enums.ParseMode.HTML)
+        return await app.send_message(
+                -1001664356911,
+                text=f"El usuario ha sido muteado con exito. Aprobado por <a href='tg://user?id={user_id}'>{userfname}</a> y este <a href='tg://user?id={user_mod}'>Usuario</a>", 
+                parse_mode=enums.ParseMode.HTML,
+                message_thread_id=82096
+            )
+
     return await app.answer_callback_query(call.id, "No se ha podido mutear al usuario.")
 
 @Client.on_callback_query(filters.regex(r"^unban_\d{8,11}$"))
