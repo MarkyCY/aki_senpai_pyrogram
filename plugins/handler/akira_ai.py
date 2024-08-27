@@ -81,8 +81,11 @@ async def manejar_mensaje(app: Client, message: Message):
         return
     
     if len(message.text) > 130:
-        msg = await message.reply_text(text="Demasiado texto! Me mareo 😵‍💫")
-        await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="🥴")])
+        try:
+            msg = await message.reply_text(text="Demasiado texto! Me mareo 😵‍💫")
+            await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="🥴")])
+        except:
+            return
         return
     
     #Mention detect
@@ -151,7 +154,10 @@ async def manejar_mensaje(app: Client, message: Message):
         print(f"response: {response}")
         return
 
-    await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="👨‍💻")])
+    try:
+        await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="👨‍💻")])
+    except:
+        pass
     await app.send_chat_action(chat_id, enums.ChatAction.TYPING)
     await asyncio.sleep(2)
 

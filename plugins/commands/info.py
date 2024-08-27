@@ -18,13 +18,19 @@ async def info_command(app: Client, message: Message, user_data=None):
         # Si el elemento es un ID de usuario
         if elemento.isdigit() and 8 <= len(elemento) <= 11:
             user_id = int(elemento)
-            get_user = await app.get_chat_member(message.chat.id, user_id)
+            try:
+                get_user = await app.get_chat_member(message.chat.id, user_id)
+            except:
+                return
             user = get_user.user
 
         # Si el elemento es un nombre de usuario
         elif elemento.startswith('@'):
                 username = elemento.replace('@', '')
-                get_user = await app.get_chat_member(message.chat.id, username)
+                try:
+                    get_user = await app.get_chat_member(message.chat.id, username)
+                except:
+                    return
                 user = get_user.user
     
     elif user_data is None:
@@ -51,7 +57,10 @@ async def info_command(app: Client, message: Message, user_data=None):
     markup = InlineKeyboardMarkup(inline_keyboard=btns)
     
     # Obtengo el rol del usuario en el chat
-    chat_member = await app.get_chat_member(message.chat.id, user.id)
+    try:
+        chat_member = await app.get_chat_member(message.chat.id, user.id)
+    except:
+        return
     role_name = str(chat_member.status).split('.')[1]
     if role_name.lower() in ['administrator', 'owner']:
         markup = None
