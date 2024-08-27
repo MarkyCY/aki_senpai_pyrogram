@@ -126,11 +126,11 @@ async def unban_command(app: Client, message: Message):
                 name = get_user.user.first_name
     
     elif not message.reply_to_message:
-        await message.reply("Por favor, responde al mensaje del usuario que deseas banear.")
-
+        return await message.reply("Por favor, responde al mensaje del usuario que deseas banear.")
+        
+    else:
         user_unban_id = message.reply_to_message.from_user.id
         name = message.reply_to_message.from_user.first_name
-        return
 
     # Obtener la ID del chat
     chat_id = message.chat.id

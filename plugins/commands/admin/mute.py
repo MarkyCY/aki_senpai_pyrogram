@@ -121,6 +121,7 @@ async def mute_command(app: Client, message: Message):
     else:
         user_mute_id = message.reply_to_message.from_user.id
         name = message.reply_to_message.from_user.first_name
+        
         if message.command and len(message.command) > 1:
             time = message.command[1]
             until_date = get_until_date(time)
