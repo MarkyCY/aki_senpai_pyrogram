@@ -1,12 +1,14 @@
 from pyrogram import Client
 from dotenv import load_dotenv
 from pyrogram.types import BotCommand
+from pytgcalls import PyTgCalls
 
 # Carga los valores del archivo .env
 load_dotenv()
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from plugins.commands.get_youtube import get_video_command
+from user_plugins.core.user_bot import pytgcalls, user_app
 
 import asyncio
 import pytz
@@ -25,15 +27,15 @@ user_api_hash = os.getenv('USER_API_HASH')
 
 plugins = dict(root="plugins")
 user_plugins = dict(root="user_plugins")
-#
+#my_bot
 #bolita
 app = Client('my_bot',api_id=api_id, api_hash=api_hash, bot_token=bot_token, plugins=plugins)
-user_app = Client('user_bot', api_id=user_api_id, api_hash=user_api_hash, plugins=user_plugins)
 
 #Función para iniciar el Bot
 async def main():
     await app.start()
     await user_app.start()
+    await pytgcalls.start()
     print('*Bots Online.')
     await app.send_message(873919300, text='Aki está lista')
     await user_app.send_message(873919300, text='UserBot está listo')
