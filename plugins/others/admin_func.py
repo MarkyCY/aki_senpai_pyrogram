@@ -53,3 +53,22 @@ def get_until_date(time):
                 until_date = datetime.datetime.now() + datetime.timedelta(minutes=num)
                 
     return until_date
+
+async def role(app, chat_id, user_id):
+    db = await get_db()
+    users = db.users
+
+    role = None
+    admin = None
+
+    Users = await users.find_one({"user_id": user_id})
+    if Users['role']:
+        print(Users['role'])
+        role = Users['role']
+
+    chat_member = await app.get_chat_member(chat_id, user_id)
+    role_name = str(chat_member.status).split('.')[1]
+    if role_name.lower() in ['administrator', 'owner']:
+        admin = True
+        
+    return role, admin
