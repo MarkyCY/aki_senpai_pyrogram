@@ -15,23 +15,28 @@ import os
 # Create a new Pyrogram client
 api_id = os.getenv('API_ID')
 api_hash = os.getenv('API_HASH')
-bot_token = "5967012336:AAE188rfjmsvcQiGvJlSBYLRPAiiLkGm5Gk"
+bot_token = os.getenv('BOT_TOKEN')
 
-
+user_api_id = os.getenv('USER_API_ID')
+user_api_hash = os.getenv('USER_API_HASH')
 #from logging import basicConfig, INFO
 #basicConfig(format="*%(levelname)s %(message)s", level=INFO, force=True)
 
 
 plugins = dict(root="plugins")
-#my_bot
+user_plugins = dict(root="user_plugins")
+#
 #bolita
 app = Client('my_bot',api_id=api_id, api_hash=api_hash, bot_token=bot_token, plugins=plugins)
+user_app = Client('user_bot', api_id=user_api_id, api_hash=user_api_hash, plugins=user_plugins)
 
 #Función para iniciar el Bot
 async def main():
     await app.start()
-    print('*Bot Online.')
+    await user_app.start()
+    print('*Bots Online.')
     await app.send_message(873919300, text='Aki está lista')
+    await user_app.send_message(873919300, text='UserBot está listo')
     await app.set_bot_commands([
         BotCommand("anime", "Buscar información sobre un anime"),
         BotCommand("manga", "Buscar información sobre un manga"),
