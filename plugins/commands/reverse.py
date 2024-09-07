@@ -2,12 +2,14 @@ from pyrogram import Client
 from pyrogram.types import Message, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
 from pyrogram import filters
 from pyrogram import enums
+from datetime import datetime
 
 import os
 import json
 import aiohttp
 
 SAUCENAO = os.getenv('SAUCENAO')
+SAUCENAO_2 = os.getenv('SAUCENAO_2')
 
 
 async def async_post_image(url, params, image_path):
@@ -41,11 +43,20 @@ async def reverse_command(app: Client, message: Message):
     msg = await app.send_photo(chat_id, message.reply_to_message.photo.file_id)
 
     url = "https://saucenao.com/search.php"
-    params = {
-        "api_key": SAUCENAO,
-        "output_type": "2",
-        "testmode": "0"
-    }
+    current_hour = datetime.now().hour
+
+    if current_hour >= 14 and current_hour < 2:
+        params = {
+            "api_key": SAUCENAO_2,
+            "output_type": "2",
+            "testmode": "0"
+        }
+    else:
+        params = {
+            "api_key": SAUCENAO,
+            "output_type": "2",
+            "testmode": "0"
+        }
 
     downloaded_file = await app.download_media(message.reply_to_message, file_name="image.jpg", progress=progress)
 
