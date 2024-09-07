@@ -61,7 +61,7 @@ async def reverse_command(app: Client, message: Message):
     downloaded_file = await app.download_media(message.reply_to_message, file_name="image.jpg", progress=progress)
 
     result = await async_post_image(url, params, downloaded_file)
-
+    print(result)
     res = json.loads(result)
 
     #print(res)
