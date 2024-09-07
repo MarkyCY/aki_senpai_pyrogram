@@ -2,7 +2,10 @@ from pyrogram import Client
 from pyrogram.types import Message, ReactionTypeEmoji, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
 from pyrogram import filters
 from pyrogram import enums
+
 from datetime import datetime
+from dotenv import load_dotenv
+load_dotenv()
 
 import os
 import json
