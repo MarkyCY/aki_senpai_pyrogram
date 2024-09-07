@@ -28,7 +28,7 @@ async def progress(current, total):
 @Client.on_message(filters.regex(r'(?i)wa'))
 async def reverse_command(app: Client, message: Message):
     chat_id = message.chat.id
-    
+
     if not message.reply_to_message:
         return
 
@@ -49,13 +49,13 @@ async def reverse_command(app: Client, message: Message):
     current_hour = datetime.now().hour
     if 2 <= current_hour < 20:
         params = {
-            "api_key": SAUCENAO_2,
+            "api_key": SAUCENAO,
             "output_type": "2",
             "testmode": "0"
         }
     else:
         params = {
-            "api_key": SAUCENAO,
+            "api_key": SAUCENAO_2,
             "output_type": "2",
             "testmode": "0"
         }
