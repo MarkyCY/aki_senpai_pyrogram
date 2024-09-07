@@ -47,7 +47,7 @@ async def reverse_command(app: Client, message: Message):
 
     url = "https://saucenao.com/search.php"
     current_hour = datetime.now().hour
-
+    print(current_hour)
     if current_hour >= 14 and current_hour < 2:
         print(2)
         params = {
