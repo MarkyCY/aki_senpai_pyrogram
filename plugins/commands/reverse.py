@@ -48,12 +48,14 @@ async def reverse_command(app: Client, message: Message):
     url = "https://saucenao.com/search.php"
     current_hour = datetime.now().hour
     if 2 <= current_hour < 20:
+        print(1, SAUCENAO)
         params = {
             "api_key": SAUCENAO,
             "output_type": "2",
             "testmode": "0"
         }
     else:
+        print(2, SAUCENAO_2)
         params = {
             "api_key": SAUCENAO_2,
             "output_type": "2",
