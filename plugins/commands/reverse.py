@@ -65,7 +65,7 @@ async def reverse_command(app: Client, message: Message):
     downloaded_file = await app.download_media(message.reply_to_message, file_name="image.jpg", progress=progress)
 
     result = await async_post_image(url, params, downloaded_file)
-    
+
     res = json.loads(result)
 
     #print(res)
@@ -104,7 +104,10 @@ async def reverse_command(app: Client, message: Message):
                 break
 
         if text != "Búsqueda:\n\n":
-            await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="⚡")])
+            try:
+                await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji="⚡")])
+            except:
+                pass
             add_media = InputMediaPhoto(message.reply_to_message.photo.file_id, text, parse_mode=enums.ParseMode.HTML)
             await app.edit_message_media(chat_id, msg.id, add_media, reply_markup=reply_markup)
             #await message.reply_text(text=text, parse_mode=enums.ParseMode.HTML, reply_markup=reply_markup)
