@@ -76,8 +76,11 @@ async def reverse_command(app: Client, message: Message):
     print(
         f"Haciendo soliticud a SauceNAO... user: @{message.from_user.username}")
 
-    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton('Google Lens', url=f'https://lens.google.com/uploadbyurl?url=https://saucenao.com{res["header"]["query_image_display"]}')]])
-
+    try:
+        reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton('Google Lens', url=f'https://lens.google.com/uploadbyurl?url=https://saucenao.com{res["header"]["query_image_display"]}')]])
+    except:
+        pass
+    
     if 'results' in res:
         characters = None
         source = None
