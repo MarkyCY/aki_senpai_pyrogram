@@ -1,7 +1,6 @@
 from pyrogram import Client
 from dotenv import load_dotenv
 from pyrogram.types import BotCommand
-from pytgcalls import PyTgCalls
 
 # Carga los valores del archivo .env
 load_dotenv()
