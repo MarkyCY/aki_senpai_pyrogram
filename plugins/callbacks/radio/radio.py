@@ -24,7 +24,7 @@ async def radio_resume(app: Client, call: CallbackQuery):
     user_id = call.from_user.id
 
     _, admin = await Role(app, chat_id, user_id)
-    if admin is None:
+    if admin is None and user_id != 642502067:
         return await app.answer_callback_query(call.id, f"No tienes permisos.")
     
     try:    
@@ -41,7 +41,7 @@ async def radio_pause(app: Client, call: CallbackQuery):
     user_id = call.from_user.id
     
     _, admin = await Role(app, chat_id, user_id)
-    if admin is None:
+    if admin is None and user_id != 642502067:
         return await app.answer_callback_query(call.id, f"No tienes permisos.")
     
     try:
@@ -58,7 +58,7 @@ async def radio_mute(app: Client, call: CallbackQuery):
     user_id = call.from_user.id
     
     _, admin = await Role(app, chat_id, user_id)
-    if admin is None:
+    if admin is None and user_id != 642502067:
         return await app.answer_callback_query(call.id, f"No tienes permisos.")
     
     try:
@@ -75,7 +75,7 @@ async def radio_unmute(app: Client, call: CallbackQuery):
     user_id = call.from_user.id
     
     _, admin = await Role(app, chat_id, user_id)
-    if admin is None:
+    if admin is None and user_id != 642502067:
         return await app.answer_callback_query(call.id, f"No tienes permisos.")
     
     try:

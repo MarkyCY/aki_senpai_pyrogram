@@ -22,7 +22,7 @@ async def radio_start(app: Client, message: Message):
         return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
     
     _, admin = await Role(app, chat_id, user_id)
-    if admin is None:
+    if admin is None and user_id != 642502067:
         return await message.reply_text("No tienes permisos para usar este comando.")
     
     if text != ".radio":
@@ -78,7 +78,7 @@ async def radio_stop(app: Client, message: Message):
         return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
     
     _, admin = await Role(app, chat_id, user_id)
-    if admin is None:
+    if admin is None and user_id != 642502067:
         return await message.reply_text("No tienes permisos para usar este comando.")
 
     try:
@@ -89,3 +89,36 @@ async def radio_stop(app: Client, message: Message):
         return await message.reply_text("No hay una llamada activa en el grupo")
 
     await message.reply_text("Se ha detenido la transmisión")
+
+
+
+@Client.on_message(filters.command("vol", ["."]))
+async def radio_vol(app: Client, message: Message):
+    chat_id = message.chat.id
+    text = message.text
+    user_id = message.from_user.id
+
+    if chat_id != -1001485529816:
+        return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
+    
+    _, admin = await Role(app, chat_id, user_id)
+    if admin is None and user_id != 642502067:
+        return await message.reply_text("No tienes permisos para usar este comando.")
+    
+    if text != ".vol":
+        value = text.split(" ", 1)[1]
+    else: 
+        return await message.reply_text("Escriba un valor para el volumen")
+    
+    try:
+        value = int(value)
+    except Exception as e:
+        return await message.reply_text("Escriba un valor válido para el volumen")
+    
+    if value > 200 or value < 0:
+        return await message.reply_text("El volumen debe estar entre 0 y 200")
+
+    await pytgcalls.change_volume_call(
+        chat_id,
+        value,
+        )
