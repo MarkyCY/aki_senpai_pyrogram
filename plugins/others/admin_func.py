@@ -63,7 +63,6 @@ async def role(app, chat_id, user_id):
 
     Users = await users.find_one({"user_id": user_id})
     if Users['role']:
-        print(Users['role'])
         role = Users['role']
 
     chat_member = await app.get_chat_member(chat_id, user_id)
