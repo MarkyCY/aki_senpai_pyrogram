@@ -18,8 +18,8 @@ async def radio_start(app: Client, message: Message):
     text = message.text
     user_id = message.from_user.id
 
-    if chat_id != -1001485529816:
-        return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
+    # if chat_id != -1001485529816:
+    #     return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
     
     _, admin = await Role(app, chat_id, user_id)
     if admin is None and user_id != 642502067:
@@ -74,8 +74,8 @@ async def radio_stop(app: Client, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
 
-    if chat_id != -1001485529816:
-        return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
+    # if chat_id != -1001485529816:
+    #     return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
     
     _, admin = await Role(app, chat_id, user_id)
     if admin is None and user_id != 642502067:
@@ -98,8 +98,8 @@ async def radio_vol(app: Client, message: Message):
     text = message.text
     user_id = message.from_user.id
 
-    if chat_id != -1001485529816:
-        return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
+    # if chat_id != -1001485529816:
+    #     return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
     
     _, admin = await Role(app, chat_id, user_id)
     if admin is None and user_id != 642502067:
