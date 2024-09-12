@@ -90,7 +90,11 @@ async def ban_command(app: Client, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
 
-    chat_member = await app.get_chat_member(chat_id, user_id)
+    try:
+        chat_member = await app.get_chat_member(chat_id, user_id)
+    except Exception as e:
+        print(f"Chat ID: {chat_id}\nUser ID: {user_id}\n{e}")
+
     role_name = str(chat_member.status).split('.')[1]
     if role_name.lower() not in ['administrator', 'owner']:
         await message.reply("No tienes permisos para usar este comando.")
