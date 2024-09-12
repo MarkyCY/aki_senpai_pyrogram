@@ -17,7 +17,7 @@ async def restart_command(app: Client, message: Message):
 
     await message.reply_text("Reiniciando...")
     # shutil.rmtree("downloads", ignore_errors=True)
-    os.system(f'pkill -f "python main.py" && bash startup.sh')
+    os.system(f"kill -9 {os.getpid()} && bash startup.sh")
 
 @Client.on_message(filters.command('kill'))
 async def kill_command(app: Client, message: Message):
@@ -32,4 +32,4 @@ async def kill_command(app: Client, message: Message):
 
     await message.reply_text("Bye...")
     # shutil.rmtree("downloads", ignore_errors=True)
-    os.system(f'pkill -f "python main.py"')
+    os.system(f"kill -9 {os.getpid()}")
