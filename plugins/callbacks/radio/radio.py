@@ -3,6 +3,7 @@ from pyrogram.types import CallbackQuery
 from pyrogram import filters
 
 from pytgcalls import filters as fl
+from pytgcalls.types import MediaStream, AudioQuality
 
 from user_plugins.core.user_bot import pytgcalls
 from plugins.others.admin_func import role as Role
@@ -16,7 +17,14 @@ async def stream_end(client, update):
 
     chat_id = update.chat_id
 
-    await pytgcalls.leave_call(chat_id)
+    await pytgcalls.play(
+            chat_id,
+            MediaStream(
+                'http://gr01.cdnstream.com:8290',
+                audio_parameters=AudioQuality.LOW,
+                video_flags=MediaStream.Flags.NO_LATENCY,
+            ),
+        )
 
 @Client.on_callback_query(filters.regex(r"^radio_resume$"))
 async def radio_resume(app: Client, call: CallbackQuery):
