@@ -8,6 +8,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from plugins.commands.get_youtube import get_video_command
 from user_plugins.core.user_bot import pytgcalls, user_app
+from plugins.others.ram_verif import verif_ram
 
 import asyncio
 import pytz
@@ -66,6 +67,7 @@ async def main():
 scheduler = AsyncIOScheduler()
 tz = pytz.timezone('Cuba')
 scheduler.add_job(get_video_command, CronTrigger(minute='*/30', timezone=tz), args=(app,))
+scheduler.add_job(verif_ram, CronTrigger(hour='*/2', timezone=tz), args=(90,))
 scheduler.start()
 
 #Iniciar Proceso de la función main()
