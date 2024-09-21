@@ -12,6 +12,4 @@ async def reverse_handler(app: Client, message: Message):
     if text[1] != "waifu" and text[1] != "husbando":
         return
     
-    msg = await message.reply_text("wa")
-    await asyncio.sleep(1)
-    await msg.delete()
+    await message.reply_text("wa")
