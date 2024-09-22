@@ -1,6 +1,7 @@
 from pyrogram import Client, filters, utils, enums
 from pyrogram.types import Message, ChatPermissions
 from collections import defaultdict
+from plugins.others.img_error import img_error
 
 import time
 import os
@@ -32,7 +33,6 @@ user_activity = defaultdict(list)
 
 @Client.on_message(filters.group & (filters.sticker | filters.photo))
 async def antispam(app: Client, message: Message):
-    
     user_id = message.from_user.id
     chat_id = message.chat.id
     current_time = time.time()
@@ -48,11 +48,11 @@ async def antispam(app: Client, message: Message):
     
     current_hour = datetime.now().hour
     if 23 <= current_hour or current_hour < 8:
-        time_limit = 10
-        times = 1
+        time_limit = 5 # 10 segundos
+        times = 2 # 1 veces
     else:
-        # time_limit = 5
-        # times = 2
+        #time_limit = 5
+        #times = 2
         return
 
     # Limpiar actividades antiguas
@@ -67,6 +67,11 @@ async def antispam(app: Client, message: Message):
     
     # Verificar si es un sticker
     if message.sticker:
+
+        if img_error(downloaded_file, message.sticker.thumbs[0].file_id):
+            print("Imagen en lista negra")
+            return
+        
         # Contar cuántas veces se ha enviado el mismo sticker
         repeated_stickers = sum(1 for activity in user_activity[user_id] if activity['type'] == 'sticker')
         if repeated_stickers >= times:
@@ -119,8 +124,8 @@ async def antispam(app: Client, message: Message):
     if ban is True:
         until_date=utils.zero_datetime()
         try:
-            #await app.restrict_chat_member(chat_id, message.from_user.id, permissions, until_date=until_date)
-            await app.ban_chat_member(chat_id, message.from_user.id, until_date=until_date)
+            await app.restrict_chat_member(chat_id, message.from_user.id, permissions, until_date=until_date)
+            #await app.ban_chat_member(chat_id, message.from_user.id, until_date=until_date)
         except Exception as e:
             pass
              
