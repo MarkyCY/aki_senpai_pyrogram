@@ -7,6 +7,7 @@ import google.generativeai as genai
 from database.mongodb import get_db
 
 import os
+import re
 import json
 import asyncio
 
@@ -52,6 +53,10 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
 
 @Client.on_message(akira_filter_detect | filters.reply & akira_detect & filters.group)
 async def manejar_mensaje(app: Client, message: Message):
+    
+    if re.match(r"^/", message.text):
+        return
+
     db = await get_db()
     users = db.users
     Admins = db.admins
