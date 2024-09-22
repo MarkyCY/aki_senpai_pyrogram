@@ -3,8 +3,23 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from database.mongodb import get_db
 
+group_perm = [-1001485529816, -1001664356911]
+
 @Client.on_message(filters.command('blacklist'))
 async def blacklist_command(app: Client, message: Message, user_data=None):
+
+    chat_id = message.chat.id
+    user_id = message.from_user.id
+
+    if chat_id not in group_perm:
+        await message.reply_text(text="Este comando no está disponible en este grupo.")
+        return
+
+    chat_member = await app.get_chat_member(chat_id, user_id)
+    role_name = str(chat_member.status).split('.')[1]
+    if role_name.lower() not in ['administrator', 'owner']:
+        await message.reply_text(text="Solo los administradores pueden usar este comando.")
+
     # Conectar a la base de datos
     db = await get_db()
     img_blacklist = db.img_blacklist
