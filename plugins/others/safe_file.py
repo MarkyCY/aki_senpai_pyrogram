@@ -30,7 +30,7 @@ Subido de tono {comp.racy}
 """
     
     
-    "adult", comp.adult, "medical", comp.medical, "violence", comp.violence, "racy", comp.racy
+    #"adult", comp.adult, "medical", comp.medical, "violence", comp.violence, "racy", comp.racy
 
     safe = True
     
