@@ -3,6 +3,7 @@ from pyrogram.types import Message, ChatPermissions
 
 from database.mongodb import get_db
 from datetime import datetime
+from plugins.others.img_error import img_error
 
 from plugins.others.safe_file import detect_safe_search
 from plugins.others.compare_img import compare_images
@@ -69,6 +70,9 @@ async def detect_new_user(app: Client, message: Message):
 
     if message.sticker:
         downloaded_file = await app.download_media(message.sticker.thumbs[0].file_id)
+        if img_error(downloaded_file, message.sticker.thumbs[0].file_id):
+            print("Imagen en lista negra")
+            return
     if message.photo:
         downloaded_file = await app.download_media(message.photo.file_id)
 
