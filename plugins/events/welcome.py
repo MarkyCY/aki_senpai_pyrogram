@@ -115,36 +115,36 @@ async def send_welcome_event(app: Client, message: Message):
 
     # Enviamos el mensaje de bienvenida al grupo
     reply_markup=InlineKeyboardMarkup(
-                        [
-                            [
-                                InlineKeyboardButton(
-                                    "📏 Leer las Reglas",
-                                    url="https://t.me/Akira_Senpai_bot?start=rules"
-                                ),
-                                InlineKeyboardButton(
-                                    "🏆 Concursos",
-                                    url="https://t.me/Akira_Senpai_bot?start=contests"
-                                )
-                            ],
-                            # [
-                            #     InlineKeyboardButton(
-                            #         "✅ Empezar a escribir",
-                            #         url="https://t.me/MarkyWTF"
-                            #     ),
-                            # ],
-                        ]
-                    )
+        [
+            [
+                InlineKeyboardButton(
+                    "📏 Leer las Reglas",
+                    url="https://t.me/Akira_Senpai_bot?start=rules"
+                ),
+                InlineKeyboardButton(
+                    "🏆 Concursos",
+                    url="https://t.me/Akira_Senpai_bot?start=contests"
+                )
+            ],
+            # [
+            #     InlineKeyboardButton(
+            #         "✅ Empezar a escribir",
+            #         url="https://t.me/MarkyWTF"
+            #     ),
+            # ],
+        ]
+    )
     msg = await message.reply_text(text=f"{welcome_message}", reply_markup=reply_markup)
     await app.set_reaction(chat_id, msg.id, reaction=[ReactionTypeEmoji(emoji="😁")])
 
     #until_date=utils.zero_datetime()
     until_date = datetime.now() + timedelta(days=10) # Establecer until_date a 10 días a partir del momento actual
-    try:
-        await app.restrict_chat_member(chat_id, new_user_id, permissions, until_date=until_date)
-    except Exception as e:
-        print(e)
 
     user = await users.find_one({"user_id": new_user_id})
     if user is None:
         timestamp = datetime.now().timestamp()
         await users.insert_one({"user_id": new_user_id, "enter_date": timestamp})
+        try:
+            await app.restrict_chat_member(chat_id, new_user_id, permissions, until_date=until_date)
+        except Exception as e:
+            print(e)
