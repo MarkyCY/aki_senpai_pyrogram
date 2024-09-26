@@ -71,14 +71,18 @@ async def detect_new_user(app: Client, message: Message):
     if message.sticker:
         downloaded_file = await app.download_media(message.sticker.thumbs[0].file_id)
         if img_error(downloaded_file, message.sticker.thumbs[0].file_id):
+            os.remove(downloaded_file)
             print("Imagen en lista negra")
             return
     if message.photo:
         downloaded_file = await app.download_media(message.photo.file_id)
 
-    safe, explain = detect_safe_search(downloaded_file)
-
-    resul_comp = await compare_images(downloaded_file)
+    try:
+        safe, explain = detect_safe_search(downloaded_file)
+        resul_comp = await compare_images(downloaded_file)
+    except Exception as e:
+        os.remove(downloaded_file)
+        return
 
     os.remove(downloaded_file)
 

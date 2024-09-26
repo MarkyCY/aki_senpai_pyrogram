@@ -46,10 +46,17 @@ async def revise_command(app: Client, message: Message):
         return
     
     if message.reply_to_message.sticker:
-        downloaded_file = await app.download_media(message.reply_to_message.sticker.thumbs[0].file_id)
+        try:
+            downloaded_file = await app.download_media(message.reply_to_message.sticker.thumbs[0].file_id)
+        except Exception as e:
+            os.remove(downloaded_file)
     elif message.reply_to_message.photo:
-        downloaded_file = await app.download_media(message.reply_to_message.photo.file_id)
+        try:
+            downloaded_file = await app.download_media(message.reply_to_message.photo.file_id)
+        except Exception as e:
+            os.remove(downloaded_file)
     else:
+        os.remove(downloaded_file)
         return await message.reply_text(text=f"Esto solo funciona con imagenes o stickers.")
 
     safe, explain = detect_safe_search(downloaded_file)
