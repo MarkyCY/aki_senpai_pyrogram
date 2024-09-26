@@ -68,8 +68,7 @@ async def antispam(app: Client, message: Message):
     # Verificar si es un sticker
     if message.sticker:
 
-        if img_error(downloaded_file, message.sticker.thumbs[0].file_id):
-            print("Imagen en lista negra")
+        if await img_error(downloaded_file, message.sticker.thumbs[0].file_id):
             return
         
         # Contar cuántas veces se ha enviado el mismo sticker
