@@ -64,7 +64,7 @@ async def type_callback(client, call):
 
     match type:
         case "text":
-            await client.send_message(call.from_user.id, text='Cantidad de Caractéres')
+            await client.send_message(call.from_user.id, text='Cantidad de Palabras')
             conversations.update({call.from_user.id: "contest_amount_text"})
             return
         case "photo":
