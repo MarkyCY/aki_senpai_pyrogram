@@ -40,10 +40,10 @@ async def info_command(app: Client, message: Message, user_data=None):
         if message.reply_to_message is None:
             await message.reply_text('Por favor, responde a un mensaje')
             return
+        
+        else:
+            user = message.reply_to_message.from_user
 
-    else:
-        user = user_data
-    
     user_action_id = user.id
     
     btns = [
