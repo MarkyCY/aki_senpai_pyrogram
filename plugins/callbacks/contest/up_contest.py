@@ -11,7 +11,7 @@ import re
 
 def count_words(text):
     words = re.findall(r'\b\w+\b', text)
-    return len(words)
+    return int(len(words))
 
 def diference_min(timestamp_a, timestamp_b):
     dt_a = datetime.fromtimestamp(timestamp_a)
