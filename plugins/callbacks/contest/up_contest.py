@@ -68,7 +68,7 @@ async def up_contest(app: Client, call: CallbackQuery):
             
             msg_text += f"\n\n{text}"
             try:
-                sent_message = await app.send_message(principal_chat_id, msg.text, message_thread_id=principal_thread_id, reply_markup=markup)
+                sent_message = await app.send_message(principal_chat_id, msg_text, message_thread_id=principal_thread_id, reply_markup=markup)
                 data = {'_id': contest_data_id, 'contest_id': contest_sel['_id'], 'user_id': user_id, 'type': contest_sel['type'], 'm_id': sent_message.id, 'text': msg.text}
             except Exception as e:
                 await app.send_message(chat_id, text="Ha ocurrido un error")
