@@ -62,9 +62,8 @@ async def up_contest(app: Client, call: CallbackQuery):
         case 'text':
             msg_text = msg.text
             cant_words = count_words(msg_text)
-            print(cant_words)
             
-            if len(cant_words) < contest_sel['amount_text']:
+            if cant_words < contest_sel['amount_text']:
                 return await app.answer_callback_query(call.id, f"El mensaje debe tener al menos {contest_sel['amount_text']} palabras...")
             
             msg_text += "\n\n", text
