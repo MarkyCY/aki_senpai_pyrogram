@@ -72,6 +72,10 @@ async def antispam(app: Client, message: Message):
         if repeated_stickers >= times:
             print(f"[ANTISPAM] Usuario {message.from_user.first_name} está enviando stickers repetidos más de 3 veces.")
             downloaded_file = await app.download_media(message.sticker.thumbs[0].file_id)
+        
+        if downloaded_file is None:
+            print(f"No se pudo descargar el sticker: {downloaded_file}")
+            return
             
         if await img_error(downloaded_file, message.sticker.thumbs[0].file_id):
             return
