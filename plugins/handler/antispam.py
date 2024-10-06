@@ -49,7 +49,7 @@ async def antispam(app: Client, message: Message):
     current_hour = datetime.now().hour
     if 23 <= current_hour or current_hour < 8:
         time_limit = 5 # 10 segundos
-        times = 2 # 1 veces
+        times = 3 # 1 veces
     else:
         #time_limit = 5
         #times = 2
@@ -72,13 +72,9 @@ async def antispam(app: Client, message: Message):
         if repeated_stickers >= times:
             print(f"[ANTISPAM] Usuario {message.from_user.first_name} está enviando stickers repetidos más de 3 veces.")
             downloaded_file = await app.download_media(message.sticker.thumbs[0].file_id)
-        
-        if downloaded_file is None:
-            print(f"No se pudo descargar el sticker: {downloaded_file}")
-            return
             
-        if await img_error(downloaded_file, message.sticker.thumbs[0].file_id):
-            return
+            if await img_error(downloaded_file, message.sticker.thumbs[0].file_id):
+                return
     # Verificar si es una imagen
     if message.photo:
         # Contar cuántas veces se ha enviado la misma imagen
@@ -86,13 +82,20 @@ async def antispam(app: Client, message: Message):
         if repeated_photos >= times:
             print(f"[ANTISPAM] Usuario {message.from_user.first_name} está enviando la misma imagen más de 3 veces.")
             downloaded_file2 = await app.download_media(message.photo.file_id)
+
+            if downloaded_file2 is None:
+                return
     
     # Verificar si envió demasiadas actividades (mensajes/stickers/imagenes) en un corto período de tiempo
     if len(user_activity[user_id]) >= times:
         print(f"[ANTISPAM] Usuario {message.from_user.first_name} está enviando demasiados mensajes, stickers o imágenes en poco tiempo.")
         if downloaded_file:
-            safe, explain = detect_safe_search(downloaded_file)
-            resul_comp = await compare_images(downloaded_file)
+            try:
+                safe, explain = detect_safe_search(downloaded_file)
+                resul_comp = await compare_images(downloaded_file)
+            except Exception as e:
+                print(e)
+                return os.remove(downloaded_file)
 
             os.remove(downloaded_file)
 
@@ -103,8 +106,12 @@ async def antispam(app: Client, message: Message):
                 ban = True
 
         if downloaded_file2:
-            safe, explain = detect_safe_search(downloaded_file2)
-            resul_comp = await compare_images(downloaded_file2)
+            try:
+                safe, explain = detect_safe_search(downloaded_file2)
+                resul_comp = await compare_images(downloaded_file2)
+            except Exception as e:
+                print(e)
+                return os.remove(downloaded_file2)
 
             os.remove(downloaded_file2)
 
