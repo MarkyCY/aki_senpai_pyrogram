@@ -99,8 +99,8 @@ async def antispam(app: Client, message: Message):
                 ban = True
 
         if downloaded_file2:
-            safe, explain = detect_safe_search(downloaded_file)
-            resul_comp = await compare_images(downloaded_file)
+            safe, explain = detect_safe_search(downloaded_file2)
+            resul_comp = await compare_images(downloaded_file2)
 
             os.remove(downloaded_file2)
 
