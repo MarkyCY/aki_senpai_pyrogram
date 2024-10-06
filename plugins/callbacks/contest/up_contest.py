@@ -7,6 +7,11 @@ from plugins.others.contest import *
 from bson import ObjectId
 
 from datetime import datetime
+import re
+
+def count_words(text):
+    words = re.findall(r'\b\w+\b', text)
+    return len(words)
 
 def diference_min(timestamp_a, timestamp_b):
     dt_a = datetime.fromtimestamp(timestamp_a)
@@ -56,11 +61,10 @@ async def up_contest(app: Client, call: CallbackQuery):
     match contest_sel['type']:
         case 'text':
             msg_text = msg.text
-            words = msg_text.split()
-            print(words)
-            print(contest_sel['amount_text'])
+            cant_words = count_words(msg_text)
+            print(cant_words)
             
-            if len(words) < contest_sel['amount_text']:
+            if len(cant_words) < contest_sel['amount_text']:
                 return await app.answer_callback_query(call.id, f"El mensaje debe tener al menos {contest_sel['amount_text']} palabras...")
             
             msg_text += "\n\n", text
