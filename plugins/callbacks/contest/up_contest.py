@@ -53,7 +53,7 @@ async def up_contest(app: Client, call: CallbackQuery):
     markup = InlineKeyboardMarkup(
         [
             [InlineKeyboardButton(str(i), callback_data=f"vote_{i}_{call.from_user.id}_{contest_data_id}") for i in range(1, 6)],
-            [InlineKeyboardButton(str(i), callback_data=f"vote_{i}_{call.from_user.id}_{contest_data_id}") for i in range(6, 11)]
+            [InlineKeyboardButton(str(i), callback_data=f"vote_{i}_{call.from_user.id}_{contest_data_id}") for i in range(6, 10)]
         ]
     )
 
