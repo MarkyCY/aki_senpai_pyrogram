@@ -42,7 +42,7 @@ async def disqualified(app: Client, call: CallbackQuery):
 
     markup = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("✅Permitir", callback_data=f"allow_{call.from_user.id}_{contest_id}")],
+            [InlineKeyboardButton("✅Permitir", callback_data=f"allow_{u_disq}_{contest_id}")],
         ]
     )
     msg = f"El <a href='tg://user?id={u_disq}'>usuario</a> ha sido descalificado para este concurso."
@@ -79,7 +79,7 @@ async def undo_disqualified(app: Client, call: CallbackQuery):
 
     markup = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("❌Descalificar", callback_data=f"disq_{call.from_user.id}_{contest_id}")],
+            [InlineKeyboardButton("❌Descalificar", callback_data=f"disq_{u_disq}_{contest_id}")],
         ]
     )
     msg = f"El <a href='tg://user?id={u_disq}'>usuario</a> ha sido permitido para este concurso."
