@@ -47,7 +47,6 @@ async def up_contest(app: Client, call: CallbackQuery):
         msg = call.message.text
 
     name = call.from_user.first_name
-    print(name)   
 
     if re.search(r'(' + re.escape(name) + r'\d+️⃣|' + re.escape(name) + r'🔟)', msg):
         msg = re.sub(r'(' + re.escape(name) + r'\d+️⃣|' + re.escape(name) + r'🔟)', f'{name}{emojis[str(vote)]}', msg)
@@ -65,7 +64,7 @@ async def up_contest(app: Client, call: CallbackQuery):
         ]
     )
      
-    if contest['type'] == 'photo':
+    if contest['type'] == 'photo' or contest['type'] == 'video':
         await app.edit_message_caption(cid, mid, msg, reply_markup=markup)
     if contest['type'] == 'text':
         await app.edit_message_text(cid, mid, msg, reply_markup=markup)
