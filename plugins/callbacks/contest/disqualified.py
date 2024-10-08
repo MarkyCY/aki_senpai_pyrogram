@@ -13,6 +13,9 @@ async def disqualified(app: Client, call: CallbackQuery):
     cid = call.message.chat.id
     mid = call.message.id
     Disq = None
+    
+    if cid != 873919300:
+        return await app.answer_callback_query(call.id, "No tienes el permiso necesario.")
 
     db = await get_db()
     contest = db.contest
@@ -21,6 +24,7 @@ async def disqualified(app: Client, call: CallbackQuery):
     parts = call.data.split('_')
     u_disq = int(parts[1])
     contest_id = ObjectId(parts[2])
+
 
     contest = await contest.find_one({'_id': contest_id})
 
@@ -55,6 +59,9 @@ async def undo_disqualified(app: Client, call: CallbackQuery):
     cid = call.message.chat.id
     mid = call.message.id
     Disq = None
+
+    if cid != 873919300:
+        return await app.answer_callback_query(call.id, "No tienes el permiso necesario.")
 
     db = await get_db()
     contest = db.contest
