@@ -43,7 +43,7 @@ async def contest_command(app: Client, message: Message, call_msg_id=None, user_
         return
 
     if username is None:
-        await message.reply_text(text=f"Lo siento, no te puedes subscribir al concurso sin un nombre de usuario. Para crearte un nombre de usuario:\nVe a `Ajustes > Nombre de usuario` y escribe uno que sea único.")
+        await message.reply_text(text=f"Lo siento, no te puedes subscribir a los concursos sin un nombre de usuario. Para crearte un nombre de usuario:\nVe a `Ajustes > Nombre de usuario` y escribe uno que sea único.")
         return
     
     user = users.find_one({'user_id': user_id})
