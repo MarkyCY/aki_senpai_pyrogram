@@ -1,6 +1,6 @@
 from pyrogram import Client
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram import filters, enums
+from pyrogram import filters
 
 from database.mongodb import get_db
 from plugins.others.contest import *
@@ -12,7 +12,6 @@ import re
 async def up_contest(app: Client, call: CallbackQuery):
 
     db = await get_db()
-    contest = db.contest
     Contest_Data = db.contest_data
 
     JUECES = {873919300, 759372927}
@@ -59,7 +58,10 @@ async def up_contest(app: Client, call: CallbackQuery):
     markup = InlineKeyboardMarkup(
         [
             [InlineKeyboardButton(str(i), callback_data=f"vote_{i}_{u_vote}_{contest_data_id}") for i in range(1, 6)],
-            [InlineKeyboardButton(str(i), callback_data=f"vote_{i}_{u_vote}_{contest_data_id}") for i in range(6, 12)]
+            [InlineKeyboardButton(str(i), callback_data=f"vote_{i}_{u_vote}_{contest_data_id}") for i in range(6, 11)],
+            [
+                InlineKeyboardButton("❌Descalificar", callback_data=f"disq_{call.from_user.id}_{contest['contest_id']}"),
+            ]
         ]
     )
      
