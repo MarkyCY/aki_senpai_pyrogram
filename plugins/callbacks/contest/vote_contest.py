@@ -14,7 +14,7 @@ async def up_contest(app: Client, call: CallbackQuery):
     db = await get_db()
     Contest_Data = db.contest_data
 
-    JUECES = {873919300, 759372927}
+    JUECES = {873919300, 759372927, 1881435398, 938816655, 5897689654, 5346671352, 1221472021}
 
     uid = call.from_user.id
     cid = call.message.chat.id
