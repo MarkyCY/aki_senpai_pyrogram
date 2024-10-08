@@ -113,6 +113,7 @@ async def sub_contest(app: Client, call: CallbackQuery):
     contest = db.contest
 
     found = None
+    Disq = None
 
     contest_sel = await contest.find_one({'_id': contest_id})
 
@@ -131,6 +132,15 @@ async def sub_contest(app: Client, call: CallbackQuery):
                 
     if found is True:
         await app.answer_callback_query(call.id, "Oh! Ya estabas registrado en el concurso...", True)
+        return
+    
+    for disq in contest_sel['disqualified']:
+        if disq['user'] == user_id:
+            Disq = True
+            break
+    
+    if Disq is True:
+        await app.answer_callback_query(call.id, "Lo siento pero estás descalificado para este concurso...", True)
         return
     
     if not found:
