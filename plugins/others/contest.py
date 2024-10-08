@@ -35,6 +35,32 @@ async def del_user(user_id, id):
 
     return result
 
+async def disq_user(user_id, id):
+    # Conectar a la base de datos
+    db = await get_db()
+    contest = db.contest
+
+    filter = {'_id': id}
+
+    update = {'$push': {'disqualified': {'user': user_id}}}
+    
+    result = await contest.update_one(filter, update)
+
+    return result
+
+async def un_disq_user(user_id, id):
+    # Conectar a la base de datos
+    db = await get_db()
+    contest = db.contest
+
+    filter = {'_id': id}
+
+    update = {'$pull': {'disqualified': {'user': user_id}}}
+    
+    result = await contest.update_one(filter, update)
+
+    return result
+
 async def reg_user(user_id, username):
     # Conectar a la base de datos
     db = await get_db()
