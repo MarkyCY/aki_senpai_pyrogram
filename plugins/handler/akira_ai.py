@@ -79,8 +79,8 @@ async def manejar_mensaje(app: Client, message: Message):
     db = await get_db()
     users = db.users
     Admins = db.admins
-
-    group_perm = [-1001485529816, -1001664356911, -1001223004404, -1002094390065]
+    #YIGA , -1002094390065
+    group_perm = [-1001485529816, -1001664356911, -1001223004404]
 
     user_id = message.from_user.id
     chat_id = message.chat.id
