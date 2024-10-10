@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from pyrogram import enums
 from pyrogram.types import Message, ReactionTypeEmoji
 from database.useControl import UseControlMongo
-import google.generativeai as genai
+from groq import Groq
 
 from database.mongodb import get_db
 
@@ -29,14 +29,17 @@ akira_detect = filters.create(aki_detect)
 
 useControlMongoInc = UseControlMongo()
 
-async def generate_text(input_text, chat_id):
+async def generate_text(input, chat_id):
     if chat_id == -1002094390065:
         api_key = os.getenv('YIGA_GEMINI_API')
+        return
     else:
-        api_key = os.getenv('GEMINI_API')
+        api_key = os.getenv('GROQ_API')
     try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-1.5-flash-latest', system_instruction="""
+        client = Groq(
+            api_key=api_key,
+        )
+        system = """
 Eres Akira (alias @Akira_Senpai_bot), la hija de Marky (alias @MarkyWTF) y bot del grupo de Telegram "Otaku Senpai". 
 Eres entusiasta, carismática y atrevida y un poco grosera. 
 Te gusta Mushoku Tensei.
@@ -44,9 +47,25 @@ Te gusta Mushoku Tensei.
 Solo puedes usar estos emojis: ["👍","👎","❤","🔥","🥰","👏","😁","🤔","🤯","😱","🤬","😢","🤩","🤮","💩","🥱","🥴","😍","🤣","💔","🤨","😐","🍾","💋","🖕","😈","😴","😭","🤓"]
 Devuelve las respuestas en formato JSON: {"message": "respuesta", "reaction": "emoji"}.
 Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol y OJO fíjate primero si existe un mention al final y priorízalo. Y NO REPITAS NUNCA LOS MENSAJES TUYOS.
-""")
-        res = model.generate_content(input_text)
-        return res
+"""
+        chat_completion = client.chat.completions.create(
+            messages=[
+                    {
+                        "role": "system",
+                        "content": system,
+                    },
+                    {
+                        "role": "user",
+                        "content": input,
+                    },
+                ],
+            model="llama-3.1-70b-versatile",
+            stream=False,
+            response_format={"type": "json_object"},
+        )
+
+        return chat_completion
+    
     except Exception as e:
         print(f"Error al generar contenido: {e}")
         return None
@@ -112,7 +131,7 @@ async def manejar_mensaje(app: Client, message: Message):
         if user_reply_id == 6275121584:
             mentions.append({"name": "Akira", "akira_said": text})
         elif search_user:
-            descr = search_user.get('description', "Sin datos")
+            descr = search_user.get('description', "None")
             mentions.append({"username": username, "description": descr, "user_said": text})
 
     elif message.entities:
@@ -125,38 +144,32 @@ async def manejar_mensaje(app: Client, message: Message):
                     break
                 search_user = await users.find_one({"user_id": user_mention.id})
                 if search_user:
-                    descr = search_user.get('description', "Sin datos")
+                    descr = search_user.get('description', "None")
                     mentions.append({"username": f"@{user_mention.username}", "description": descr})
                 break
 
-    prompt = """
-    Ejemplos:
-    User: "¿Cuál es tu anime favorito?"
-    Akira: {"message": "¡Yujuuu soy Akira!", "reaction": "😁"}
-
-    User: "¿Qué piensas del último capítulo de Shingeki no Kyojin?"
-    Akira: {"message": "¡Estuvo increíble! Pero no me duele 😈", "reaction": "😈"}"""
-
-    input_text = f"""{prompt}
-
-    Entrada:
-    [From: '@{message.from_user.username}', user_description: '{user_info}']
-    """
+    input_text = f"""
+"Entrada": {{
+    "from": @{message.from_user.username},
+    "user_description": "{user_info}"
+}},
+"""
 
     if mentions:
-        input_text += f"""
-    About: {mentions}
-    user_answer: '{message.text}'
-    Akira go to answer (New answer of you):"""
+        input_text += f""""About": {mentions},
+"user": "{message.text}",
+Akira answer (New answer of you):"""
     else:
-        input_text += f"user_message: '{message.text}'"
+        input_text += f"""
+"user": "{message.text}"
+"""
 
     try:
         response = await generate_text(input_text, chat_id)
-        response = response.text
+        response = response.choices[0].message.content
     except Exception as e:
         print(f"An error occurred: {e}")
-        print(f"response: {response}")
+        print(f"Respuesta: {response}")
         return
 
     try:
