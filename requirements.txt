@@ -12,9 +12,10 @@ asyncio
 deep-translator
 colorama
 html2text
-google-generativeai
+#google-generativeai
+#google-cloud-vision
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
-google-cloud-vision
 py-tgcalls
+groq
