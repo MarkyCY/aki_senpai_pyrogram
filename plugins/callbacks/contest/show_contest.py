@@ -133,11 +133,11 @@ async def sub_contest(app: Client, call: CallbackQuery):
     if found is True:
         await app.answer_callback_query(call.id, "Oh! Ya estabas registrado en el concurso...", True)
         return
-    
-    for disq in contest_sel['disqualified']:
-        if disq['user'] == user_id:
-            Disq = True
-            break
+    if 'disqualified' in contest_sel:
+        for disq in contest_sel['disqualified']:
+            if disq['user'] == user_id:
+                Disq = True
+                break
     
     if Disq is True:
         await app.answer_callback_query(call.id, "Lo siento pero estás descalificado para este concurso...", True)
