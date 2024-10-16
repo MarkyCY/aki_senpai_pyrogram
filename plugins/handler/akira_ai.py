@@ -30,11 +30,7 @@ akira_detect = filters.create(aki_detect)
 useControlMongoInc = UseControlMongo()
 
 async def generate_text(input, chat_id):
-    if chat_id == -1002094390065:
-        api_key = os.getenv('YIGA_GEMINI_API')
-        return
-    else:
-        api_key = os.getenv('GROQ_API')
+    api_key = os.getenv('GROQ_API')
     try:
         client = Groq(
             api_key=api_key,
@@ -166,6 +162,7 @@ Akira answer (New answer of you):"""
 
     try:
         response = await generate_text(input_text, chat_id)
+        print(response)
         response = response.choices[0].message.content
     except Exception as e:
         print(f"An error occurred: {e}")
