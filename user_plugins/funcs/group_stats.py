@@ -129,18 +129,21 @@ async def guardar_datos(stats):
         top_users=top_users_data,
         top_admins=top_admins_data
     )
-    #await Stats.update_one({"_id": "status_daily"}, {"$set": document_data.dict()}, upsert=True)
+    await Stats.update_one({"_id": "status_daily"}, {"$set": document_data.dict()}, upsert=True)
     return users
 
 async def async_post_image(url, params, image_path):
     async with aiohttp.ClientSession() as session:
         with open(image_path, 'rb') as file:
-            async with session.post(url, params=params, data={'file': file}) as response:
-                return await response.text()
+            data = {'image': file}
+            async with session.post(url, params=params, data=data) as response:
+                return await response.json()
 
 
 @Client.on_message(filters.command("stats"))
 async def stats_show(app: Client, message: Message):
+    db = await get_db()
+    Users = db.users
     await message.reply_text("Cargando...")
     stats = await app.invoke(functions.stats.GetMegagroupStats(
             channel= await app.resolve_peer(-1001485529816)
@@ -151,9 +154,24 @@ async def stats_show(app: Client, message: Message):
     user_list = await app.get_users(users)
 
     for user in user_list:
+        print("download phto", user)
         photo_download = await app.download_media(user.photo.small_file_id, file_name="user_photo.jpg")
-        url = "http://192.168.1.101:5000/upload"
+        url = "https://api.imgbb.com/1/upload"
         params = {
-            "user_id": user.id,
+            "key": "3c9f7d508db060250e97fec0d68bc0ac",
         }
-        await async_post_image(url, params, photo_download)
+        response = await async_post_image(url, params, photo_download)
+
+        usr_sel = await Users.find_one({"user_id": user.id})
+
+        if usr_sel is None:
+            continue
+        if "avatar" in usr_sel:
+            continue
+
+        print(usr_sel)
+
+        await Users.update_one({"user_id": user.id}, {"$set": {"avatar": response["data"]["url"]}})
+        print(response["data"]["url"])
+        
+    print("Finish Stats")
