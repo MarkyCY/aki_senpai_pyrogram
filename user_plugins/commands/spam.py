@@ -13,7 +13,7 @@ def spam(app: Client, message: Message):
         return message.reply_text("Este comando es exclusivo de Otaku Senpai")
     
     current_hour = datetime.now().hour
-    if current_hour >= 0 or current_hour < 5:
+    if current_hour >= 0 and current_hour < 5:
         pass
     else:
         return message.reply_text("Solo se puede hacer spam en horario de la madrugada.")
