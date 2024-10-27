@@ -28,8 +28,8 @@ def spam(app: Client, message: Message):
             app.delete_messages(message.chat.id, messages)
             messages = []
             break
-
-        msg = app.send_message(message.chat.id, f"Spam {i}")
+        
+        msg = app.send_message(message.chat.id, f"Spam {i}", message_thread_id=252001)
         messages.append(msg.id)
 
         if i % 5 == 0:
