@@ -12,12 +12,6 @@ def spam(app: Client, message: Message):
     if message.chat.id != -1001485529816:
         return message.reply_text("Este comando es exclusivo de Otaku Senpai")
     
-    current_hour = datetime.now().hour
-    if current_hour >= 0 and current_hour < 5:
-        pass
-    else:
-        return message.reply_text("Solo se puede hacer spam en horario de la madrugada.")
-    
     global stop_spam
     stop_spam = False
 
@@ -32,7 +26,7 @@ def spam(app: Client, message: Message):
         msg = app.send_message(message.chat.id, f"Spam {i}", message_thread_id=252001)
         messages.append(msg.id)
 
-        if i % 5 == 0:
+        if i % 10:
             time.sleep(3)
             app.delete_messages(message.chat.id, messages)
             messages = []
