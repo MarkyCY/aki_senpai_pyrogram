@@ -26,7 +26,7 @@ def spam(app: Client, message: Message):
         msg = app.send_message(message.chat.id, f"Spam {i}", message_thread_id=252001)
         messages.append(msg.id)
 
-        if i % 10 == 0:
+        if i % 5 == 0:
             time.sleep(3)
             app.delete_messages(message.chat.id, messages)
             messages = []
