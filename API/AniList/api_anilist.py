@@ -45,7 +45,7 @@ async def search_anime(name):
             if response.status == 200:
                 return await response.json()
             else:
-                raise aiohttp.HttpProcessingError(
+                raise aiohttp.ClientResponseError(
                     message=f"Error al realizar la solicitud: {response.status}",
                     code=response.status
                 )
@@ -97,7 +97,7 @@ async def search_anime_id(id):
             if response.status == 200:
                 return await response.json()
             else:
-                raise aiohttp.HttpProcessingError(
+                raise aiohttp.ClientResponseError(
                     message=f"Error al realizar la solicitud: {response.status}",
                     code=response.status
                 )
@@ -142,7 +142,7 @@ async def search_manga(name):
             if response.status == 200:
                 return await response.json()
             else:
-                raise aiohttp.HttpProcessingError(
+                raise aiohttp.ClientResponseError(
                     message=f"Error al realizar la solicitud: {response.status}",
                     code=response.status
                 )
@@ -190,7 +190,7 @@ async def search_manga_id(id):
             if response.status == 200:
                 return await response.json()
             else:
-                raise aiohttp.HttpProcessingError(
+                raise aiohttp.ClientResponseError(
                     message=f"Error al realizar la solicitud: {response.status}",
                     code=response.status
                 )
@@ -235,7 +235,7 @@ async def searchCharacter(name):
             if response.status == 200:
                 return await response.json()
             else:
-                raise aiohttp.HttpProcessingError(
+                raise aiohttp.ClientResponseError(
                     message=f"Error al realizar la solicitud: {response.status}",
                     code=response.status
                 )
@@ -282,7 +282,7 @@ async def searchCharacterId(id):
             if response.status == 200:
                 return await response.json()
             else:
-                raise aiohttp.HttpProcessingError(
+                raise aiohttp.ClientResponseError(
                     message=f"Error al realizar la solicitud: {response.status}",
                     code=response.status
                 )
