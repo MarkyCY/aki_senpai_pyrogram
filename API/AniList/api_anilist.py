@@ -45,10 +45,7 @@ async def search_anime(name):
             if response.status == 200:
                 return await response.json()
             else:
-                raise aiohttp.ClientResponseError(
-                    message=f"Error al realizar la solicitud: {response.status}",
-                    code=response.status
-                )
+                raise Exception(f"Error al realizar la solicitud: {response.status} - {response.reason}")
 
 async def search_anime_id(id):
     query = '''
