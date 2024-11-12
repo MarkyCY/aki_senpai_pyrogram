@@ -43,6 +43,9 @@ async def info_command(app: Client, message: Message, user_data=None):
         
         else:
             user = message.reply_to_message.from_user
+            
+    else:
+        user = message.reply_to_message.from_user
 
     user_action_id = user.id
     
