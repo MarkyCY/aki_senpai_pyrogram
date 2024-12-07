@@ -47,7 +47,6 @@ Solo puedes usar estos emojis: ["👍","👎","❤","🔥","🥰","👏","😁",
 Devuelve las respuestas en formato JSON: {"message": "respuesta", "reaction": "emoji"}.
 Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol y OJO fíjate primero si existe un mention al final y priorízalo. Y NO REPITAS NUNCA LOS MENSAJES TUYOS.
 """
-        print(system, input)
         chat_completion = client.chat.completions.create(
             messages=[
                 {
@@ -103,7 +102,7 @@ async def manejar_mensaje(app: Client, message: Message):
                 return True
         return False
 
-    if await useControlMongoInc.verif_limit(user_id) is False and await isAdmin(user_id) is False and chat_id != -1002094390065:
+    if await useControlMongoInc.verif_limit(user_id) is False and await isAdmin(user_id) is False:
         msg = await message.reply_text(text="Has llegado al límite de uso diario!")
         await asyncio.sleep(3)
         await app.delete_messages(chat_id, msg.id)
