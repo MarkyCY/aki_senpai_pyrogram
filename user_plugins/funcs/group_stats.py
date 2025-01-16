@@ -4,8 +4,14 @@ from pyrogram.raw import functions
 
 from database.mongodb import get_db
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+load_dotenv()
 
 import aiohttp
+import os
+
+imgbb_api = os.getenv('IMGBB_API')
 
 class User(BaseModel):
     user_id: int
@@ -141,10 +147,12 @@ async def async_post_image(url, params, image_path):
 
 
 @Client.on_message(filters.command("stats"))
-async def stats_show(app: Client, message: Message):
+async def stats_show(app: Client, message: Message = None):
+    print("Guardando estadísticas")
     db = await get_db()
     Users = db.users
-    await message.reply_text("Cargando...")
+    if message:
+        await message.reply_text("Cargando...")
     stats = await app.invoke(functions.stats.GetMegagroupStats(
             channel= await app.resolve_peer(-1001485529816)
         ))
@@ -154,19 +162,17 @@ async def stats_show(app: Client, message: Message):
     user_list = await app.get_users(users)
 
     for user in user_list:
-        print("download phto", user)
+        print("download phto", user.first_name)
         photo_download = await app.download_media(user.photo.small_file_id, file_name="user_photo.jpg")
         url = "https://api.imgbb.com/1/upload"
         params = {
-            "key": "3c9f7d508db060250e97fec0d68bc0ac",
+            "key": imgbb_api,
         }
         response = await async_post_image(url, params, photo_download)
 
         usr_sel = await Users.find_one({"user_id": user.id})
 
         if usr_sel is None:
-            continue
-        if "avatar" in usr_sel:
             continue
 
         print(usr_sel)

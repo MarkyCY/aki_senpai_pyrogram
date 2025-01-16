@@ -2,6 +2,8 @@ from pyrogram import Client
 from dotenv import load_dotenv
 from pyrogram.types import BotCommand
 
+from user_plugins.funcs.group_stats import stats_show
+
 # Carga los valores del archivo .env
 load_dotenv()
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -21,8 +23,8 @@ bot_token = os.getenv('BOT_TOKEN')
 
 user_api_id = os.getenv('USER_API_ID')
 user_api_hash = os.getenv('USER_API_HASH')
-#from logging import basicConfig, INFO
-#basicConfig(format="*%(levelname)s %(message)s", level=INFO, force=True)
+# from logging import basicConfig, INFO
+# basicConfig(format="*%(levelname)s %(message)s", level=INFO, force=True)
 
 
 plugins = dict(root="plugins")
@@ -68,6 +70,7 @@ scheduler = AsyncIOScheduler()
 tz = pytz.timezone('Cuba')
 scheduler.add_job(get_video_command, CronTrigger(minute='*/30', timezone=tz), args=(app,))
 scheduler.add_job(verif_ram, CronTrigger(hour='*/2', timezone=tz), args=(90,))
+scheduler.add_job(stats_show, CronTrigger(hour='23', minute='55', timezone=tz), args=(user_app,))
 scheduler.start()
 
 #Iniciar Proceso de la función main()
