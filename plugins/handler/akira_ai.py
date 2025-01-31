@@ -88,7 +88,6 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
             tool_choice="auto",
             max_tokens=1000,
         )
-        print(chat_completion)
         response_message = chat_completion.choices[0].message
         tool_calls = response_message.tool_calls
 
@@ -133,11 +132,9 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
             messages.append(second_response.choices[0].message)
 
             # Devolvemos la respuesta final
-            print(second_response)
             return second_response.choices[0].message.content
 
         messages.append(response_message)
-        print(response_message)
         return response_message.content
 
     except Exception as e:
