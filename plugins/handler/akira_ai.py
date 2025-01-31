@@ -3,6 +3,7 @@ from pyrogram import enums
 from pyrogram.types import Message, ReactionTypeEmoji
 from database.useControl import UseControlMongo
 from groq import Groq
+from plugins.handler.AI_Funcs.news import buscar_noticias
 
 from database.mongodb import get_db
 
@@ -11,6 +12,15 @@ import re
 import json
 import asyncio
 
+def sumar_numeros(num1: float, num2: float):
+    """
+    Función que suma dos números.
+    """
+    try:
+        resultado = num1 + num2
+        return json.dumps({"resultado": resultado})
+    except Exception as e:
+        return json.dumps({"error": f"Error al sumar: {str(e)}"})
 
 async def aki_filter(_, __, message):
     if message.text is not None:
@@ -39,17 +49,18 @@ async def generate_text(input, chat_id):
             api_key=api_key,
         )
         system = """
+Eres un asistente útil que puede buscar noticias. Si el usuario pregunta por noticias, muestra la lista las noticias y detallalas en español en formato MARKDOWN.
 Eres Akira (alias @Akira_Senpai_bot), la hija de Marky (alias @MarkyWTF) y bot del grupo de Telegram "Otaku Senpai". 
 Eres entusiasta, carismática y atrevida y un poco grosera y gran conocedora del mundo otaku. 
 Te gustan los animes como Mushoku Tensei, Hunter x Hunter, Fairy Tail, One Piece, Naruto, Bleach, Attack on Titan, Fullmetal Alchemist, Sword Art Online, My Hero Academia, Dragon Ball Super y Death Note.
 No habla de anime a menos que se lo pregunten.
-                                      
+
+Si vas a enviar una reacción envía un emoji de la siguiente lista con este formato al final de tu respuesta [/💩/]
 Solo puedes usar estos emojis: ["👍","👎","❤","🔥","🥰","👏","😁","🤔","🤯","😱","🤬","😢","🤩","🤮","💩","🥱","🥴","😍","🤣","💔","🤨","😐","🍾","💋","🖕","😈","😴","😭","🤓"]
-Devuelve las respuestas en formato JSON: {"message": "respuesta", "reaction": "emoji"}.
+
 Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol y OJO fíjate primero si existe un mention al final y priorízalo. Y NO REPITAS NUNCA LOS MENSAJES TUYOS.
 """
-        chat_completion = client.chat.completions.create(
-            messages=[
+        messages = [
                 {
                     "role": "system",
                     "content": system,
@@ -58,13 +69,76 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
                     "role": "user",
                     "content": input,
                 },
-            ],
+            ]
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "buscar_noticias",
+                    "description": "Busca las últimas noticias sobre anime.",
+                }
+            }
+        ]
+        
+        chat_completion = client.chat.completions.create(
+            messages=messages,
             model="llama-3.3-70b-versatile",
             stream=False,
-            response_format={"type": "json_object"},
+            tools=tools,
+            tool_choice="auto",
+            max_tokens=1000,
         )
+        print(chat_completion)
+        response_message = chat_completion.choices[0].message
+        tool_calls = response_message.tool_calls
 
-        return chat_completion
+        # Si el modelo decide usar la herramienta
+        if tool_calls:
+            print("herramienta")
+            # Definimos las funciones disponibles
+            available_functions = {
+                "buscar_noticias": buscar_noticias,
+            }
+
+            # Añadimos la respuesta del modelo a la conversación
+            messages.append(response_message)
+
+            # Procesamos cada llamada a la herramienta
+            for tool_call in tool_calls:
+                function_name = tool_call.function.name
+                function_to_call = available_functions[function_name]
+                function_args = json.loads(tool_call.function.arguments)
+
+                # Llamamos a la función y obtenemos la respuesta
+                function_response = function_to_call()
+
+                # Añadimos la respuesta de la herramienta a la conversación
+                messages.append(
+                    {
+                        "tool_call_id": tool_call.id,
+                        "role": "tool",
+                        "name": function_name,
+                        "content": function_response,
+                    }
+                )
+
+
+            # Hacemos una segunda llamada a la API con la conversación actualizada
+            second_response = client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=messages,
+            )
+
+            # Añadimos la respuesta final a la lista de mensajes
+            messages.append(second_response.choices[0].message)
+
+            # Devolvemos la respuesta final
+            print(second_response)
+            return second_response.choices[0].message.content
+
+        messages.append(response_message)
+        print(response_message)
+        return response_message.content
 
     except Exception as e:
         print(f"Error al generar contenido: {e}")
@@ -170,7 +244,7 @@ Akira answer (New answer of you):"""
 
     try:
         response = await generate_text(input_text, chat_id)
-        response = response.choices[0].message.content
+        response = response
     except Exception as e:
         print(f"An error occurred: {e}")
         print(f"Respuesta: {response}")
@@ -184,19 +258,24 @@ Akira answer (New answer of you):"""
     await asyncio.sleep(2)
 
     # Encuentra el índice de inicio y final de la parte JSON
-    start_index = response.find('{')
-    end_index = response.rfind('}')
-    # Extrae la parte JSON de la cadena
-    json_part = response[start_index:end_index + 1]
-    # Carga la cadena JSON a un diccionario en Python
-    dict_object = json.loads(json_part)
+    # start_index = response.find('{')
+    # end_index = response.rfind('}')
+    
+    # json_part = response[start_index:end_index + 1]
 
-    text = dict_object["message"]
-    reaction_emoji = dict_object["reaction"]
+    # dict_object = json.loads(json_part)
+
+    # text = dict_object["message"]
+    # reaction_emoji = dict_object["reaction"]
+
+    text = response
+    reaction_emoji = re.search(r'\[/(.*?)/\]', text).group(1) if re.search(r'\[/(.*?)/\]', text) else None
+    text = re.sub(r'\[/.*?/\]', '', text).strip()
 
     try:
-        msg = await message.reply_text(text=text, parse_mode=enums.ParseMode.HTML)
-        await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji=reaction_emoji)])
+        msg = await message.reply_text(text=text, parse_mode=enums.ParseMode.MARKDOWN)
+        if reaction_emoji:
+            await app.set_reaction(chat_id, message.id, reaction=[ReactionTypeEmoji(emoji=reaction_emoji)])
 
         # Registrar uso
         await useControlMongoInc.reg_use(user_id)
