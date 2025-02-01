@@ -14,7 +14,7 @@ def buscar_noticias():
     # Obtén todos los elementos 'atom:entry'
     all_entries = root.findall('atom:entry', ns)
     # Itera desde el final hacia el principio, tomando los últimos 10 elementos
-    for entry in all_entries[:5]:
+    for entry in all_entries[5]:
 
         title = entry.find('atom:title', ns).text
         title_clean = re.sub(r"This Week in Anime - ", "", title)
