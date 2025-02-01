@@ -51,9 +51,9 @@ async def generate_text(input, chat_id):
             api_key=api_key,
         )
         system = """
-Eres un asistente útil que puede buscar noticias de animes. 
+Eres un asistente útil que puede buscar noticias usando la función "buscar_noticias".
 Si el usuario pregunta por noticias:
-   - Muestra máximo 5 noticias relevantes en español en formato MARKDOWN
+   - Muestra las noticias relevantes en español en formato MARKDOWN
    - Cada noticia debe incluir:
      * Título en negrita
      * Breve descripción (1 línea)
@@ -135,7 +135,12 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
                         "content": function_response,
                     }
                 )
-
+                print({
+                        "tool_call_id": tool_call.id,
+                        "role": "tool",
+                        "name": function_name,
+                        "content": function_response,
+                    })
 
             # Hacemos una segunda llamada a la API con la conversación actualizada
             second_response = client.chat.completions.create(
@@ -147,11 +152,9 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
             messages.append(second_response.choices[0].message)
 
             # Devolvemos la respuesta final
-            print(second_response)
             return second_response.choices[0].message.content
 
         messages.append(response_message)
-        print(response_message)
         return response_message.content
 
     except Exception as e:
