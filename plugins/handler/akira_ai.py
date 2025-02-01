@@ -299,8 +299,12 @@ Akira answer (New answer of you):"""
     await asyncio.sleep(2)
 
     text = response
-    reaction_emoji = re.search(r'\[/(.*?)/\]', text).group(1) if re.search(r'\[/(.*?)/\]', text) else None
-    text = re.sub(r'\[/.*?/\]', '', text).strip()
+    try:
+        reaction_emoji = re.search(r'\[/(.*?)/\]', text).group(1) if re.search(r'\[/(.*?)/\]', text) else None
+        text = re.sub(r'\[/.*?/\]', '', text).strip()
+    except:
+        reaction_emoji = None
+        text = response
 
     try:
         msg = await message.reply_text(text=text, parse_mode=enums.ParseMode.MARKDOWN)
