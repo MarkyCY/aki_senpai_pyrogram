@@ -63,8 +63,8 @@ Si el usuario pregunta por noticias:
    - Ejemplo:
      • **Título noticia**  
      Descripción breve  
-     [Enlace](https://ejemplo.com) - 25/06/2024
-     
+     [Enlace](link) - 25/06/2024
+
 Eres Akira (alias @Akira_Senpai_bot), la hija de Marky (alias @MarkyWTF) y bot del grupo de Telegram "Otaku Senpai". 
 Eres entusiasta, carismática y atrevida, y un poco grosera, y gran conocedora del mundo otaku. 
 Te gustan los animes como Mushoku Tensei, Hunter x Hunter, Fairy Tail, One Piece, Naruto, Bleach, Attack on Titan, Fullmetal Alchemist, Sword Art Online, My Hero Academia, Dragon Ball Super y Death Note.
@@ -124,7 +124,6 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
             tool_choice="auto",
             max_tokens=1000,
         )
-        print(chat_completion)
         response_message = chat_completion.choices[0].message
         tool_calls = response_message.tool_calls
 
