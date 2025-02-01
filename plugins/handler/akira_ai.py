@@ -51,7 +51,7 @@ async def generate_text(input, chat_id):
             api_key=api_key,
         )
         system = """
-Eres un asistente útil que puede buscar noticias y realizar operaciones matemáticas. 
+Eres un asistente útil que puede buscar noticias de animes. 
 Si el usuario pregunta por noticias:
    - Muestra máximo 5 noticias relevantes en español en formato MARKDOWN
    - Cada noticia debe incluir:
@@ -92,27 +92,6 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
                     "name": "buscar_noticias",
                     "description": "Busca las últimas noticias sobre anime.",
                 }
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "sumar_numeros",
-                    "description": "Suma dos números.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "num1": {
-                                "type": "number",
-                                "description": "El primer número a sumar."
-                            },
-                            "num2": {
-                                "type": "number",
-                                "description": "El segundo número a sumar."
-                            }
-                        },
-                        "required": ["num1", "num2"]
-                    }
-                }
             }
         ]
         
@@ -133,7 +112,6 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
             # Definimos las funciones disponibles
             available_functions = {
                 "buscar_noticias": buscar_noticias,
-                "sumar_numeros": sumar_numeros,
             }
 
             # Añadimos la respuesta del modelo a la conversación
