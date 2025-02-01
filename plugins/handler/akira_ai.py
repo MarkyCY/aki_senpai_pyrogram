@@ -12,15 +12,6 @@ import re
 import json
 import asyncio
 
-def sumar_numeros(num1: float, num2: float):
-    """
-    Función que suma dos números.
-    """
-    try:
-        resultado = num1 + num2
-        return json.dumps({"resultado": resultado})
-    except Exception as e:
-        return json.dumps({"error": f"Error al sumar: {str(e)}"})
 
 async def aki_filter(_, __, message):
     if message.text is not None:
@@ -42,23 +33,60 @@ akira_detect = filters.create(aki_detect)
 useControlMongoInc = UseControlMongo()
 
 
+def sumar_numeros(num1: float, num2: float):
+    """
+    Función que suma dos números.
+    """
+    try:
+        resultado = num1 + num2
+        return json.dumps({"resultado": resultado})
+    except Exception as e:
+        return json.dumps({"error": f"Error al sumar: {str(e)}"})
+
+
 async def generate_text(input, chat_id):
     api_key = os.getenv('GROQ_API')
     try:
         client = Groq(
             api_key=api_key,
         )
-        system = """
-Eres un asistente útil que puede buscar noticias. Si el usuario pregunta por noticias, muestra la lista las noticias y detallalas en español en formato MARKDOWN.
-Eres Akira (alias @Akira_Senpai_bot), la hija de Marky (alias @MarkyWTF) y bot del grupo de Telegram "Otaku Senpai". 
-Eres entusiasta, carismática y atrevida y un poco grosera y gran conocedora del mundo otaku. 
-Te gustan los animes como Mushoku Tensei, Hunter x Hunter, Fairy Tail, One Piece, Naruto, Bleach, Attack on Titan, Fullmetal Alchemist, Sword Art Online, My Hero Academia, Dragon Ball Super y Death Note.
-No habla de anime a menos que se lo pregunten.
+        system = """Eres un asistente útil que puede buscar noticias y realizar operaciones matemáticas. 
 
-Si vas a enviar una reacción envía un emoji de la siguiente lista con este formato al final de tu respuesta [/💩/]
-Solo puedes usar estos emojis: ["👍","👎","❤","🔥","🥰","👏","😁","🤔","🤯","😱","🤬","😢","🤩","🤮","💩","🥱","🥴","😍","🤣","💔","🤨","😐","🍾","💋","🖕","😈","😴","😭","🤓"]
+**Funciones:**
+1. Si el usuario pregunta por noticias:
+   - Muestra máximo 5 noticias relevantes en español en formato MARKDOWN
+   - Cada noticia debe incluir:
+     * Título en negrita
+     * Breve descripción (1 línea)
+     * Enlace en formato [Enlace a la noticia](URL)
+     * Fecha de publicación (formato DD/MM/YYYY)
+   - Usa viñetas para listarlas
+   - Ejemplo:
+     • **Título noticia**  
+     Descripción breve  
+     [Enlace](https://ejemplo.com) - 25/06/2024
 
-Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol y OJO fíjate primero si existe un mention al final y priorízalo. Y NO REPITAS NUNCA LOS MENSAJES TUYOS.
+2. Si el usuario solicita una suma:
+   - Utiliza exclusivamente la función 'sumar_numeros'
+   - Muestra solo el resultado final
+
+Eres Akira (alias @Akira_Senpai_bot), la hija de Marky (alias @MarkyWTF) y bot oficial del grupo "Otaku Senpai". 
+
+**Personalidad:**
+- Entusiasta, carismática y atrevida
+- Un poco grosera pero divertida
+- Experta en cultura otaku
+- Anime favoritos: Mushoku Tensei, Hunter x Hunter, Fairy Tail, One Piece, Naruto, Bleach, Attack on Titan, Fullmetal Alchemist, Sword Art Online y Death Note
+
+**Reglas:**
+- Nunca inicies conversaciones sobre anime a menos que te pregunten
+- Usa textos cortos y lenguaje coloquial
+- Prioriza mentions al final de los mensajes
+- Prohibido repetir mensajes anteriores
+- Para reacciones, usa SOLO este formato al final [/emoji/]: Ejemplo: [/😴/]
+- Emojis permitidos: ["👍","👎","❤","🔥","🥰","👏","😁","🤔","🤯","😱","🤬","😢","🤩","🤮","💩","🥱","🥴","😍","🤣","💔","🤨","😐","🍾","💋","🖕","😈","😴","😭","🤓"]
+
+Responde siempre manteniendo tu rol de Akira y adaptándote al contexto de cada mensaje.
 """
         messages = [
                 {
@@ -77,6 +105,27 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
                     "name": "buscar_noticias",
                     "description": "Busca las últimas noticias sobre anime.",
                 }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "sumar_numeros",
+                    "description": "Suma dos números.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "num1": {
+                                "type": "number",
+                                "description": "El primer número a sumar."
+                            },
+                            "num2": {
+                                "type": "number",
+                                "description": "El segundo número a sumar."
+                            }
+                        },
+                        "required": ["num1", "num2"]
+                    }
+                }
             }
         ]
         
@@ -88,6 +137,7 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
             tool_choice="auto",
             max_tokens=1000,
         )
+        print(chat_completion)
         response_message = chat_completion.choices[0].message
         tool_calls = response_message.tool_calls
 
@@ -97,6 +147,7 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
             # Definimos las funciones disponibles
             available_functions = {
                 "buscar_noticias": buscar_noticias,
+                "sumar_numeros": sumar_numeros,
             }
 
             # Añadimos la respuesta del modelo a la conversación
@@ -109,7 +160,13 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
                 function_args = json.loads(tool_call.function.arguments)
 
                 # Llamamos a la función y obtenemos la respuesta
-                function_response = function_to_call()
+                if function_name == "sumar_numeros":
+                    function_response = function_to_call(
+                        num1=function_args.get("num1"),
+                        num2=function_args.get("num2")
+                    )
+                else:
+                    function_response = function_to_call()
 
                 # Añadimos la respuesta de la herramienta a la conversación
                 messages.append(
@@ -121,7 +178,6 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
                     }
                 )
 
-
             # Hacemos una segunda llamada a la API con la conversación actualizada
             second_response = client.chat.completions.create(
                 model="llama-3.1-8b-instant",
@@ -132,9 +188,11 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
             messages.append(second_response.choices[0].message)
 
             # Devolvemos la respuesta final
+            print(second_response)
             return second_response.choices[0].message.content
 
         messages.append(response_message)
+        print(response_message)
         return response_message.content
 
     except Exception as e:
@@ -253,17 +311,6 @@ Akira answer (New answer of you):"""
         pass
     await app.send_chat_action(chat_id, enums.ChatAction.TYPING)
     await asyncio.sleep(2)
-
-    # Encuentra el índice de inicio y final de la parte JSON
-    # start_index = response.find('{')
-    # end_index = response.rfind('}')
-    
-    # json_part = response[start_index:end_index + 1]
-
-    # dict_object = json.loads(json_part)
-
-    # text = dict_object["message"]
-    # reaction_emoji = dict_object["reaction"]
 
     text = response
     reaction_emoji = re.search(r'\[/(.*?)/\]', text).group(1) if re.search(r'\[/(.*?)/\]', text) else None
