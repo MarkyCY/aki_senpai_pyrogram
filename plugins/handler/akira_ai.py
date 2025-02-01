@@ -124,13 +124,7 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
                 function_args = json.loads(tool_call.function.arguments)
 
                 # Llamamos a la función y obtenemos la respuesta
-                if function_name == "sumar_numeros":
-                    function_response = function_to_call(
-                        num1=function_args.get("num1"),
-                        num2=function_args.get("num2")
-                    )
-                else:
-                    function_response = function_to_call()
+                function_response = function_to_call()
 
                 # Añadimos la respuesta de la herramienta a la conversación
                 messages.append(
@@ -141,6 +135,7 @@ Responde el mensaje del usuario como Akira en textos cortos, manteniendo tu rol 
                         "content": function_response,
                     }
                 )
+
 
             # Hacemos una segunda llamada a la API con la conversación actualizada
             second_response = client.chat.completions.create(
