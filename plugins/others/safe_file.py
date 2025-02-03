@@ -171,7 +171,7 @@ def analyze_image(image, prompt, api_key, is_url=False):
                     ],
                 }
             ],
-            temperature=1,
+            temperature=2,
             max_completion_tokens=1024,
             top_p=1,
             stream=False,
