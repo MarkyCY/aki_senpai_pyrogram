@@ -1,10 +1,17 @@
 from pyrogram import Client, filters, utils, enums
 from pyrogram.types import Message, ChatPermissions
 
-from plugins.others.safe_file import detect_safe_search
-from plugins.others.compare_img import compare_images
+from plugins.others.safe_file import process_image
+# from plugins.others.compare_img import compare_images
+from dotenv import load_dotenv
+
+load_dotenv()
 
 import os
+import base64
+import io
+
+groq_api = os.getenv('GROQ_API')
 
 async def progress(current, total):
     print(f"{current * 100 / total:.1f}%")
@@ -26,6 +33,12 @@ can_pin_messages = False,
 can_manage_topics = False,
 can_send_media_messages = False,
 )
+
+
+def encode_image(image):
+    buffered = io.BytesIO()
+    image.save(buffered, format="JPEG")
+    return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 @Client.on_message(filters.command("rev"))
 async def revise_command(app: Client, message: Message):
@@ -58,18 +71,22 @@ async def revise_command(app: Client, message: Message):
     else:
         os.remove(downloaded_file)
         return await message.reply_text(text=f"Esto solo funciona con imagenes o stickers.")
-
-    safe, explain = detect_safe_search(downloaded_file)
-
-    resul_comp = await compare_images(downloaded_file)
     
+
+    # safe, explain = detect_safe_search(downloaded_file)
+
+    # resul_comp = await compare_images(downloaded_file)
+    prompt = "Describe all elements in this image in detail, including text, objects, and context. If the image isn't safe you must say, 'the image is Unsafe'."
+    
+    description, safety = process_image(downloaded_file, None, prompt, groq_api)
+
     os.remove(downloaded_file)
 
-    if resul_comp is True:
+    if safety == "unsafe":
         ban = True
 
-    if safe is False:
-        ban = True
+    # if safe is False:
+    #     ban = True
 
     if ban is True:
 
@@ -83,13 +100,13 @@ async def revise_command(app: Client, message: Message):
         await app.forward_messages(-1001664356911, message.chat.id, message.reply_to_message.id, message_thread_id=82096)
         await app.send_message(
             -1001664356911,
-            text=f"Contenido no deseado de <a href='tg://user?id={message.reply_to_message.from_user.id}'>{message.reply_to_message.from_user.first_name}</a>{explain}", 
-            parse_mode=enums.ParseMode.HTML,
+            text=f"Contenido no deseado de <a href='tg://user?id={message.reply_to_message.from_user.id}'>{message.reply_to_message.from_user.first_name}</a>\n<blockquote>{description}</blockquote>", 
+            parse_mode=enums.ParseMode.MARKDOWN,
             message_thread_id=82096
             )
 
         await app.delete_messages(chat_id, message.reply_to_message.id)
 
     else:
-        await message.reply_text(f"Esta imagen está permitida\n {explain}")
+        await message.reply_text(f"Esta imagen está permitida\n <blockquote>{description}</blockquote>", parse_mode=enums.ParseMode.MARKDOWN,)
     
