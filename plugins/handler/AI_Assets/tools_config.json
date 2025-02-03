@@ -1,0 +1,43 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "buscar_noticias",
+      "description": "Busca las últimas noticias sobre anime."
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "web_new_search",
+      "description": "Busca en internet noticias por su nombre",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "La consulta a buscar"
+          }
+        },
+        "required": ["query"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "view_web",
+      "description": "Entrar a un sitio y extraer información",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "URL": {
+            "type": "string",
+            "description": "URL del sitio"
+          }
+        },
+        "required": ["URL"]
+      }
+    }
+  }
+]
