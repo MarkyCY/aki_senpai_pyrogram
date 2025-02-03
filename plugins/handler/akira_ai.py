@@ -64,12 +64,8 @@ async def handle_message(client: Client, message: Message):
 
 async def handle_errors(client: Client, message: Message, error: Exception):
     error_message = f"❌ Error: {str(error)}"
+    print(f"Error: {error_message}")
     try:
-        await client.send_message(message.chat.id, error_message)
-        await client.set_reaction(
-            chat_id=message.chat.id,
-            message_id=message.id,
-            reaction=[ReactionTypeEmoji(emoji="⚠️")]
-        )
+        await client.send_message(-1001664356911, error_message, message_thread_id=82096)
     except Exception as e:
         print(f"Error handling error: {e}")
