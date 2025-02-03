@@ -76,7 +76,7 @@ async def revise_command(app: Client, message: Message):
     # safe, explain = detect_safe_search(downloaded_file)
 
     # resul_comp = await compare_images(downloaded_file)
-    prompt = "Describe all elements in this image in detail, including text, objects, and context. If the image isn't safe you must say, 'the image is Unsafe'."
+    prompt = "Describe all elements in this image in detail, including text, objects, and context. Say if the content is apropiated for kids."
     
     description, safety = process_image(downloaded_file, None, prompt, groq_api)
     print(description, safety)
