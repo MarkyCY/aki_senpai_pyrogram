@@ -47,9 +47,9 @@ def WebGetContents_Tool(URL, premium):
 
         if DEBUG:
             print(f"Successfully retrieved content from {URL}")
-            print(f"Content preview: {text}...")
+            print(f"Content preview: {text[:4000]}...")
 
-        return text
+        return text[:2000]
 
     except requests.RequestException as e:
         error_message = f"Error retrieving content from {URL}: {str(e)}"
