@@ -190,7 +190,7 @@ def check_content_safety(image_description, api_key):
             messages=[
                 {
                     "role": "system", 
-                    "content": "You are a content safety classifier. Analyze the text and determine if it contains unsafe content for kids."
+                    "content": "You are a content safety classifier. Analyze the text and determine if it contains unsafe content for kids or younger viewers."
                 },
                 {
                     "role": "user", 
