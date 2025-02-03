@@ -200,6 +200,7 @@ def check_content_safety(image_description, api_key):
             model="llama-guard-3-8b",
         )
         res = chat_completion.choices[0].message.content
+        print(res.lower())
         if "unsafe" in res.lower():
             return "unsafe"
         return "safe"
