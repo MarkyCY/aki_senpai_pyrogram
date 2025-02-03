@@ -23,8 +23,8 @@ bot_token = os.getenv('BOT_TOKEN')
 
 user_api_id = os.getenv('USER_API_ID')
 user_api_hash = os.getenv('USER_API_HASH')
-from logging import basicConfig, INFO
-basicConfig(format="*%(levelname)s %(message)s", level=INFO, force=True)
+# from logging import basicConfig, INFO
+# basicConfig(format="*%(levelname)s %(message)s", level=INFO, force=True)
 
 
 plugins = dict(root="plugins")
