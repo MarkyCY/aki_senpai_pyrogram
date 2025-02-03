@@ -79,6 +79,7 @@ async def revise_command(app: Client, message: Message):
     prompt = "Describe all elements in this image in detail, including text, objects, and context. If the image isn't safe you must say, 'the image is Unsafe'."
     
     description, safety = process_image(downloaded_file, None, prompt, groq_api)
+    print(description, safety)
 
     os.remove(downloaded_file)
 
