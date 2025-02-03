@@ -5,9 +5,9 @@ import xml.etree.ElementTree as ET
 
 
 def buscar_noticias(premium):
-    if premium is False:
-        print("Solo usuarios premium pueden buscar en internet.")
-        return "Notification: Este usuario no es Premium"
+    # if premium is False:
+    #     print("Solo usuarios premium pueden buscar en internet.")
+    #     return "Notification: Este usuario no es Premium"
     
     response = requests.get("https://www.animenewsnetwork.com/this-week-in-anime/atom.xml?ann-edition=w")
     xml_data = response.text
