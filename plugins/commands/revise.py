@@ -101,7 +101,7 @@ async def revise_command(app: Client, message: Message):
         await app.forward_messages(-1001664356911, message.chat.id, message.reply_to_message.id, message_thread_id=82096)
         await app.send_message(
             -1001664356911,
-            text=f"Contenido no deseado de <a href='tg://user?id={message.reply_to_message.from_user.id}'>{message.reply_to_message.from_user.first_name}</a>\n<blockquote>{description}</blockquote>", 
+            text=f"Contenido no deseado de <a href='tg://user?id={message.reply_to_message.from_user.id}'>{message.reply_to_message.from_user.first_name}</a>\n<blockquote>{description[:400]}</blockquote>", 
             parse_mode=enums.ParseMode.MARKDOWN,
             message_thread_id=82096
             )
@@ -109,5 +109,5 @@ async def revise_command(app: Client, message: Message):
         await app.delete_messages(chat_id, message.reply_to_message.id)
 
     else:
-        await message.reply_text(f"Esta imagen está permitida\n <blockquote>{description}</blockquote>", parse_mode=enums.ParseMode.MARKDOWN,)
+        await message.reply_text(f"Esta imagen está permitida\n <blockquote>{description[:400]}</blockquote>", parse_mode=enums.ParseMode.MARKDOWN,)
     
