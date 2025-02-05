@@ -71,7 +71,7 @@ async def get_premiums():
 
     users_id = []
     stats = await Stats.find_one({"_id": "status_daily"})
-    for user in stats['top_users'][:10]:
+    for user in stats['top_users'][:5]:
         users_id.append(user['user_id'])
 
     return users_id
