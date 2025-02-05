@@ -1,4 +1,5 @@
-from pyrogram import Client
+import re
+from pyrogram import Client, enums
 from pyrogram.types import Message, ReactionTypeEmoji
 from pyrogram import filters
 
@@ -10,7 +11,8 @@ from plugins.handler.AI_Assets.utils import (
     validate_message,
     process_response,
     check_permissions,
-    check_usage_limits
+    check_usage_limits,
+    get_premiums
 )
 from database.useControl import UseControlMongo
 
@@ -33,8 +35,10 @@ async def handle_message(client: Client, message: Message):
         Admins = db.admins
         
         admins = [doc['user_id'] async for doc in Admins.find()]
+        premiums = await get_premiums()
+
         premium = False
-        if message.from_user.id in admins:
+        if message.from_user.id in admins or message.from_user.id in premiums:
             premium = True
         
         # Verificación de permisos y límites

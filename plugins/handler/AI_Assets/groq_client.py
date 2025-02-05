@@ -6,7 +6,9 @@ from pyrogram.types import Message
 
 from plugins.handler.AI_Assets.get_web_data import WebGetContents_Tool
 from plugins.handler.AI_Assets.news import buscar_noticias
+from plugins.handler.AI_Assets.utils import format_message_to_markdown
 from plugins.others.WebNewSearch import web_new_search
+from plugins.others.WebSearch import web_search
 
 class GroqClient:
     def __init__(self, system_prompt_path: str, tools_config: str, emoji_list: str):
@@ -24,6 +26,7 @@ class GroqClient:
         Construye el prompt para la API de Groq basándose en el mensaje del usuario,
         la información del usuario y las menciones.
         """
+        text = format_message_to_markdown(message)
         input_text = f"""
 "Entrada": {{
     "from": @{message.from_user.username},
@@ -33,13 +36,12 @@ class GroqClient:
 
         if mentions:
             input_text += f""""About": {mentions},
-"user": "{message.text}",
+"user": "{text}",
 Akira answer (New answer of you):"""
         else:
             input_text += f"""
-"user": "{message.text}"
+"user": "{text}"
 """
-
         return input_text
 
     async def generate_response(self, input_text: str, chat_id: int, premium: bool) -> Optional[str]:
@@ -71,6 +73,7 @@ Akira answer (New answer of you):"""
 
         available_functions = {
             "buscar_noticias": buscar_noticias,
+            "web_search": web_search,
             "web_new_search": web_new_search,
             "view_web": WebGetContents_Tool,
         }
@@ -79,6 +82,7 @@ Akira answer (New answer of you):"""
 
         for tool_call in response.choices[0].message.tool_calls:
             function_name = tool_call.function.name
+            print(tool_call.function.arguments)
             function_args = json.loads(tool_call.function.arguments)
             function_args["premium"] = premium
             

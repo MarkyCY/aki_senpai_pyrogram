@@ -39,5 +39,22 @@
         "required": ["URL"]
       }
     }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "web_search",
+      "description": "Buscar información en internet",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "La consulta a buscar"
+          }
+        },
+        "required": ["query"]
+      }
+    }
   }
 ]

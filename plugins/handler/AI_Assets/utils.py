@@ -3,6 +3,7 @@ from typing import Dict, List
 from pyrogram.types import Message, ReactionTypeEmoji
 from pyrogram import Client, enums
 from database.useControl import UseControlMongo
+from database.mongodb import get_db
 
 useControlMongoInc = UseControlMongo()
 
@@ -37,7 +38,8 @@ async def handle_mentions(client: Client, message: Message, users_collection) ->
         username = message.reply_to_message.from_user.username or message.reply_to_message.from_user.first_name
         username = f"@{username}" if username else username
 
-        text = message.reply_to_message.text or message.reply_to_message.caption or ""
+        text = format_message_to_markdown(message.reply_to_message)
+        #text = message.reply_to_message.text or message.reply_to_message.caption or ""
 
         search_user = await users_collection.find_one({"user_id": user_reply_id})
 
@@ -60,3 +62,84 @@ async def process_response(client: Client, message: Message, response: str):
     msg = await message.reply(text=text, parse_mode=enums.ParseMode.MARKDOWN)
     if reaction_emoji:
         await client.set_reaction(message.chat.id, message.id, reaction=[ReactionTypeEmoji(emoji=reaction_emoji)])
+
+
+async def get_premiums():
+    # Conectar a la base de datos
+    db = await get_db()
+    Stats = db.stats
+
+    users_id = []
+    stats = await Stats.find_one({"_id": "status_daily"})
+    for user in stats['top_users']:
+        users_id.append(user['user_id'])
+
+    return users_id
+
+def format_message_to_markdown(message) -> str:
+    """
+    Convierte un mensaje de Telegram con entidades de formato a Markdown.
+    
+    Args:
+        message: Objeto Message de Pyrogram
+        
+    Returns:
+        str: Texto formateado en Markdown
+    """
+    # Obtener el texto y las entidades
+    text = message.text or message.caption or ""
+    entities = message.entities or []
+    
+    # Ordenar entidades en orden inverso para evitar conflictos de offsets
+    sorted_entities = sorted(
+        entities,
+        key=lambda x: (-x.offset, -x.length),
+        reverse=False
+    )
+
+    for entity in sorted_entities:
+        start = entity.offset
+        end = start + entity.length
+        entity_type = re.sub(r'MessageEntityType\.', '', str(entity.type)).lower()
+        original = text[start:end]
+
+        # Aplicar formato según el tipo de entidad
+        if entity_type == "bold":
+            replacement = f"**{original}**"
+        elif entity_type == "italic":
+            replacement = f"*{original}*"
+        elif entity_type == "underline":
+            replacement = f"__{original}__"
+        elif entity_type == "strikethrough":
+            replacement = f"~~{original}~~"
+        elif entity_type == "spoiler":
+            replacement = f"||{original}||"
+        elif entity_type == "blockquote":
+            replacement = "\n".join(f"> {line}" for line in original.split("\n"))
+        elif entity_type == "code":
+            replacement = f"`{original}`"
+        elif entity_type == "pre":
+            lang = getattr(entity, "language", "")
+            replacement = f"```{lang}\n{original}\n```"
+        elif entity_type == "text_link":
+            url = entity.url
+            replacement = f"[{original}]({url})"
+        elif entity_type == "mention":
+            replacement = f"{original}"
+        elif entity_type == "url":
+            replacement = f"[{original}]({original})"
+        elif entity_type == "email":
+            replacement = f"`{original}`"
+        elif entity_type == "phone_number":
+            replacement = f"`{original}`"
+        elif entity_type == "hashtag":
+            replacement = original  # Mantener formato original
+        elif entity_type == "cashtag":
+            replacement = original  # Mantener formato original
+        else:
+            replacement = original  # Para tipos no soportados
+
+        # Reemplazar en el texto
+        text = text[:start] + replacement + text[end:]
+
+    return text
