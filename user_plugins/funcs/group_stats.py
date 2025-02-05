@@ -68,7 +68,7 @@ async def guardar_datos(stats):
     top_users_data = []
 
     # Recorrer los 20 usuarios top y buscar su first_name en stats.users
-    for poster in sorted_posters[:10]:
+    for poster in sorted_posters:
         user_id = poster.user_id
         messages = poster.messages  # mensajes
         avg_chars = poster.avg_chars  # caracteres por mensaje
