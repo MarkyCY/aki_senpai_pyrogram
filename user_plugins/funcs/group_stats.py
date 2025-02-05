@@ -163,19 +163,20 @@ async def stats_show(app: Client, message: Message = None):
 
     for user in user_list:
         print("download phto", user.first_name)
-        photo_download = await app.download_media(user.photo.small_file_id, file_name="user_photo.jpg")
-        url = "https://api.imgbb.com/1/upload"
-        params = {
-            "key": imgbb_api,
-        }
-        response = await async_post_image(url, params, photo_download)
+        try:
+            photo_download = await app.download_media(user.photo.small_file_id, file_name="user_photo.jpg")
+            url = "https://api.imgbb.com/1/upload"
+            params = {
+                "key": imgbb_api,
+            }
+            response = await async_post_image(url, params, photo_download)
 
-        usr_sel = await Users.find_one({"user_id": user.id})
+            usr_sel = await Users.find_one({"user_id": user.id})
 
-        if usr_sel is None:
+            if usr_sel is None:
+                continue
+        except:
             continue
-
-        print(usr_sel)
 
         await Users.update_one({"user_id": user.id}, {"$set": {"avatar": response["data"]["url"]}})
         print(response["data"]["url"])
