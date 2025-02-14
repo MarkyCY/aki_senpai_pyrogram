@@ -4,7 +4,6 @@ from pyrogram import filters
 from datetime import datetime, timedelta
 
 import random
-from datetime import datetime
 from database.mongodb import get_db
 
 # Definimos una lista de mensajes de bienvenida por defecto

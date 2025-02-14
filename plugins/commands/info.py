@@ -8,6 +8,13 @@ from datetime import datetime
 
 group_perm = [-1001485529816, -1001664356911]
 
+def compare_dates(enter_timestamp):
+    enter_date = datetime.fromtimestamp(enter_timestamp)  # Convertimos el timestamp a datetime
+    today = datetime.now()  # Obtenemos la fecha actual
+
+    difference = today - enter_date  # Calculamos la diferencia en días
+    return difference.days  # Retornamos True si la diferencia es menor o igual a los días especificados
+
 @Client.on_message(filters.command('info'))
 async def info_command(app: Client, message: Message, user_data=None):
     # Conectar a la base de datos
@@ -93,6 +100,7 @@ async def info_command(app: Client, message: Message, user_data=None):
     if date is not None:
         dt_object = datetime.fromtimestamp(date)
         msg += f"\n📅Fecha de entrada: {dt_object.strftime('%d/%m/%Y %I:%M %p')}\n"
+        msg += f"⏰Días en el grupo: {compare_dates(date)} días"
     
     if user_data is None:
         await app.send_message(message.chat.id, text=msg, reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), reply_markup=markup)

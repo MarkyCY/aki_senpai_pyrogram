@@ -57,7 +57,7 @@ async def new_member(_, __, message):
     
 new_member_detect = filters.create(new_member)
 
-@Client.on_message(filters.group & new_member_detect & (filters.photo | filters.sticker))
+@Client.on_message(filters.group & new_member_detect & (filters.text | filters.photo | filters.sticker))
 async def detect_new_user(app: Client, message: Message):
     chat_id = message.chat.id
 
@@ -65,8 +65,7 @@ async def detect_new_user(app: Client, message: Message):
 
     if chat_id not in group_perm:
         return
-    
-    username = message.from_user.username
+
     entities = message.entities or []
     text = message.text or message.caption or ""
     mute = None
@@ -87,13 +86,17 @@ async def detect_new_user(app: Client, message: Message):
             url = entity.url
             mute = True
             reason = f"Link: [{original}]({url})"
+
+            if original.startswith('https://t.me/OtakuSenpai2020') or (url and url.startswith('https://t.me/OtakuSenpai2020')):
+                mute = False
+
             explain = f"Los nuevos usuarios no tienen permiso para enviar enlaces en el grupo hasta que pasen 5 días desde su entrada al grupo. \n\nInfo: https://t.me/OtakuSenpai2020/251766/2172877"
         elif entity_type == "mention":
             mute = True
             reason = f"Mention: {original}"
             explain = f"Los nuevos usuarios no tienen permiso para hacer menciones en el grupo hasta que pasen 5 días desde su entrada al grupo. \n\nInfo: https://t.me/OtakuSenpai2020/251766/2172877"
             try:
-                get_user = await app.get_chat_member(-1001485529816, username)
+                get_user = await app.get_chat_member('OtakuSenpai2020', original)
                 if get_user:
                     mute = False
             except:
