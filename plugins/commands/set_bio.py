@@ -34,9 +34,9 @@ async def set_bio_command(app: Client, message: Message):
     description = args[1]
     notice = "Descripción actualizada correctamente."
     username = message.reply_to_message.from_user.username
-    if len(description) > 100:
-        description = description[:100]
-        notice += "\n\nEsta descripción se redujo a 100 caracteres."
+    if len(description) > 250:
+        description = description[:250]
+        notice += "\n\nEsta descripción se redujo a 250 caracteres."
 
     user_id = message.reply_to_message.from_user.id
     await users.update_one({"user_id": user_id}, {"$set": {"username": username, "description": description}}, upsert=True)
