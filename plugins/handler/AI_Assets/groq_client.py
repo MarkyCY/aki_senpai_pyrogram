@@ -4,7 +4,7 @@ from groq import Groq
 from typing import Optional, Any
 from pyrogram.types import Message
 
-from plugins.handler.AI_Assets.get_web_data import WebGetContents_Tool
+#from plugins.handler.AI_Assets.get_web_data import WebGetContents_Tool
 from plugins.handler.AI_Assets.news import buscar_noticias
 from plugins.handler.AI_Assets.utils import format_message_to_markdown
 from plugins.others.WebNewSearch import web_new_search
@@ -75,7 +75,7 @@ Akira answer (New answer of you):"""
             "buscar_noticias": buscar_noticias,
             "web_search": web_search,
             "web_new_search": web_new_search,
-            "view_web": WebGetContents_Tool,
+            #"view_web": WebGetContents_Tool,
         }
 
         messages.append(response.choices[0].message)
