@@ -100,7 +100,7 @@ Concurso de <strong>{contest_sel['title']}</strong>
     try:
         await app.edit_message_text(chat_id, mid, text=text, parse_mode=enums.ParseMode.HTML, reply_markup=markup)
     except:    
-        await app.edit_inline_reply_markup(inline_message_id=mid, reply_markup=markup)
+        await app.edit_inline_reply_markup(inline_message_id=str(mid), reply_markup=markup)
 
 
 @Client.on_callback_query(filters.regex(r"^sub_contest_[a-f\d]{24}$"))
