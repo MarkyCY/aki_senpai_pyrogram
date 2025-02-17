@@ -97,7 +97,10 @@ Concurso de <strong>{contest_sel['title']}</strong>
     buttons.append([InlineKeyboardButton("🔙Atrás", callback_data=f"back_contests")])
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)
 
-    await app.edit_message_text(chat_id, mid, text=text, parse_mode=enums.ParseMode.HTML, reply_markup=markup)
+    try:
+        await app.edit_message_text(chat_id, mid, text=text, parse_mode=enums.ParseMode.HTML, reply_markup=markup)
+    except:    
+        await app.edit_inline_reply_markup(inline_message_id=mid, reply_markup=markup)
 
 
 @Client.on_callback_query(filters.regex(r"^sub_contest_[a-f\d]{24}$"))
