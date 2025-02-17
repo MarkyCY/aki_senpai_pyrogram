@@ -49,7 +49,6 @@ async def show_contest(app: Client, call: CallbackQuery, re_open=None):
     chat_id = call.message.chat.id
     username = call.from_user.username
     mid = call.message.id
-    m_text = call.message.text
 
     db = await get_db()
     contest = db.contest
@@ -98,9 +97,9 @@ Concurso de <strong>{contest_sel['title']}</strong>
     buttons.append([InlineKeyboardButton("🔙Atrás", callback_data=f"back_contests")])
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)
 
-    if m_text != text:
+    try:
         await app.edit_message_text(chat_id, mid, text=text, parse_mode=enums.ParseMode.HTML, reply_markup=markup)
-    else:    
+    except:    
         await app.edit_inline_reply_markup(inline_message_id=str(mid), reply_markup=markup)
 
 
