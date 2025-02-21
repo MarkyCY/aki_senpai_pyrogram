@@ -15,13 +15,13 @@ imgbb_api = os.getenv('IMGBB_API')
 
 class User(BaseModel):
     user_id: int
-    first_name: str
+    first_name: str | None
     messages: int
     avg_chars: float
 
 class Admin(BaseModel):
     user_id: int
-    first_name: str
+    first_name: str | None
     deleted: int
     kicked: int
     banned: int
@@ -182,3 +182,24 @@ async def stats_show(app: Client, message: Message = None):
         print(response["data"]["url"])
         
     print("Finish Stats")
+
+
+# 1 validation error for Document
+# top_users.0.first_name
+#   Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
+#     For further information visit https://errors.pydantic.dev/2.7/v/string_type
+# Traceback (most recent call last):
+#   File "/home/ubuntu/akira/venv/lib/python3.11/site-packages/pyrogram/dispatcher.py", line 414, in handler_worker
+#     await handler.callback(self.client, *args)
+#   File "/home/ubuntu/akira/user_plugins/funcs/group_stats.py", line 160, in stats_show
+#     users = await guardar_datos(stats)
+#             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   File "/home/ubuntu/akira/user_plugins/funcs/group_stats.py", line 114, in guardar_datos
+#     document_data = Document(
+#                     ^^^^^^^^^
+#   File "/home/ubuntu/akira/venv/lib/python3.11/site-packages/pydantic/main.py", line 176, in __init__
+#     self.__pydantic_validator__.validate_python(data, self_instance=self)
+# pydantic_core._pydantic_core.ValidationError: 1 validation error for Document
+# top_users.0.first_name
+#   Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
+#     For further information visit https://errors.pydantic.dev/2.7/v/string_type
