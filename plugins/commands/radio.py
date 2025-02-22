@@ -27,7 +27,7 @@ async def radio_start(app: Client, message: Message):
     
     args = text.split(" ", 1)
     link_audio = None
-    
+
     if len(args) == 1:
         link = 'http://gr01.cdnstream.com:8290'
     elif len(args) == 2:
@@ -36,6 +36,8 @@ async def radio_start(app: Client, message: Message):
         link = args[1]
         link_audio = args[2]
     
+    print(link)
+    print(link_audio)
         
     try:
         await pytgcalls.play(
