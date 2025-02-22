@@ -36,7 +36,7 @@ async def radio_start(app: Client, message: Message):
         link = args[1]
         link_audio = args[2]
     
-    print(len(args))
+    print(args)
     print(link)
     print(link_audio)
         
