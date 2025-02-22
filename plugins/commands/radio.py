@@ -35,10 +35,6 @@ async def radio_start(app: Client, message: Message):
     elif len(args) == 3:
         link = args[1]
         link_audio = args[2]
-    
-    print(args)
-    print(link)
-    print(link_audio)
         
     try:
         await pytgcalls.play(
