@@ -25,7 +25,7 @@ async def radio_start(app: Client, message: Message):
     if admin is None and user_id != 642502067:
         return await message.reply_text("No tienes permisos para usar este comando.")
     
-    args = text.split(" ", 1)
+    args = text.split(" ", 2)
     link_audio = None
 
     if len(args) == 1:
