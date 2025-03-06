@@ -1,5 +1,5 @@
 from pyrogram import Client, filters, utils, enums
-from pyrogram.types import Message, ChatPermissions
+from pyrogram.types import Message, ChatPermissions, LinkPreviewOptions
 
 from database.mongodb import get_db
 from datetime import datetime
@@ -57,6 +57,7 @@ async def new_member(_, __, message):
     
 new_member_detect = filters.create(new_member)
 
+# @Client.on_message(filters.group)
 @Client.on_message(filters.group & new_member_detect & (filters.text | filters.photo | filters.sticker))
 async def detect_new_user(app: Client, message: Message):
     chat_id = message.chat.id
@@ -102,6 +103,17 @@ async def detect_new_user(app: Client, message: Message):
             except:
                 pass
 
+    reply = message.reply_markup
+    if reply and hasattr(reply, 'inline_keyboard'):
+        for row in reply.inline_keyboard:
+            for button in row:
+                if hasattr(button, 'url'):
+                    mute = True
+                    reason = f"Link en botón: {button.url}"
+                    explain = f"Los nuevos usuarios no tienen permiso para enviar enlaces en el grupo hasta que pasen 5 días desde su entrada al grupo. \n\nInfo: https://t.me/OtakuSenpai2020/251766/2172877"
+                    if button.url.startswith('https://t.me/OtakuSenpai2020'):
+                        mute = False
+
     # if message.sticker:
     #     downloaded_file = await app.download_media(message.sticker.thumbs[0].file_id)
     #     if img_error(downloaded_file, message.sticker.thumbs[0].file_id):
@@ -141,6 +153,7 @@ async def detect_new_user(app: Client, message: Message):
             #text=f"Contenido no deseado de <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>{explain}", 
             text=f"Contenido no deseado de <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>\n\nRazón: \n{reason}",
             parse_mode=enums.ParseMode.HTML,
+            link_preview_options=LinkPreviewOptions(is_disabled=True),
             message_thread_id=82096
             )
 
