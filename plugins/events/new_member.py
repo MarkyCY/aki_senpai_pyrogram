@@ -45,6 +45,9 @@ async def is_new(user_id):
 
     user = await users.find_one({"user_id": user_id})
 
+    if user is None:
+        return True
+
     if user and "enter_date" in user:
         return compare_dates(user["enter_date"])
     else:
