@@ -125,12 +125,12 @@ async def send_welcome_event(app: Client, message: Message):
                     url="https://t.me/Akira_Senpai_bot?start=contests"
                 )
             ],
-            # [
-            #     InlineKeyboardButton(
-            #         "✅ Empezar a escribir",
-            #         url="https://t.me/MarkyWTF"
-            #     ),
-            # ],
+            [
+                InlineKeyboardButton(
+                    "📱 MiniApp",
+                    url="https://t.me/Akira_Senpai_bot?startapp"
+                ),
+            ],
         ]
     )
     msg = await message.reply_text(text=f"{welcome_message}", reply_markup=reply_markup)
