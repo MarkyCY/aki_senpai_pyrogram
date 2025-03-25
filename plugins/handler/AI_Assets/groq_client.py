@@ -73,8 +73,8 @@ Akira answer (New answer of you):"""
 
         available_functions = {
             "buscar_noticias": buscar_noticias,
-            "web_search": web_search,
-            "web_new_search": web_new_search,
+            #"web_search": web_search,
+            #"web_new_search": web_new_search,
             #"view_web": WebGetContents_Tool,
         }
 
