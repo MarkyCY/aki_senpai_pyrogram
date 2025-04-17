@@ -139,5 +139,6 @@ async def revise_command(app: Client, message: Message):
         await app.delete_messages(chat_id, message.reply_to_message.id)
 
     else:
-        await message.reply_text(f"Esta imagen está permitida\n <blockquote>{description}</blockquote>", parse_mode=enums.ParseMode.MARKDOWN,)
+        description = f"""El contenido de este mensaje ha sido marcado como permitida con un {porn}% de probabilidad de ser pornográfico y un {hentai}% de probabilidad de ser hentai."""
+        await message.reply_text(f"Esta imagen está permitida\n <blockquote>{description}</blockquote> Si no estas de acuerdo con los resultados, por favor notifica con el comando /report a los administradores del grupo.", parse_mode=enums.ParseMode.MARKDOWN,)
     
