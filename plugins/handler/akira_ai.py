@@ -5,7 +5,7 @@ from pyrogram import filters
 
 from database.mongodb import get_db
 from plugins.handler.AI_Assets.filters import akira_filter_detect, akira_detect
-from plugins.handler.AI_Assets.groq_client import GeminiClient
+from plugins.handler.AI_Assets.groq_client import GroqClient
 from plugins.handler.AI_Assets.utils import (
     handle_mentions,
     validate_message,
@@ -17,7 +17,7 @@ from plugins.handler.AI_Assets.utils import (
 from database.useControl import UseControlMongo
 
 use_control = UseControlMongo()
-groq_client = GeminiClient(
+groq_client = GroqClient(
     system_prompt_path="plugins/handler/AI_Assets/system_prompt.txt",
     tools_config="plugins/handler/AI_Assets/tools_config.json",
     emoji_list="plugins/handler/AI_Assets/emojis.json"
