@@ -50,8 +50,8 @@ Akira answer (New answer of you):"""
             response = self.client.chat.completions.create(
                 messages=messages,
                 model="llama-3.3-70b-versatile",
-                tools=self.tools,
-                tool_choice="auto",
+                # tools=self.tools,
+                # tool_choice="auto",
                 max_tokens=1000
             )
             
@@ -72,7 +72,7 @@ Akira answer (New answer of you):"""
             return response.choices[0].message.content
 
         available_functions = {
-            "buscar_noticias": buscar_noticias,
+            # "buscar_noticias": buscar_noticias,
             #"web_search": web_search,
             #"web_new_search": web_new_search,
             #"view_web": WebGetContents_Tool,
