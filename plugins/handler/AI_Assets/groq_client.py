@@ -93,7 +93,7 @@ Akira answer (Nueva respuesta):"""
             # Configuración de generación
             generate_config = types.GenerateContentConfig(
                 thinking_config=types.ThinkingConfig(thinking_budget=0),
-                tools=tools,
+                tools=tools if premium else None,
                 response_mime_type="text/plain",
                 system_instruction=[
                     types.Part.from_text(text=self.system_prompt)],
@@ -101,8 +101,10 @@ Akira answer (Nueva respuesta):"""
 
             # Stream de respuesta
             respuesta = []
+            model_name = "gemini-2.5-flash-preview-04-17" if premium else "gemini-1.5-flash"
+            
             for chunk in self.client.models.generate_content_stream(
-                model="gemini-2.5-flash-preview-04-17",
+                model=model_name,
                 contents=contents,
                 config=generate_config,
             ):
