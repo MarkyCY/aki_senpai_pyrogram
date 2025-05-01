@@ -36,7 +36,9 @@ async def radio_start(app: Client, message: Message):
     elif len(args) == 3:
         link = args[1]
         link_audio = args[2]
-        
+
+    offset = "01:25:00"
+
     try:
         await pytgcalls.play(
             chat_id,
@@ -45,9 +47,9 @@ async def radio_start(app: Client, message: Message):
                 audio_path=link_audio,
                 audio_parameters=AudioQuality.LOW,
                 video_parameters=VideoQuality.SD_360p,
-                #audio_parameters=[AudioParameters(bitrate=48000), AudioQuality.LOW],
                 audio_flags=MediaStream.Flags.NO_LATENCY,
                 video_flags=MediaStream.Flags.NO_LATENCY,
+                ffmpeg_parameters=f"-ss {offset}",
             ),
         )
     except exceptions.NoActiveGroupCall:
