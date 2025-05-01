@@ -65,13 +65,13 @@ async def main():
         BotCommand("warn", "Advertir a un usuario"),
     ])
 
-#Crear los horarios
-scheduler = AsyncIOScheduler()
-tz = pytz.timezone('Cuba')
-scheduler.add_job(get_video_command, CronTrigger(minute='*/30', timezone=tz), args=(app,))
-scheduler.add_job(verif_ram, CronTrigger(hour='*/2', timezone=tz), args=(90,))
-scheduler.add_job(stats_show, CronTrigger(hour='23', minute='55', timezone=tz), args=(user_app,))
-scheduler.start()
+    #Crear los horarios
+    scheduler = AsyncIOScheduler()
+    tz = pytz.timezone('Cuba')
+    scheduler.add_job(get_video_command, CronTrigger(minute='*/30', timezone=tz), args=(app,))
+    scheduler.add_job(verif_ram, CronTrigger(hour='*/2', timezone=tz), args=(90,))
+    scheduler.add_job(stats_show, CronTrigger(hour='23', minute='55', timezone=tz), args=(user_app,))
+    scheduler.start()
 
 #Iniciar Proceso de la función main()
 print("Bot Starting")
