@@ -43,7 +43,6 @@ async def radio_start(app: Client, message: Message):
                 link,
                 audio_path=link_audio,
                 audio_parameters=AudioQuality.LOW,
-                video_flags=MediaStream.Flags.NO_LATENCY,
             ),
         )
     except exceptions.NoActiveGroupCall:
