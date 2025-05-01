@@ -49,6 +49,7 @@ async def radio_start(app: Client, message: Message):
     except exceptions.NoActiveGroupCall:
         return await message.reply_text("No hay una transmisión activa en el grupo")
     except Exception as e:
+        print(e)
         return await message.reply_text(f"No se pudo iniciar la transmisión")
 
     btns = [
