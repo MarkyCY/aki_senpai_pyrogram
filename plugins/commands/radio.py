@@ -1,4 +1,5 @@
 from pytgcalls.types import VideoQuality, MediaStream, AudioQuality
+from pytgcalls.types.raw import AudioParameters, AudioStream
 from pytgcalls import exceptions
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
@@ -42,9 +43,9 @@ async def radio_start(app: Client, message: Message):
             MediaStream(
                 link,
                 audio_path=link_audio,
-                audio_parameters=AudioQuality.LOW,
+                audio_parameters=[AudioParameters(bitrate=48000), AudioQuality.LOW],
                 audio_flags=MediaStream.Flags.NO_LATENCY,
-                #video_flags=MediaStream.Flags.NO_LATENCY,
+                video_flags=MediaStream.Flags.IGNORE,
             ),
         )
     except exceptions.NoActiveGroupCall:
