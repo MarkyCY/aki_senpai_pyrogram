@@ -44,6 +44,7 @@ async def radio_start(app: Client, message: Message):
                 link,
                 audio_path=link_audio,
                 audio_parameters=AudioQuality.LOW,
+                video_parameters=VideoQuality.SD_360p,
                 #audio_parameters=[AudioParameters(bitrate=48000), AudioQuality.LOW],
                 audio_flags=MediaStream.Flags.NO_LATENCY,
                 video_flags=MediaStream.Flags.NO_LATENCY,
