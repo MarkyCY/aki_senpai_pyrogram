@@ -30,7 +30,7 @@ async def radio_start(app: Client, message: Message):
     link_audio = None
 
     if len(args) == 1:
-        link = 'http://gr01.cdnstream.com:8290'
+        link = None
     elif len(args) == 2:
         link = args[1]
     elif len(args) == 3:
