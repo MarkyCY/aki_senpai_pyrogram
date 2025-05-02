@@ -12,19 +12,19 @@ from plugins.others.admin_func import role as Role
 # radio_prev
 # radio_next
 
-@pytgcalls.on_update(fl.stream_end)
-async def stream_end(client, update):
+# @pytgcalls.on_update(fl.stream_end)
+# async def stream_end(client, update):
 
-    chat_id = update.chat_id
+#     chat_id = update.chat_id
 
-    await pytgcalls.play(
-            chat_id,
-            MediaStream(
-                'http://gr01.cdnstream.com:8290',
-                audio_parameters=AudioQuality.LOW,
-                video_flags=MediaStream.Flags.NO_LATENCY,
-            ),
-        )
+#     await pytgcalls.play(
+#             chat_id,
+#             MediaStream(
+#                 'http://gr01.cdnstream.com:8290',
+#                 audio_parameters=AudioQuality.LOW,
+#                 video_flags=MediaStream.Flags.NO_LATENCY,
+#             ),
+#         )
 
 @Client.on_callback_query(filters.regex(r"^radio_resume$"))
 async def radio_resume(app: Client, call: CallbackQuery):

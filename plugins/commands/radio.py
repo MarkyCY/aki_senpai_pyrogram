@@ -1,3 +1,4 @@
+import re
 from pytgcalls.types import VideoQuality, MediaStream, AudioQuality
 from pytgcalls.types.raw import AudioParameters, AudioStream
 from pytgcalls import exceptions
@@ -26,18 +27,25 @@ async def radio_start(app: Client, message: Message):
     if admin is None and user_id != 642502067:
         return await message.reply_text("No tienes permisos para usar este comando.")
     
-    args = text.split(" ", 2)
+    OFFSET_RE = re.compile(r'^\d{1,2}:\d{2}:\d{2}$')
+    
+    parts = text.split()
+    args = parts[1:]
+
+    link = 'http://gr01.cdnstream.com:8290'
     link_audio = None
+    offset = "00:00:00"
 
-    if len(args) == 1:
-        link = None
-    elif len(args) == 2:
-        link = args[1]
-    elif len(args) == 3:
-        link = args[1]
-        link_audio = args[2]
+    for a in reversed(args):
+        if OFFSET_RE.match(a):
+            offset = a
+            args.remove(a)
+            break
 
-    offset = "01:25:00"
+    if len(args) >= 1:
+        link = args[0]
+    if len(args) >= 2:
+        link_audio = args[1]
 
     try:
         print(link)
@@ -59,7 +67,7 @@ async def radio_start(app: Client, message: Message):
                     f'Pragma: no-cache\r\n'
                     f'Cache-Control: no-cache\r\n'
                     f'Referer: https://teveo.cu/" '
-                    #f'-ss {offset}'
+                    f'-ss {offset}'
                 ),
             ),
         )
