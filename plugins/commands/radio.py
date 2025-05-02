@@ -1,4 +1,3 @@
-import re
 from pytgcalls.types import VideoQuality, MediaStream, AudioQuality
 from pytgcalls.types.raw import AudioParameters, AudioStream
 from pytgcalls import exceptions
@@ -22,30 +21,23 @@ async def radio_start(app: Client, message: Message):
 
     # if chat_id != -1001485529816:
     #     return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
-
+    
     _, admin = await Role(app, chat_id, user_id)
     if admin is None and user_id != 642502067:
         return await message.reply_text("No tienes permisos para usar este comando.")
-
-    OFFSET_RE = re.compile(r'^\d{1,2}:\d{2}:\d{2}$')
-
-    parts = text.split()
-    args = parts[1:]
-
-    link = 'http://gr01.cdnstream.com:8290'
+    
+    args = text.split(" ", 2)
     link_audio = None
-    offset = "00:00:00"
 
-    for a in reversed(args):
-        if OFFSET_RE.match(a):
-            offset = a
-            args.remove(a)
-            break
+    if len(args) == 1:
+        link = 'http://gr01.cdnstream.com:8290'
+    elif len(args) == 2:
+        link = args[1]
+    elif len(args) == 3:
+        link = args[1]
+        link_audio = args[2]
 
-    if len(args) >= 1:
-        link = args[0]
-    if len(args) >= 2:
-        link_audio = args[1]
+    offset = "01:25:00"
 
     try:
         await pytgcalls.play(
@@ -65,7 +57,7 @@ async def radio_start(app: Client, message: Message):
                     f'Pragma: no-cache\r\n'
                     f'Cache-Control: no-cache\r\n'
                     f'Referer: https://teveo.cu/" '
-                    f'-ss {offset}'
+                    #f'-ss {offset}'
                 ),
             ),
         )
@@ -76,7 +68,7 @@ async def radio_start(app: Client, message: Message):
         return await message.reply_text(f"No se pudo iniciar la transmisión")
 
     btns = [
-        [
+        [ 
             InlineKeyboardButton(
                 "▶️", callback_data=f"radio_resume"),
             # InlineKeyboardButton(
@@ -86,7 +78,7 @@ async def radio_start(app: Client, message: Message):
             InlineKeyboardButton(
                 "⏸", callback_data=f"radio_pause"),
         ],
-        [  # 📺
+        [ # 📺
             InlineKeyboardButton(
                 "🔇", callback_data=f"radio_mute"),
             InlineKeyboardButton(
@@ -107,7 +99,7 @@ async def radio_stop(app: Client, message: Message):
 
     # if chat_id != -1001485529816:
     #     return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
-
+    
     _, admin = await Role(app, chat_id, user_id)
     if admin is None and user_id != 642502067:
         return await message.reply_text("No tienes permisos para usar este comando.")
@@ -122,6 +114,7 @@ async def radio_stop(app: Client, message: Message):
     await message.reply_text("Se ha detenido la transmisión")
 
 
+
 @Client.on_message(filters.command("vol", ["."]))
 async def radio_vol(app: Client, message: Message):
     chat_id = message.chat.id
@@ -130,25 +123,25 @@ async def radio_vol(app: Client, message: Message):
 
     # if chat_id != -1001485529816:
     #     return await message.reply_text("Este comando es exclusivo de Otaku Senpai")
-
+    
     _, admin = await Role(app, chat_id, user_id)
     if admin is None and user_id != 642502067:
         return await message.reply_text("No tienes permisos para usar este comando.")
-
+    
     if text != ".vol":
         value = text.split(" ", 1)[1]
-    else:
+    else: 
         return await message.reply_text("Escriba un valor para el volumen")
-
+    
     try:
         value = int(value)
     except Exception as e:
         return await message.reply_text("Escriba un valor válido para el volumen")
-
+    
     if value > 200 or value < 0:
         return await message.reply_text("El volumen debe estar entre 0 y 200")
 
     await pytgcalls.change_volume_call(
         chat_id,
         value,
-    )
+        )
