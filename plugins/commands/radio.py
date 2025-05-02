@@ -14,7 +14,7 @@ async def ping(app: Client, message: Message):
     await message.reply_text(f"🤖 **Pong!**\n`{pytgcalls.ping} ms`")
 
 
-@Client.on_message(filters.command("radiox", ["."]))
+@Client.on_message(filters.command("radio", ["."]))
 async def radio_start(app: Client, message: Message):
     chat_id = message.chat.id
     text = message.text
@@ -47,15 +47,6 @@ async def radio_start(app: Client, message: Message):
     if len(args) >= 2:
         link_audio = args[1]
 
-    headers = (
-        "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0\\r\\n"
-        "Accept: */*\\r\\n"
-        "Accept-Language: es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3\\r\\n"
-        "Pragma: no-cache\\r\\n"
-        "Cache-Control: no-cache\\r\\n"
-        "Referer: https://teveo.cu/\\r\\n"
-    )
-
     try:
         await pytgcalls.play(
             chat_id,
@@ -66,7 +57,16 @@ async def radio_start(app: Client, message: Message):
                 video_parameters=VideoQuality.SD_360p,
                 audio_flags=MediaStream.Flags.NO_LATENCY,
                 video_flags=MediaStream.Flags.NO_LATENCY,
-                ffmpeg_parameters=f"-re -ss {offset} -headers \"{headers}\"",
+                ffmpeg_parameters=(
+                    f'-headers "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) '
+                    f'Gecko/20100101 Firefox/134.0\r\n'
+                    f'Accept: */*\r\n'
+                    f'Accept-Language: es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3\r\n'
+                    f'Pragma: no-cache\r\n'
+                    f'Cache-Control: no-cache\r\n'
+                    f'Referer: https://teveo.cu/" '
+                    f'-ss {offset}'
+                ),
             ),
         )
     except exceptions.NoActiveGroupCall:
