@@ -60,13 +60,8 @@ async def radio_start(app: Client, message: Message):
                 audio_flags=MediaStream.Flags.NO_LATENCY,
                 video_flags=MediaStream.Flags.NO_LATENCY,
                 ffmpeg_parameters=(
-                    f'-headers "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) '
-                    f'Gecko/20100101 Firefox/134.0\r\n'
-                    f'Accept: */*\r\n'
-                    f'Accept-Language: es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3\r\n'
-                    f'Pragma: no-cache\r\n'
-                    f'Cache-Control: no-cache\r\n'
-                    f'Referer: https://teveo.cu/" '
+                    f'-headers "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0'
+                    f'Referer: https://teveo.cu/"'
                     f'-ss {offset}'
                 ),
             ),
