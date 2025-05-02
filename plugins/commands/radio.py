@@ -40,6 +40,8 @@ async def radio_start(app: Client, message: Message):
     offset = "01:25:00"
 
     try:
+        print(link)
+        print(link_audio)
         await pytgcalls.play(
             chat_id,
             MediaStream(
