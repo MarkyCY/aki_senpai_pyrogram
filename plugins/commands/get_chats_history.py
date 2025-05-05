@@ -77,6 +77,7 @@ async def resumen_command(app: Client, message: Message):
 
     print(f"Tiempo transcurrido: {minutes} minutos y {seconds} segundos")
     result = f"{res_ai}\n\nTiempo transcurrido: {minutes} minutos y {seconds} segundos"
+    print(result)
     try:
         await message.reply_text(result)
     except Exception as e:
