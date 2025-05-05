@@ -107,7 +107,7 @@ def generate_genai(text: str):
     model = "gemini-2.5-flash-preview-04-17"
     generate_content_config = types.GenerateContentConfig(
         response_mime_type="text/plain",
-        system_instruction="""Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme. Tu respuesta está será en formato de mensaje de telegram para un grupo así que todo debe ser bien legible, enumerado los titulos y con plecas (-) los subtitulos y dos saltos de linea entre eventos.""",
+        system_instruction="""Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme. Tu respuesta está será en formato de mensaje de telegram para un grupo así que todo debe ser bien legible, enumerado los titulos y con plecas (-) los subtitulos y dos saltos de linea entre eventos. Formato de respuesta: Titulo\n\nIntroducción:\n\n1. Titulo de evento:\n   - Evento bien descrito.\n   - Evento bien descrito.\n\n2. Otro Titulo de Evento:\n   - Evento bien descrito.\n   - Evento bien descrito.\n\nDespedida calida. IMPORTATE: NO USAR ASTERISCOS (*), SOLO - Y NUMEROS.""",
         thinking_config=types.ThinkingConfig(
             thinking_budget=2048  # Puedes ajustar este valor según tus necesidades
         )
@@ -115,7 +115,7 @@ def generate_genai(text: str):
 
     response = client.models.generate_content(
         model=model,
-        contents=f'{text}\n\n\nFormato de respuesta: Titulo\n\nIntroducción:\n\n1. Titulo de evento:\n   - Evento bien descrito.\n   - Evento bien descrito.\n\n2. Otro Titulo de Evento:\n   - Evento bien descrito.\n   - Evento bien descrito.\n\nDespedida calida.',
+        contents=text,
         config=generate_content_config,
     )
     return response.text
