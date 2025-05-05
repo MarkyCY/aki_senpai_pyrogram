@@ -38,7 +38,7 @@ async def resumen_command(app: Client, message: Message):
         messages.append(msg)
     
     for msg in reversed(messages):
-        if msg.text is None or msg.from_user.is_bot:
+        if msg.text is None or msg.text.startswith('/protecc') or msg.from_user.is_bot:
             continue
 
         message_thread = message.message_thread_id if message.message_thread_id else None
@@ -59,7 +59,7 @@ async def resumen_command(app: Client, message: Message):
         if msg.reply_to_message and msg.reply_to_message.text:
             text += f", reply_to_msg_id: {msg.reply_to_message.id}"
         
-    print(text)
+    print(text[:200])
     
     if limit > 200:
         print("Usando GenAI...")
@@ -107,21 +107,7 @@ def generate_genai(text: str):
     model = "gemini-2.5-flash-preview-04-17"
     generate_content_config = types.GenerateContentConfig(
         response_mime_type="text/plain",
-        system_instruction="""Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme. Ejemplo de respuesta:
-Resumen del Chat Reciente
-
-¡Hola a todos! Aquí está un resumen de lo que ha pasado recientemente en el grupo:
-
-1. Conversación sobre la vida en el campo y colonias:
-   - Neko preguntó si alguien había pisado un campo.
-   - Roxas mencionó que las colonias le suenan a ciudades postapocalípticas y que hay "demasiada tierra colora".
-
-2. Situación de 𝕭𝖆𝖘𝖙𝖆𝖗𝖉:
-   - 𝕭𝖆𝖘𝖙𝖆𝖗𝖉 saludó y mencionó que al final se quedó sin jugar WoW.
-   - Parece que intentó unirse a un juego, pero hubo confusión y frustración.
-
-Espero que este resumen les haya sido útil. ¡Siéntanse libres de preguntar si necesitan más detalles! 😊
-""",
+        system_instruction="""Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme. Ejemplo de respuesta: Resumen del Chat Reciente\n\n¡Hola a todos! Aquí está un resumen de lo que ha pasado recientemente en el grupo:\n\n1. Conversación sobre la vida en el campo y colonias:\n   - Neko preguntó si alguien había pisado un campo.\n   - Roxas mencionó que las colonias le suenan a ciudades postapocalípticas y que hay "demasiada tierra colora".\n\n2. Situación de 𝕭𝖆𝖘𝖙𝖆𝖗𝖉:\n   - 𝕭𝖆𝖘𝖙𝖆𝖗𝖉 saludó y mencionó que al final se quedó sin jugar WoW.\n   - Parece que intentó unirse a un juego, pero hubo confusión y frustración.\n\nEspero que este resumen les haya sido útil. ¡Siéntanse libres de preguntar si necesitan más detalles! 😊""",
         thinking_config=types.ThinkingConfig(
             thinking_budget=2048  # Puedes ajustar este valor según tus necesidades
         )
