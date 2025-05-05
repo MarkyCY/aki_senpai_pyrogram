@@ -12,17 +12,27 @@ from user_plugins.core.user_bot import user_app
 async def resumen_command(app: Client, message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
+    args = message.text.split()
 
     if user_id != 873919300:
         return await message.reply_text("No tienes permisos para usar este comando.")
     
+    limit=200
+
+    if len(args) > 1:
+        try:
+            limit = int(args[1])
+        except ValueError:
+            limit = 200
+
+    
     text = ""
-    print("Buscando mensajes...")
+    print(f"Buscando mensajes...\nLimite de mensajes: {limit}")
     await message.reply_text("Dame un momento para leer el chat...")
     start_time = time.time()
 
     messages = []
-    async for msg in user_app.get_chat_history(chat_id, limit=200):
+    async for msg in user_app.get_chat_history(chat_id, limit=limit):
         messages.append(msg)
     
     for msg in reversed(messages):
@@ -47,7 +57,7 @@ async def resumen_command(app: Client, message: Message):
         if msg.reply_to_message and msg.reply_to_message.text:
             text += f", reply_to_msg_id: {msg.reply_to_message.id}"
         
-    #print(text)
+    print(text)
 
     client = Groq(api_key=os.getenv('GROQ_API'))
     completion = client.chat.completions.create(
