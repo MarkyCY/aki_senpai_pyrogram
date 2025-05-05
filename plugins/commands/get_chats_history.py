@@ -53,7 +53,7 @@ async def resumen_command(app: Client, message: Message):
     completion = client.chat.completions.create(
         model="deepseek-r1-distill-llama-70b",
         messages=[
-            {"role": "system", "content": "Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Sacalo en formato Markdown."},
+            {"role": "system", "content": "Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos."},
             {"role": "user", "content": text}
         ],
         temperature=0.6,
@@ -74,5 +74,5 @@ async def resumen_command(app: Client, message: Message):
 
     print(f"Tiempo transcurrido: {minutes} minutos y {seconds} segundos")
     result = f"{res_ai}\n\nTiempo transcurrido: {minutes} minutos y {seconds} segundos"
-    await message.reply_text(result, parse_mode=enums.ParseMode.MARKDOWN)
+    await message.reply_text(result)
     
