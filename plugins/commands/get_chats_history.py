@@ -107,7 +107,7 @@ def generate_genai(text: str):
     model = "gemini-2.5-flash-preview-04-17"
     generate_content_config = types.GenerateContentConfig(
         response_mime_type="text/plain",
-        system_instruction="""Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme. Ejemplo de respuesta: Resumen del Chat Reciente\n\n¡Hola a todos! Aquí está un resumen de lo que ha pasado recientemente en el grupo:\n\n1. Conversación sobre la vida en el campo y colonias:\n   - Neko preguntó si alguien había pisado un campo.\n   - Roxas mencionó que las colonias le suenan a ciudades postapocalípticas y que hay "demasiada tierra colora".\n\n2. Situación de 𝕭𝖆𝖘𝖙𝖆𝖗𝖉:\n   - 𝕭𝖆𝖘𝖙𝖆𝖗𝖉 saludó y mencionó que al final se quedó sin jugar WoW.\n   - Parece que intentó unirse a un juego, pero hubo confusión y frustración.\n\nEspero que este resumen les haya sido útil. ¡Siéntanse libres de preguntar si necesitan más detalles! 😊""",
+        system_instruction="""Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme.""",
         thinking_config=types.ThinkingConfig(
             thinking_budget=2048  # Puedes ajustar este valor según tus necesidades
         )
@@ -115,7 +115,7 @@ def generate_genai(text: str):
 
     response = client.models.generate_content(
         model=model,
-        contents=text,
+        contents=f'{text}\n\n\nFormato de respuesta: Resumen del Chat Reciente\n\n¡Hola a todos! Aquí está un resumen de lo que ha pasado recientemente en el grupo:\n\n1. Conversación sobre la vida en el campo y colonias:\n   - Neko preguntó si alguien había pisado un campo.\n   - Roxas mencionó que las colonias le suenan a ciudades postapocalípticas y que hay "demasiada tierra colora".\n\n2. Situación de 𝕭𝖆𝖘𝖙𝖆𝖗𝖉:\n   - 𝕭𝖆𝖘𝖙𝖆𝖗𝖉 saludó y mencionó que al final se quedó sin jugar WoW.\n   - Parece que intentó unirse a un juego, pero hubo confusión y frustración.\n\nEspero que este resumen les haya sido útil. ¡Siéntanse libres de preguntar si necesitan más detalles! 😊',
         config=generate_content_config,
     )
     return response.text
