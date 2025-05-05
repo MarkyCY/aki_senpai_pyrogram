@@ -58,7 +58,7 @@ async def resumen_command(app: Client, message: Message):
             text += f", reply_to_msg_id: {msg.reply_to_message.id}"
         
     print(text)
-
+    return
     client = Groq(api_key=os.getenv('GROQ_API'))
     completion = client.chat.completions.create(
         model="deepseek-r1-distill-llama-70b",
