@@ -101,19 +101,9 @@ def generate_genai(text: str):
     client = genai.Client(api_key=os.environ.get("GEMINI_API"))
 
     model = "gemini-2.5-flash-preview-04-17"
-    contents = [
-        types.Content(
-            role="user",
-            parts=[
-                types.Part.from_text(text=text),
-            ],
-        ),
-    ]
     generate_content_config = types.GenerateContentConfig(
         response_mime_type="text/plain",
-        system_instruction=[
-            types.Part.from_text(text="""Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme."""),
-        ],
+        system_instruction="Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme.",
         thinking_config=types.ThinkingConfig(
             thinking_budget=2048  # Puedes ajustar este valor según tus necesidades
         )
@@ -121,14 +111,8 @@ def generate_genai(text: str):
 
     response = client.models.generate_content(
         model=model,
-        contents=contents,
+        contents=text,
         config=generate_content_config,
     )
 
-    # Extraer el texto de la respuesta
-    if response.candidates:
-        candidate = response.candidates[0]
-        if candidate.content.parts:
-            texts = [part.text for part in candidate.content.parts if hasattr(part, 'text')]
-            return '\n'.join(texts)
-    return ""
+    return response.text
