@@ -69,6 +69,7 @@ async def resumen_command(app: Client, message: Message):
         res_ai = generate_groq(text)
 
     print("Resumiendo...")
+    print(res_ai)
     end_time = time.time()
     elapsed_time = end_time - start_time
     minutes = int(elapsed_time // 60)
@@ -76,7 +77,11 @@ async def resumen_command(app: Client, message: Message):
 
     print(f"Tiempo transcurrido: {minutes} minutos y {seconds} segundos")
     result = f"{res_ai}\n\nTiempo transcurrido: {minutes} minutos y {seconds} segundos"
-    await message.reply_text(result)
+    try:
+        await message.reply_text(result)
+    except Exception as e:
+        print(e)
+        await app.send_message(chat_id, result)
     
 
 def generate_groq(text: str):
@@ -114,5 +119,4 @@ def generate_genai(text: str):
         contents=text,
         config=generate_content_config,
     )
-    print(response.text)
     return response.text
