@@ -114,5 +114,5 @@ def generate_genai(text: str):
         contents=text,
         config=generate_content_config,
     )
-
+    print(response.text)
     return response.text
