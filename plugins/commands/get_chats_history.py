@@ -1,8 +1,10 @@
-import os
+import os, time
 from pyrogram import Client, enums
 from pyrogram.types import Message
 from pyrogram import filters
-import time
+
+from google import genai
+from google.genai import types
 
 from groq import Groq
 from user_plugins.core.user_bot import user_app
@@ -58,7 +60,26 @@ async def resumen_command(app: Client, message: Message):
             text += f", reply_to_msg_id: {msg.reply_to_message.id}"
         
     print(text)
-    return
+    
+    if limit > 200:
+        print("Usando GenAI...")
+        res_ai = generate_genai(text)
+    else:
+        print("Usando Groq...")
+        res_ai = generate_groq(text)
+
+    print("Resumiendo...")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    minutes = int(elapsed_time // 60)
+    seconds = int(elapsed_time % 60)
+
+    print(f"Tiempo transcurrido: {minutes} minutos y {seconds} segundos")
+    result = f"{res_ai}\n\nTiempo transcurrido: {minutes} minutos y {seconds} segundos"
+    await message.reply_text(result)
+    
+
+def generate_groq(text: str):
     client = Groq(api_key=os.getenv('GROQ_API'))
     completion = client.chat.completions.create(
         model="deepseek-r1-distill-llama-70b",
@@ -73,16 +94,35 @@ async def resumen_command(app: Client, message: Message):
         reasoning_format="hidden"
     )
 
-    
+    return completion.choices[0].message.content
 
-    print("Resumiendo...")
-    res_ai = completion.choices[0].message.content
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    minutes = int(elapsed_time // 60)
-    seconds = int(elapsed_time % 60)
 
-    print(f"Tiempo transcurrido: {minutes} minutos y {seconds} segundos")
-    result = f"{res_ai}\n\nTiempo transcurrido: {minutes} minutos y {seconds} segundos"
-    await message.reply_text(result)
-    
+def generate_genai(text: str):
+    client = genai.Client(
+        api_key=os.environ.get(os.getenv('GEMINI_API')),
+    )
+
+    model = "gemini-2.5-flash-preview-04-17"
+    contents = [
+        types.Content(
+            role="user",
+            parts=[
+                types.Part.from_text(text=text),
+            ],
+        ),
+    ]
+    generate_content_config = types.GenerateContentConfig(
+        response_mime_type="text/plain",
+        system_instruction=[
+            types.Part.from_text(text="""Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme."""),
+        ],
+    )
+
+    for chunk in client.models.generate_content_stream(
+        model=model,
+        contents=contents,
+        config=generate_content_config,
+    ):
+        print(chunk.text, end="")
+
+    return chunk.text
