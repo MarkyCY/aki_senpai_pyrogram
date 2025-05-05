@@ -18,6 +18,7 @@ async def resumen_command(app: Client, message: Message):
     
     text = ""
     print("Buscando mensajes...")
+    await message.reply_text("Dame un momento para leer el chat...")
     start_time = time.time()
 
     messages = []
@@ -25,7 +26,7 @@ async def resumen_command(app: Client, message: Message):
         messages.append(msg)
     
     for msg in reversed(messages):
-        if message.text is None or message.from_user.is_bot:
+        if msg.text is None or msg.from_user.is_bot:
             continue
 
         message_thread = message.message_thread_id if message.message_thread_id else None
@@ -62,13 +63,16 @@ async def resumen_command(app: Client, message: Message):
         reasoning_format="hidden"
     )
 
+    
+
+    print("Resumiendo...")
+    res_ai = completion.choices[0].message.content
     end_time = time.time()
     elapsed_time = end_time - start_time
     minutes = int(elapsed_time // 60)
     seconds = int(elapsed_time % 60)
-    print(f"Tiempo transcurrido: {minutes} minutos y {seconds} segundos")
 
-    print("Resumiendo...")
-    result = f"{completion.choices[0].message.content}\n\nTiempo transcurrido: {minutes} minutos y {seconds} segundos"
+    print(f"Tiempo transcurrido: {minutes} minutos y {seconds} segundos")
+    result = f"{res_ai}\n\nTiempo transcurrido: {minutes} minutos y {seconds} segundos"
     await message.reply_text(result, parse_mode=enums.ParseMode.MARKDOWN)
     
