@@ -68,8 +68,6 @@ async def resumen_command(app: Client, message: Message):
         print("Usando Groq...")
         res_ai = generate_groq(text)
 
-    print("Resumiendo...")
-    print(res_ai)
     end_time = time.time()
     elapsed_time = end_time - start_time
     minutes = int(elapsed_time // 60)
@@ -77,7 +75,7 @@ async def resumen_command(app: Client, message: Message):
 
     print(f"Tiempo transcurrido: {minutes} minutos y {seconds} segundos")
     result = f"{res_ai}\n\nTiempo transcurrido: {minutes} minutos y {seconds} segundos"
-    print(result)
+
     try:
         await message.reply_text(result)
     except Exception as e:
@@ -109,7 +107,21 @@ def generate_genai(text: str):
     model = "gemini-2.5-flash-preview-04-17"
     generate_content_config = types.GenerateContentConfig(
         response_mime_type="text/plain",
-        system_instruction="Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme.",
+        system_instruction="""Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme. Ejemplo de respuesta:
+Resumen del Chat Reciente
+
+¡Hola a todos! Aquí está un resumen de lo que ha pasado recientemente en el grupo:
+
+1. Conversación sobre la vida en el campo y colonias:
+   - Neko preguntó si alguien había pisado un campo.
+   - Roxas mencionó que las colonias le suenan a ciudades postapocalípticas y que hay "demasiada tierra colora".
+
+2. Situación de 𝕭𝖆𝖘𝖙𝖆𝖗𝖉:
+   - 𝕭𝖆𝖘𝖙𝖆𝖗𝖉 saludó y mencionó que al final se quedó sin jugar WoW.
+   - Parece que intentó unirse a un juego, pero hubo confusión y frustración.
+
+Espero que este resumen les haya sido útil. ¡Siéntanse libres de preguntar si necesitan más detalles! 😊
+""",
         thinking_config=types.ThinkingConfig(
             thinking_budget=2048  # Puedes ajustar este valor según tus necesidades
         )
