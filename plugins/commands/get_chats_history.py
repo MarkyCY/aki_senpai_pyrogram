@@ -118,11 +118,17 @@ def generate_genai(text: str):
         ],
     )
 
-    for chunk in client.models.generate_content_stream(
+    # for chunk in client.models.generate_content_stream(
+    #     model=model,
+    #     contents=contents,
+    #     config=generate_content_config,
+    # ):
+    #     print(chunk.text, end="")
+
+    response = client.models.generate_content(
         model=model,
         contents=contents,
         config=generate_content_config,
-    ):
-        print(chunk.text, end="")
+    )
 
-    return chunk.text
+    return response.text
