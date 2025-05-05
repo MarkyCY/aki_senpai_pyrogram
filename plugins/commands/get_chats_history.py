@@ -99,7 +99,7 @@ def generate_groq(text: str):
 
 def generate_genai(text: str):
     client = genai.Client(
-        api_key=os.environ.get(os.getenv('GEMINI_API')),
+        api_key=os.environ.get("GEMINI_API"),
     )
 
     model = "gemini-2.5-flash-preview-04-17"
