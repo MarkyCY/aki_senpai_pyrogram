@@ -14,7 +14,7 @@ async def ping(app: Client, message: Message):
     await message.reply_text(f"🤖 **Pong!**\n`{pytgcalls.ping} ms`")
 
 
-@Client.on_message(filters.command("r", ["."]))
+@Client.on_message(filters.command("radio", ["."]))
 async def radio_start(app: Client, message: Message):
     chat_id = message.chat.id
     text = message.text
@@ -50,6 +50,7 @@ async def radio_start(app: Client, message: Message):
     try:
         transcode = False  # activación de transcodificación
         ffmpeg_params = [
+            f'-ss {offset}'
             '-fflags', '+nobuffer',
             '-flags', 'low_delay',
             '-analyzeduration', '0',
@@ -74,7 +75,7 @@ async def radio_start(app: Client, message: Message):
 
         # Unimos todo en un string, que es lo que espera MediaStream
         ffmpeg_args = " ".join(ffmpeg_params)
-        
+
         try:
             await pytgcalls.play(
                 chat_id,
