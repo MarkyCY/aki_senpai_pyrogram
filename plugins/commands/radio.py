@@ -76,7 +76,7 @@ async def radio_start(app: Client, message: Message, x=False):
         # Unimos todo en un string, que es lo que espera MediaStream
         ffmpeg_args = " ".join(ffmpeg_params)
         if x == True:
-            ffmpeg_args += f"-ss {offset}"
+            ffmpeg_args = f"-ss {offset}"
         try:
             await pytgcalls.play(
                 chat_id,
