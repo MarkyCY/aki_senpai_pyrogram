@@ -64,19 +64,17 @@ async def radio_start(app: Client, message: Message, x=False):
                 '-preset', 'veryfast',    # preset rápido para menor carga CPU
                 '-tune', 'zerolatency'    # optimiza para transmisión en vivo
             ]
-        # Iniciar la reproducción en el chat de voz
-        # await pytgcalls_app.play(
-        #     chat_id,
-        #     MediaStream(
-        #         hls_url,
-        #         ffmpeg_parameters=ffmpeg_params
-        #     )
-        # )
+
+        if x == True:
+            ffmpeg_params = [
+                '-ss', offset,
+                '-fflags', '+nobuffer',
+                '-flags', 'low_delay',
+                '-analyzeduration', '0',
+            ]
 
         # Unimos todo en un string, que es lo que espera MediaStream
         ffmpeg_args = " ".join(ffmpeg_params)
-        if x == True:
-            ffmpeg_args = f"-ss {offset}"
         try:
             await pytgcalls.play(
                 chat_id,
