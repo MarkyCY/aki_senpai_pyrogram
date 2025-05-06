@@ -74,19 +74,22 @@ async def radio_start(app: Client, message: Message):
 
         # Unimos todo en un string, que es lo que espera MediaStream
         ffmpeg_args = " ".join(ffmpeg_params)
-
-        await pytgcalls.play(
-            chat_id,
-            MediaStream(
-                link,
-                audio_path=link_audio,
-                audio_parameters=AudioQuality.LOW,
-                video_parameters=VideoQuality.SD_360p,
-                audio_flags=MediaStream.Flags.NO_LATENCY,
-                video_flags=MediaStream.Flags.NO_LATENCY,
-                ffmpeg_parameters=ffmpeg_args,
-            ),
-        )
+        print(ffmpeg_args)
+        try:
+            await pytgcalls.play(
+                chat_id,
+                MediaStream(
+                    link,
+                    audio_path=link_audio,
+                    audio_parameters=AudioQuality.LOW,
+                    video_parameters=VideoQuality.SD_360p,
+                    audio_flags=MediaStream.Flags.NO_LATENCY,
+                    video_flags=MediaStream.Flags.NO_LATENCY,
+                    ffmpeg_parameters=ffmpeg_args,
+                ),
+            )
+        except Exception as e:
+            print(e)
 
     except exceptions.NoActiveGroupCall:
         return await message.reply_text("No hay una transmisión activa en el grupo")
