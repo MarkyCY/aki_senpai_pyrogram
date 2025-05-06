@@ -9,6 +9,24 @@ from google.genai import types
 from groq import Groq
 from user_plugins.core.user_bot import user_app
 
+def split_preserving_newlines(text: str, max_size: int = 4070) -> list[str]:
+    """
+    Divide 'text' en trozos de hasta 'max_size' caracteres,
+    preservando saltos de línea y espacios.
+    """
+    lines = text.splitlines(keepends=True)  # cada línea incluye el '\n' :contentReference[oaicite:1]{index=1}
+    chunks = []
+    current = ""
+    for line in lines:
+        # Si añadimos esta línea supera el límite, cerramos el chunk actual
+        if len(current) + len(line) > max_size:
+            chunks.append(current)
+            current = line
+        else:
+            current += line
+    if current:
+        chunks.append(current)
+    return chunks
 
 @Client.on_message(filters.command('resumen'))
 async def resumen_command(app: Client, message: Message):
@@ -78,28 +96,9 @@ async def resumen_command(app: Client, message: Message):
     result = f"{res_ai}\n\nTiempo transcurrido: {minutes} minutos y {seconds} segundos"
     
     if len(result) <= 4070:
-        try:
-            await message.reply_text(result)
-        except Exception as e:
-            print(e)
-            await app.send_message(chat_id, result)
+        await message.reply_text(result)
     else:
-        print(result)
-        chunks = []
-        current_chunk = ""
-        words = result.split()
-        
-        for word in words:
-            if len(current_chunk) + len(word) + 1 <= 4070:
-                current_chunk += word + " "
-            else:
-                chunks.append(current_chunk.strip())
-                current_chunk = word + " "
-        
-        if current_chunk:
-            chunks.append(current_chunk.strip())
-            
-        for chunk in chunks:
+        for chunk in split_preserving_newlines(result):
             try:
                 await message.reply_text(chunk)
             except Exception as e:
