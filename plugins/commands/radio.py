@@ -125,7 +125,7 @@ async def radio_start(app: Client, message: Message, x=False):
 
 @Client.on_message(filters.command("radiox", ["."]))
 async def radiox_start(app: Client, message: Message):
-    radio_start(app=app, message=message, x=True)
+    await radio_start(app=app, message=message, x=True)
 
 @Client.on_message(filters.command("stop", "."))
 async def radio_stop(app: Client, message: Message):
