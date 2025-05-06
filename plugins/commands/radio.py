@@ -50,7 +50,7 @@ async def radio_start(app: Client, message: Message):
     try:
         transcode = False  # activación de transcodificación
         ffmpeg_params = [
-            f'-ss {offset}'
+            '-ss', offset,
             '-fflags', '+nobuffer',
             '-flags', 'low_delay',
             '-analyzeduration', '0',
