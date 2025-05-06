@@ -48,8 +48,29 @@ async def radio_start(app: Client, message: Message):
         link_audio = args[1]
 
     try:
-        print(link)
-        print(link_audio)
+        transcode = True  # activación de transcodificación
+        ffmpeg_params = [
+            '-fflags', '+nobuffer',
+            '-flags', 'low_delay',
+            '-analyzeduration', '0',
+            '-probesize', '32',
+            '-thread_queue_size', '8192',
+            '-re'
+        ]
+        if transcode:
+            ffmpeg_params += [
+                '-vf', 'scale=640:360',   # redimensionar a 360p (ancho 640px)
+                '-preset', 'veryfast',    # preset rápido para menor carga CPU
+                '-tune', 'zerolatency'    # optimiza para transmisión en vivo
+            ]
+        # Iniciar la reproducción en el chat de voz
+        # await pytgcalls_app.play(
+        #     chat_id,
+        #     MediaStream(
+        #         hls_url,
+        #         ffmpeg_parameters=ffmpeg_params
+        #     )
+        # )
         await pytgcalls.play(
             chat_id,
             MediaStream(
@@ -59,7 +80,7 @@ async def radio_start(app: Client, message: Message):
                 video_parameters=VideoQuality.SD_360p,
                 audio_flags=MediaStream.Flags.NO_LATENCY,
                 video_flags=MediaStream.Flags.NO_LATENCY,
-                ffmpeg_parameters=f'-ss {offset} -vf scale=-2:360 -pix_fmt yuv420p -profile:v baseline',
+                ffmpeg_parameters=ffmpeg_params,
             ),
         )
 
