@@ -74,13 +74,37 @@ async def resumen_command(app: Client, message: Message):
     seconds = int(elapsed_time % 60)
 
     print(f"Tiempo transcurrido: {minutes} minutos y {seconds} segundos")
-    result = f"{res_ai}\n\nTiempo transcurrido: {minutes} minutos y {seconds} segundos"
 
-    try:
-        await message.reply_text(result)
-    except Exception as e:
-        print(e)
-        await app.send_message(chat_id, result)
+    result = f"{res_ai}\n\nTiempo transcurrido: {minutes} minutos y {seconds} segundos"
+    
+    if len(result) <= 4070:
+        try:
+            await message.reply_text(result)
+        except Exception as e:
+            print(e)
+            await app.send_message(chat_id, result)
+    else:
+
+        chunks = []
+        current_chunk = ""
+        words = result.split()
+        
+        for word in words:
+            if len(current_chunk) + len(word) + 1 <= 4070:
+                current_chunk += word + " "
+            else:
+                chunks.append(current_chunk.strip())
+                current_chunk = word + " "
+        
+        if current_chunk:
+            chunks.append(current_chunk.strip())
+            
+        for chunk in chunks:
+            try:
+                await message.reply_text(chunk)
+            except Exception as e:
+                print(e)
+                await app.send_message(chat_id, chunk)
     
 
 def generate_groq(text: str):
