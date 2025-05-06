@@ -84,7 +84,7 @@ async def resumen_command(app: Client, message: Message):
             print(e)
             await app.send_message(chat_id, result)
     else:
-
+        print(result)
         chunks = []
         current_chunk = ""
         words = result.split()
