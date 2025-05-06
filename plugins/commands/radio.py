@@ -15,7 +15,7 @@ async def ping(app: Client, message: Message):
 
 
 @Client.on_message(filters.command("radio", ["."]))
-async def radio_start(app: Client, message: Message):
+async def radio_start(app: Client, message: Message, x=False):
     chat_id = message.chat.id
     text = message.text
     user_id = message.from_user.id
@@ -75,7 +75,8 @@ async def radio_start(app: Client, message: Message):
 
         # Unimos todo en un string, que es lo que espera MediaStream
         ffmpeg_args = " ".join(ffmpeg_params)
-
+        if x == True:
+            ffmpeg_args += f"-ss {offset}"
         try:
             await pytgcalls.play(
                 chat_id,
@@ -122,6 +123,9 @@ async def radio_start(app: Client, message: Message):
 
     await message.reply_text("Se ha iniciado la transmisión", reply_markup=markup)
 
+@Client.on_message(filters.command("radiox", ["."]))
+async def radiox_start(app: Client, message: Message):
+    radio_start(app=app, message=message, x=True)
 
 @Client.on_message(filters.command("stop", "."))
 async def radio_stop(app: Client, message: Message):
