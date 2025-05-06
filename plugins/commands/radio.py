@@ -71,6 +71,10 @@ async def radio_start(app: Client, message: Message):
         #         ffmpeg_parameters=ffmpeg_params
         #     )
         # )
+
+        # Unimos todo en un string, que es lo que espera MediaStream
+        ffmpeg_args = " ".join(ffmpeg_params)
+
         await pytgcalls.play(
             chat_id,
             MediaStream(
@@ -80,7 +84,7 @@ async def radio_start(app: Client, message: Message):
                 video_parameters=VideoQuality.SD_360p,
                 audio_flags=MediaStream.Flags.NO_LATENCY,
                 video_flags=MediaStream.Flags.NO_LATENCY,
-                ffmpeg_parameters=ffmpeg_params,
+                ffmpeg_parameters=ffmpeg_args,
             ),
         )
 
