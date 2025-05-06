@@ -59,12 +59,7 @@ async def radio_start(app: Client, message: Message):
                 video_parameters=VideoQuality.SD_360p,
                 audio_flags=MediaStream.Flags.NO_LATENCY,
                 video_flags=MediaStream.Flags.NO_LATENCY,
-                ffmpeg_parameters=(
-                    f'-ss {offset}',
-                    '-vf scale=-2:360',
-                    '-pix_fmt yuv420p',
-                    '-profile:v baseline',
-                ),
+                ffmpeg_parameters=f'-ss {offset} -vf scale=-2:360 -pix_fmt yuv420p -profile:v baseline',
             ),
         )
 
