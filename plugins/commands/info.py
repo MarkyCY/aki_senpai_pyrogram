@@ -1,10 +1,16 @@
 from pyrogram import Client
-from pyrogram.types import Message, ReplyParameters, InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import Message, ReplyParameters, InlineKeyboardButton, InlineKeyboardMarkup, LinkPreviewOptions
 from pyrogram import filters
 
 from database.mongodb import get_db
 
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+SERVER_API = os.getenv('SERVER_API')
 
 group_perm = [-1001485529816, -1001664356911]
 
@@ -102,7 +108,12 @@ async def info_command(app: Client, message: Message, user_data=None):
         msg += f"\n📅Fecha de entrada: {dt_object.strftime('%d/%m/%Y %I:%M %p')}\n"
         msg += f"⏰Días en el grupo: {compare_dates(date)} días"
     
+    if user_db.get("canva_json"):
+        link_preview = LinkPreviewOptions(url=f"{SERVER_API}/canva/user_canva/{user.id}", prefer_large_media=True, show_above_text=True, manual=True, safe=True)
+    else:
+        link_preview = LinkPreviewOptions(is_disabled=True)
+
     if user_data is None:
-        await app.send_message(message.chat.id, text=msg, reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), reply_markup=markup)
+        await app.send_message(message.chat.id, text=msg, reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), reply_markup=markup, link_preview_options=link_preview)
     else:
         await app.edit_message_text(message.chat.id, message.id, text=msg, reply_markup=markup)
