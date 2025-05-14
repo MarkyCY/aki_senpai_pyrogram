@@ -121,7 +121,7 @@ async def info_command(app: Client, message: Message, user_data=None):
         if user_db.get("canva_json"):
             await app.send_photo(
                 message.chat.id, 
-                photo=f"{SERVER_API}/canva/user_canva/{user.id}",
+                photo=f"{SERVER_API}/canva/user_canva/{user.id}?t={datetime.now().timestamp()}",
                 caption=msg, 
                 reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), 
                 reply_markup=markup, 
@@ -137,6 +137,6 @@ async def info_command(app: Client, message: Message, user_data=None):
             
     else:
         if user_db.get("canva_json"):
-            await app.edit_message_media(message.chat.id, message.id, media=InputMediaPhoto(media=f"{SERVER_API}/canva/user_canva/{user.id}", caption=msg), reply_markup=markup)
+            await app.edit_message_media(message.chat.id, message.id, media=InputMediaPhoto(media=f"{SERVER_API}/canva/user_canva/{user.id}?t={datetime.now().timestamp()}", caption=msg), reply_markup=markup)
         else:
             await app.edit_message_text(message.chat.id, message.id, text=msg, reply_markup=markup)
