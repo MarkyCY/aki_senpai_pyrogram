@@ -114,7 +114,7 @@ async def info_command(app: Client, message: Message, user_data=None):
         link_preview = LinkPreviewOptions(is_disabled=True)
 
     if user_data is None:
-        await app.send_photo(
+        await app.send_message(
             message.chat.id, 
             text=msg, 
             reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), 
