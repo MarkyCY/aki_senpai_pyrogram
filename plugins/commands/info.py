@@ -109,7 +109,7 @@ async def info_command(app: Client, message: Message, user_data=None):
         msg += f"⏰Días en el grupo: {compare_dates(date)} días"
     
     if user_db.get("canva_json"):
-        link_preview = LinkPreviewOptions(url=f"{SERVER_API}/canva/user_canva/{user.id}", prefer_large_media=True, show_above_text=True, manual=True, safe=True)
+        link_preview = LinkPreviewOptions(url=f"{SERVER_API}/canva/user_canva/{user.id}", prefer_large_media=True, show_above_text=True, manual=False, safe=False)
     else:
         link_preview = LinkPreviewOptions(is_disabled=True)
 
