@@ -1,5 +1,5 @@
 from pyrogram import Client
-from pyrogram.types import Message, ReplyParameters, InlineKeyboardButton, InlineKeyboardMarkup, LinkPreviewOptions, InputMedia
+from pyrogram.types import Message, ReplyParameters, InlineKeyboardButton, InlineKeyboardMarkup, LinkPreviewOptions, InputMediaPhoto
 from pyrogram import filters
 import requests
 
@@ -137,6 +137,6 @@ async def info_command(app: Client, message: Message, user_data=None):
             
     else:
         if user_db.get("canva_json"):
-            await app.edit_message_media(message.chat.id, message.id, media=InputMedia(media=f"{SERVER_API}/canva/user_canva/{user.id}", caption=msg), reply_markup=markup)
+            await app.edit_message_media(message.chat.id, message.id, media=InputMediaPhoto(media=f"{SERVER_API}/canva/user_canva/{user.id}", caption=msg), reply_markup=markup)
         else:
             await app.edit_message_text(message.chat.id, message.id, text=msg, reply_markup=markup)
