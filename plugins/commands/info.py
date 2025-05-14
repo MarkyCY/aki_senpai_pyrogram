@@ -1,6 +1,7 @@
 from pyrogram import Client
-from pyrogram.types import Message, ReplyParameters, InlineKeyboardButton, InlineKeyboardMarkup, LinkPreviewOptions
+from pyrogram.types import Message, ReplyParameters, InlineKeyboardButton, InlineKeyboardMarkup, LinkPreviewOptions, InputMedia
 from pyrogram import filters
+import requests
 
 from database.mongodb import get_db
 
@@ -108,18 +109,34 @@ async def info_command(app: Client, message: Message, user_data=None):
         msg += f"\n📅Fecha de entrada: {dt_object.strftime('%d/%m/%Y %I:%M %p')}\n"
         msg += f"⏰Días en el grupo: {compare_dates(date)} días"
     
-    if user_db.get("canva_json"):
-        link_preview = LinkPreviewOptions(url=f"{SERVER_API}/canva/user_canva/{user.id}?t={datetime.now().timestamp()}", prefer_large_media=True, show_above_text=True, manual=False, safe=False)
-    else:
-        link_preview = LinkPreviewOptions(is_disabled=True)
+    
+
+    # if user_db.get("canva_json"):
+    #     link_preview = LinkPreviewOptions(url=f"{SERVER_API}/canva/user_canva/{user.id}", prefer_large_media=True, show_above_text=True, manual=False, safe=False)
+    #     photo = requests.get(f"{SERVER_API}/canva/user_canva/{user.id}")
+    # else:
+    #     link_preview = LinkPreviewOptions(is_disabled=True)
 
     if user_data is None:
-        await app.send_message(
-            message.chat.id, 
-            text=msg, 
-            reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), 
-            reply_markup=markup, 
-            link_preview_options=link_preview
-            )
+        if user_db.get("canva_json"):
+            await app.send_photo(
+                message.chat.id, 
+                photo=f"{SERVER_API}/canva/user_canva/{user.id}",
+                caption=msg, 
+                reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), 
+                reply_markup=markup, 
+                #link_preview_options=link_preview
+                )
+        else:
+            await app.send_message(
+                message.chat.id, 
+                text=msg, 
+                reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), 
+                reply_markup=markup,
+                )
+            
     else:
-        await app.edit_message_text(message.chat.id, message.id, text=msg, reply_markup=markup, link_preview_options=link_preview)
+        if user_db.get("canva_json"):
+            await app.edit_message_media(message.chat.id, message.id, text=InputMedia(media=f"{SERVER_API}/canva/user_canva/{user.id}", caption=msg), reply_markup=markup)
+        else:
+            await app.edit_message_text(message.chat.id, message.id, text=msg, reply_markup=markup)
