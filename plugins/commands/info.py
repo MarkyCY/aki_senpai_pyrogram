@@ -1,5 +1,5 @@
 from pyrogram import Client
-from pyrogram.types import Message, ReplyParameters, InlineKeyboardButton, InlineKeyboardMarkup, LinkPreviewOptions
+from pyrogram.types import Message, ReplyParameters, InlineKeyboardButton, InlineKeyboardMarkup, LinkPreviewOptions, InputMedia
 from pyrogram import filters
 
 from database.mongodb import get_db
@@ -114,6 +114,13 @@ async def info_command(app: Client, message: Message, user_data=None):
         link_preview = LinkPreviewOptions(is_disabled=True)
 
     if user_data is None:
-        await app.send_message(message.chat.id, text=msg, reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), reply_markup=markup, link_preview_options=link_preview)
+        await app.send_photo(
+            message.chat.id, 
+            photo=f"{SERVER_API}/canva/user_canva/{user.id}",
+            caption=msg, 
+            reply_parameters=ReplyParameters(message_id=message.reply_to_message_id), 
+            reply_markup=markup, 
+            #link_preview_options=link_preview
+            )
     else:
-        await app.edit_message_text(message.chat.id, message.id, text=msg, reply_markup=markup)
+        await app.edit_message_media(message.chat.id, message.id, text=InputMedia(media=f"{SERVER_API}/canva/user_canva/{user.id}", caption=msg), reply_markup=markup, link_preview_options=link_preview)
