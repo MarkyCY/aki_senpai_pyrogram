@@ -6,6 +6,8 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, ReplyParameters
 import m3u8
 import requests
+from PIL import Image
+from io import BytesIO
 
 
 def load_playlist(source: str) -> m3u8.M3U8:
@@ -23,6 +25,7 @@ def select_best_stream(playlist: m3u8.M3U8) -> m3u8.Playlist:
         if bw > max_bw:
             max_bw = bw
             best = variant
+            #print(f"Seleccionado: {bw} bps, Resolución: {width}x{height}")
     return best
 
 
@@ -104,38 +107,32 @@ async def download(app: Client, message: Message, cmd: list[str]):
     # Actualizar a 100% al finalizar
     await app.edit_message_text(chat_id, msg.id, "Descarga completa - 100%")
 
-    # Miniatura para el video
-    thumbnail = 'https://images.angelstudios.com/image/upload/b_rgb:000000,h_630,w_1200,c_fill,g_north/l_v1652712203:angel-studios:one_pixel,/fl_relative,w_1.0,h_1.0,c_scale,e_colorize,co_black,o_50/fl_layer_apply/l_v1632350973:angel-app:tuttle-twins:discovery_images:logo/fl_relative,w_0.35,c_scale/fl_layer_apply,g_north_west,y_0.05,x_0.05,fl_relative/l_v1663942060:angel-studios:logos:Angel-Studios-Logo-White/w_0.25,c_scale,fl_relative/fl_layer_apply,g_south_east,y_0.05,x_0.05,fl_relative/,h_630,w_1200/v1736813449/studio-app/catalog/1f941545-0480-4fc4-b406-b9851cd0bbc6.webp'
-
-    # Descargar el thumbnail
-    thumb = requests.get(thumbnail).content
-
-    # Enviar el archivo resultante
-    try:
-        await app.send_video(chat_id, 'output.mp4', thumb=thumb,
-                                caption="Aquí tienes el video descargado.",
-                                reply_parameters=ReplyParameters(message_id=message.id))
-    except Exception as e:
-        print(e)
-        await app.send_video(chat_id, 'output.mp4',
-                                caption="Aquí tienes el video descargado.",
-                                reply_parameters=ReplyParameters(message_id=message.id))
+    return True
 
 @Client.on_message(filters.command('download'))
 async def angel_command(app: Client, message: Message):
+    chat_id = message.chat.id
     user_id = message.from_user.id
+
     if user_id != 873919300:
         return await message.reply_text("No tienes permisos para usar este comando.")
 
-    args = message.text.split(maxsplit=1)
+    args = message.text.split(maxsplit=3)
     if len(args) < 2:
         return await message.reply_text("Proporciona un enlace.")
 
     link = args[1].strip()
     playlist = load_playlist(link)
     best = select_best_stream(playlist)
+
     if not best:
         return await message.reply_text("No se encontró un stream de video.")
+    
+    # Obtener resolución
+    stream_info = best.stream_info
+    width = stream_info.resolution[0] if stream_info.resolution else None
+    height = stream_info.resolution[1] if stream_info.resolution else None
+    print(f"Resolución seleccionada: {width}x{height}")
 
     # audio = select_media(playlist, 'AUDIO', ['es', 'en'])
     audio = select_media(playlist, 'AUDIO', ['es'])
@@ -146,9 +143,73 @@ async def angel_command(app: Client, message: Message):
     subtitle_uri = subtitles.uri if subtitles else None
 
     ffmpeg_cmd = build_ffmpeg_command(video_uri, audio_uri, None)
-    await download(app, message, ffmpeg_cmd)
+    downld = await download(app, message, ffmpeg_cmd)
+
+    # Miniatura para el video
+    thumbnail = 'https://images.angelstudios.com/image/upload/b_rgb:000000,h_630,w_1200,c_fill,g_north/l_v1652712203:angel-studios:one_pixel,/fl_relative,w_1.0,h_1.0,c_scale,e_colorize,co_black,o_50/fl_layer_apply/l_v1632350973:angel-app:tuttle-twins:discovery_images:logo/fl_relative,w_0.35,c_scale/fl_layer_apply,g_north_west,y_0.05,x_0.05,fl_relative/l_v1663942060:angel-studios:logos:Angel-Studios-Logo-White/w_0.25,c_scale,fl_relative/fl_layer_apply,g_south_east,y_0.05,x_0.05,fl_relative/,h_630,w_1200/v1736813449/studio-app/catalog/1f941545-0480-4fc4-b406-b9851cd0bbc6.webp'
+
+    # Descargar el thumbnail
+    response = requests.get(thumbnail)
+    
+    # Open image and resize keeping aspect ratio
+    img = Image.open(BytesIO(response.content))
+    # Calculate new size maintaining aspect ratio
+    ratio = min(320/img.width, 320/img.height)
+    new_size = (int(img.width * ratio), int(img.height * ratio))
+    img = img.resize(new_size, Image.Resampling.LANCZOS)
+    
+    # Save as JPEG with quality adjustment to keep under 200KB
+    quality = 85
+    output = BytesIO()
+    img.save(output, format='JPEG', quality=quality, optimize=True)
+    thumb = output.getvalue()
+    
+    # If still over 200KB, reduce quality until it fits
+    while len(thumb) > 200*1024:
+        quality = int(quality * 0.9)
+        output = BytesIO()
+        img.save(output, format='JPEG', quality=quality, optimize=True)
+        thumb = output.getvalue()
+
+
+    if downld:
+        # Enviar el archivo resultante
+        try:
+            await app.send_video(chat_id, 'output.mp4', thumb=thumb,
+                                    caption="Aquí tienes el video descargado.",
+                                    width=int(width) if width else 0, height=int(height) if height else 0,
+                                    reply_parameters=ReplyParameters(message_id=message.id))
+        except Exception as e:
+            print(e)
+            await app.send_video(chat_id, 'output.mp4',
+                                    caption="Aquí tienes el video descargado.",
+                                    width=int(width) if width else 0, height=int(height) if height else 0,
+                                    reply_parameters=ReplyParameters(message_id=message.id))
+
+
+def main():
+    source = input("Introduce la URL o el texto del archivo M3U8: ").strip()
+    playlist = load_playlist(source)
+    best_stream = select_best_stream(playlist)
+    print(best_stream)
+    if not best_stream:
+        print("No se encontró un stream de video.")
+        return
+
+    # Obtener resolución
+    stream_info = best_stream.stream_info
+    width = stream_info.resolution[0] if stream_info.resolution else None
+    height = stream_info.resolution[1] if stream_info.resolution else None
+    print(f"Resolución seleccionada: {width}x{height}")
+
+    audio = select_media(playlist, 'AUDIO', ['es', 'en'])
+    subtitles = select_media(playlist, 'SUBTITLES', ['es', 'en'])
+
+    video_uri = best_stream.uri
+    audio_uri = audio.uri if audio else None
+    subtitle_uri = subtitles.uri if subtitles else None
+
+    ffmpeg_cmd = build_ffmpeg_command(video_uri, audio_uri, subtitle_uri)
 
 if __name__ == '__main__':
-    # Nombre de sesión/config según tus credenciales de Pyrogram
-    app = Client('session_name')
-    app.run()
+    main()
