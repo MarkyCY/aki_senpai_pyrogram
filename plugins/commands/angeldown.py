@@ -18,14 +18,22 @@ def load_playlist(source: str) -> m3u8.M3U8:
 
 
 def select_best_stream(playlist: m3u8.M3U8) -> m3u8.Playlist:
+    # best = None
+    # max_bw = 0
+    # for variant in playlist.playlists:
+    #     bw = variant.stream_info.bandwidth
+    #     if bw > max_bw:
+    #         max_bw = bw
+    #         best = variant
+    #         #print(f"Seleccionado: {bw} bps, Resolución: {width}x{height}")
+    # return best
     best = None
-    max_bw = 0
+    min_bw = float('inf')  # Start with infinity to find minimum
     for variant in playlist.playlists:
         bw = variant.stream_info.bandwidth
-        if bw > max_bw:
-            max_bw = bw
+        if bw < min_bw:
+            min_bw = bw
             best = variant
-            #print(f"Seleccionado: {bw} bps, Resolución: {width}x{height}")
     return best
 
 
