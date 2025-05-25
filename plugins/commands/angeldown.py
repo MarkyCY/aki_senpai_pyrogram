@@ -3,7 +3,7 @@ import re
 import time
 import asyncio
 from pyrogram import Client, filters
-from pyrogram.types import Message
+from pyrogram.types import Message, ReplyParameters
 import m3u8
 
 # Miniatura para el video
@@ -105,7 +105,7 @@ async def download(app: Client, message: Message, cmd: list[str]):
     # Enviar el archivo resultante
     await app.send_document(chat_id, 'output.mkv', thumb=thumb,
                             caption="Aquí tienes el video descargado.",
-                            reply_to_message_id=message.id)
+                            reply_parameters=ReplyParameters(message_id=message.id))
 
 @Client.on_message(filters.command('download'))
 async def angel_command(app: Client, message: Message):
