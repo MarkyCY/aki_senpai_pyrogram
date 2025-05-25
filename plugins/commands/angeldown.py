@@ -37,7 +37,7 @@ def select_media(playlist: m3u8.M3U8, media_type: str, langs: list[str]) -> m3u8
 
 def build_ffmpeg_command(video_uri: str, audio_uri: str | None = None,
                         subtitle_uri: str | None = None,
-                        output_file: str = 'output.mkv') -> list[str]:
+                        output_file: str = 'output.mp4') -> list[str]:
     cmd = ['ffmpeg', '-y']
     cmd += ['-i', video_uri]
     if audio_uri:
@@ -112,12 +112,12 @@ async def download(app: Client, message: Message, cmd: list[str]):
 
     # Enviar el archivo resultante
     try:
-        await app.send_document(chat_id, 'output.mkv', thumb=thumb,
+        await app.send_video(chat_id, 'output.mp4', thumb=thumb,
                                 caption="Aquí tienes el video descargado.",
                                 reply_parameters=ReplyParameters(message_id=message.id))
     except Exception as e:
         print(e)
-        await app.send_document(chat_id, 'output.mkv',
+        await app.send_video(chat_id, 'output.mp4',
                                 caption="Aquí tienes el video descargado.",
                                 reply_parameters=ReplyParameters(message_id=message.id))
 
@@ -137,14 +137,15 @@ async def angel_command(app: Client, message: Message):
     if not best:
         return await message.reply_text("No se encontró un stream de video.")
 
-    audio = select_media(playlist, 'AUDIO', ['es', 'en'])
+    # audio = select_media(playlist, 'AUDIO', ['es', 'en'])
+    audio = select_media(playlist, 'AUDIO', ['es'])
     subtitles = select_media(playlist, 'SUBTITLES', ['es', 'en'])
 
     video_uri = best.uri
     audio_uri = audio.uri if audio else None
     subtitle_uri = subtitles.uri if subtitles else None
 
-    ffmpeg_cmd = build_ffmpeg_command(video_uri, audio_uri, subtitle_uri)
+    ffmpeg_cmd = build_ffmpeg_command(video_uri, audio_uri, None)
     await download(app, message, ffmpeg_cmd)
 
 if __name__ == '__main__':
