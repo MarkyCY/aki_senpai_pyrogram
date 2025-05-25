@@ -93,7 +93,11 @@ async def download(app: Client, message: Message, cmd: list[str]):
             out_time_ms = int(m.group(1))
         if time.time() - last_update >= 3:
             percent = min(100, int((out_time_ms / 1_000_000) / total_secs * 100)) if total_secs > 0 else 0
-            await app.edit_message_text(chat_id, msg.id, f"Descargando - {percent}%")
+            bar_length = 20  # longitud de la barra
+            filled_length = int(bar_length * percent // 100)
+            bar = '█' * filled_length + '─' * (bar_length - filled_length)
+
+            await app.edit_message_text(chat_id, msg.id, f"Descargando\n{percent}% [{bar}]")
             last_update = time.time()
 
     await proc.wait()
