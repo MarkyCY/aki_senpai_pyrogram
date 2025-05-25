@@ -5,6 +5,7 @@ import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message, ReplyParameters
 import m3u8
+import requests
 
 # Miniatura para el video
 thumb = 'https://images.angelstudios.com/image/upload/b_rgb:000000,h_630,w_1200,c_fill,g_north/l_v1652712203:angel-studios:one_pixel,/fl_relative,w_1.0,h_1.0,c_scale,e_colorize,co_black,o_50/fl_layer_apply/l_v1632350973:angel-app:tuttle-twins:discovery_images:logo/fl_relative,w_0.35,c_scale/fl_layer_apply,g_north_west,y_0.05,x_0.05,fl_relative/l_v1663942060:angel-studios:logos:Angel-Studios-Logo-White/w_0.25,c_scale,fl_relative/fl_layer_apply,g_south_east,y_0.05,x_0.05,fl_relative/,h_630,w_1200/v1736813449/studio-app/catalog/1f941545-0480-4fc4-b406-b9851cd0bbc6.webp'
@@ -101,6 +102,9 @@ async def download(app: Client, message: Message, cmd: list[str]):
     await proc.wait()
     # Actualizar a 100% al finalizar
     await app.edit_message_text(chat_id, msg.id, "Descarga completa - 100%")
+
+    # Descargar el thumbnail
+    thumb = requests.get(thumb).content
 
     # Enviar el archivo resultante
     await app.send_document(chat_id, 'output.mkv', thumb=thumb,
