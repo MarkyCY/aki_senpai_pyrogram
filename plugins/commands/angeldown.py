@@ -67,7 +67,7 @@ async def get_duration(uri: str) -> float:
 
 async def download(app: Client, message: Message, cmd: list[str]):
     chat_id = message.chat.id
-    msg = await app.send_message(chat_id, "Descargando - 0%", reply_to_message_id=message.id)
+    msg = await app.send_message(chat_id, "Descargando - 0%", reply_parameters=ReplyParameters(message_id=message.id))
 
     # Obtener duración total
     video_uri = cmd[cmd.index('-i') + 1]
