@@ -50,29 +50,29 @@ async def angel_command(app: Client, message: Message):
     user_id = message.from_user.id
     args = message.text.split()
 
-    if user_id != 873919300:
-        return await message.reply_text("No tienes permisos para usar este comando.")
+    # if user_id != 873919300:
+    #     return await message.reply_text("No tienes permisos para usar este comando.")
     
-    if len(args) > 1:
-        link = args[1].strip()
-    else:
-        return await message.reply_text("Proporciona un enlace.")
+    # if len(args) > 1:
+    #     link = args[1].strip()
+    # else:
+    #     return await message.reply_text("Proporciona un enlace.")
     
-    playlist = load_playlist(link)
-    best_stream = select_best_stream(playlist)
-    if not best_stream:
-        return await message.reply_text("No se encontró un stream de video.")
+    # playlist = load_playlist(link)
+    # best_stream = select_best_stream(playlist)
+    # if not best_stream:
+    #     return await message.reply_text("No se encontró un stream de video.")
     
-    audio = select_media(playlist, 'AUDIO', ['es', 'en'])
-    subtitles = select_media(playlist, 'SUBTITLES', ['es', 'en'])
+    # audio = select_media(playlist, 'AUDIO', ['es', 'en'])
+    # subtitles = select_media(playlist, 'SUBTITLES', ['es', 'en'])
 
-    video_uri = best_stream.uri
-    audio_uri = audio.uri if audio else None
-    subtitle_uri = subtitles.uri if subtitles else None
+    # video_uri = best_stream.uri
+    # audio_uri = audio.uri if audio else None
+    # subtitle_uri = subtitles.uri if subtitles else None
 
-    ffmpeg_cmd = build_ffmpeg_command(video_uri, audio_uri, subtitle_uri)
+    # ffmpeg_cmd = build_ffmpeg_command(video_uri, audio_uri, subtitle_uri)
     
-    os.system(ffmpeg_cmd)
-    await message.reply_text("Descarga completa.")
-    
-    await message.reply_document('output.mkv', caption="Aquí tienes el video descargado.")
+    # os.system(ffmpeg_cmd)
+    await app.send_message(chat_id, "Descargando...", reply_to_message_id=message.id)
+
+    await app.send_document(chat_id, 'output.mkv', caption="Aquí tienes el video descargado.", reply_to_message_id=message.id)
