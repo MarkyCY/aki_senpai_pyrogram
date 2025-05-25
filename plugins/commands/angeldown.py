@@ -95,12 +95,12 @@ async def download(app: Client, message: Message, cmd: list[str]):
             out_time_ms = int(m.group(1))
         if time.time() - last_update >= 3:
             percent = min(100, int((out_time_ms / 1_000_000) / total_secs * 100)) if total_secs > 0 else 0
-            await app.edit_message_text(chat_id, msg.message_id, f"Descargando - {percent}%")
+            await app.edit_message_text(chat_id, msg.d, f"Descargando - {percent}%")
             last_update = time.time()
 
     await proc.wait()
     # Actualizar a 100% al finalizar
-    await app.edit_message_text(chat_id, msg.message_id, "Descarga completa - 100%")
+    await app.edit_message_text(chat_id, msg.id, "Descarga completa - 100%")
 
     # Enviar el archivo resultante
     await app.send_document(chat_id, 'output.mkv', thumb=thumb,
