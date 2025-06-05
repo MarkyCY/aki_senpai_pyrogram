@@ -130,6 +130,52 @@ async def angel_command(app: Client, message: Message):
         return await message.reply_text("Proporciona un enlace.")
 
     link = args[1].strip()
+
+    # ✨ Primera opción: si el enlace termina en .mp4, descarga el archivo,
+    # convierte a 1080x720 si es más grande, y luego lo envía como video.
+    if link.lower().endswith('.mp4'):
+        # Descarga el archivo .mp4
+        input_file = 'input.mp4'
+        with requests.get(link, stream=True) as r:
+            r.raise_for_status()
+            with open(input_file, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=1024 * 1024):
+                    if chunk:
+                        f.write(chunk)
+
+        # Convierte a resolución máxima 1080x720 conservando proporción si es mayor
+        output_file = 'output.mp4'
+        ffmpeg_cmd = [
+            'ffmpeg', '-y', '-i', input_file,
+            '-vf', "scale='min(1080,iw)':'min(720,ih)':force_original_aspect_ratio=decrease",
+            '-c:v', 'libx264', '-c:a', 'copy', output_file
+        ]
+        proc = await asyncio.create_subprocess_exec(
+            *ffmpeg_cmd,
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL
+        )
+        await proc.wait()
+
+        # Envía el video resultante
+        try:
+            await app.send_video(
+                chat_id,
+                output_file,
+                caption="Aquí tienes el video descargado.",
+                reply_parameters=ReplyParameters(message_id=message.id)
+            )
+        except Exception as e:
+            print(e)
+            await app.send_video(
+                chat_id,
+                output_file,
+                caption="Aquí tienes el video descargado.",
+                reply_parameters=ReplyParameters(message_id=message.id)
+            )
+        return
+
+    # Si no es .mp4, se asume que es un playlist m3u8
     playlist = load_playlist(link)
     best = select_best_stream(playlist)
 
