@@ -141,23 +141,40 @@ async def detect_new_user(app: Client, message: Message):
     # if safe is False:
     #     mute = True
 
-    if mute is True:
+    if mute is not True:
+        return
+    
+    db = await get_db()
+    users = db.users
+     
+    user = await users.find_one({"user_id": message.from_user.id})
 
-        until_date=utils.zero_datetime()
+    until_date=utils.zero_datetime()
+
+    if user is None:
+        try:
+            await app.ban_chat_member(chat_id, message.from_user.id, until_date=until_date)
+        except Exception as e:
+            pass
+        notify = f"El usuario <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a> ha sido baneado por no ser completamente seguro de su contenido."
+        action = "Baneado"
+    else:
         try:
             await app.restrict_chat_member(chat_id, message.from_user.id, permissions, until_date=until_date)
         except Exception as e:
             pass
-
-        await message.reply_text(f"El usuario <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a> ha sido muteado por no ser completamente seguro de su contenido. \n\n{explain}", parse_mode=enums.ParseMode.HTML)
-        await app.forward_messages(-1001664356911, message.chat.id, message.id, message_thread_id=82096)
-        await app.send_message(
-            -1001664356911,
-            #text=f"Contenido no deseado de <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>{explain}", 
-            text=f"Contenido no deseado de <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>\n\nRazón: \n{reason}",
-            parse_mode=enums.ParseMode.HTML,
-            link_preview_options=LinkPreviewOptions(is_disabled=True),
-            message_thread_id=82096
-            )
-
-        await app.delete_messages(chat_id, message.id)
+        notify = f"El usuario <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a> ha sido muteado por no ser completamente seguro de su contenido."
+        action = "Muteado"
+             
+    await message.reply_text(f"{notify} \n\n{explain}", parse_mode=enums.ParseMode.HTML)
+    await app.forward_messages(-1001664356911, message.chat.id, message.id, message_thread_id=82096)
+    await app.send_message(
+        -1001664356911,
+        #text=f"Contenido no deseado de <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>{explain}", 
+        text=f"Contenido no deseado de <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>\n\nRazón: \n{reason}\n\nAcción: {action}",
+        parse_mode=enums.ParseMode.HTML,
+        link_preview_options=LinkPreviewOptions(is_disabled=True),
+        message_thread_id=82096
+        )
+     
+    await app.delete_messages(chat_id, message.id)
