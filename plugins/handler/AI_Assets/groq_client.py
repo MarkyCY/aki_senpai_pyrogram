@@ -36,11 +36,11 @@ class GroqClient:
 
         if mentions:
             input_text += f""""Reply" : {mentions},
-"El usuario te habla:": "{text}",
+"@{message.from_user.username} te habla:": "{text}",
 Akira answer (New answer of you):"""
         else:
             input_text += f"""
-"El usuario te habla:": "{text}"
+"@{message.from_user.username} te habla:": "{text}"
 """
         return input_text
 
