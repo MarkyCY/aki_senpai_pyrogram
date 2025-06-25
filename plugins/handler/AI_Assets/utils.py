@@ -46,9 +46,9 @@ async def handle_mentions(client: Client, message: Message, users_collection) ->
         if user_reply_id == 6275121584:
             mentions.append({"name": "Akira", "akira_said": text})
         elif search_user:
-            descr = search_user.get('description', "None")
+            descr = search_user.get("description", "None")
             mentions.append(
-                {"username": username, "description": descr, "user_said": text})
+                {"username": username, "description": descr, "reply_user_said": text})
 
     return mentions
 

@@ -28,14 +28,14 @@ class GroqClient:
         """
         text = format_message_to_markdown(message)
         input_text = f"""
-"Entrada": {{
-    "from": @{message.from_user.username},
+"Entrada" : {{
+    "from": "@{message.from_user.username}",
     "user_description": "{user_info}"
 }},
 """
 
         if mentions:
-            input_text += f""""About": {mentions},
+            input_text += f""""Reply" : {mentions},
 "user": "{text}",
 Akira answer (New answer of you):"""
         else:
