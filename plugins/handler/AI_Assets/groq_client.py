@@ -49,7 +49,7 @@ Akira answer (New answer of you):"""
             messages = self._build_messages(input_text)
             response = self.client.chat.completions.create(
                 messages=messages,
-                model="llama-3.3-70b-versatile",
+                model="meta-llama/llama-4-scout-17b-16e-instruct",
                 # tools=self.tools,
                 # tool_choice="auto",
                 max_tokens=1000
