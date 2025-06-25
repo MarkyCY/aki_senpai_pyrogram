@@ -62,6 +62,7 @@ Akira answer (New answer of you):"""
             return None
 
     def _build_messages(self, input_text: str) -> list:
+        print(self.system_prompt)
         return [
             {"role": "system", "content": self.system_prompt},
             {"role": "user", "content": input_text}
