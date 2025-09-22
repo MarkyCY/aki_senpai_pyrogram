@@ -15,7 +15,7 @@ async def angel_command(app: Client, message: Message):
 
     dir = args[1].strip()
 
-    app.send_document(
+    await app.send_document(
         chat_id=chat_id,
         document=dir,
         caption=f"Archivo subido")
