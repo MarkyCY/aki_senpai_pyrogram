@@ -81,4 +81,4 @@ uritemplate==4.1.1
 urllib3==2.2.1
 websockets==15.0.1
 yarl==1.9.4
-jwt
+PyJWT
