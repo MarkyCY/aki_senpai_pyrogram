@@ -8,8 +8,9 @@ import jwt
 
 
 # Handler específico para el juego
-@Client.on_callback_query(filters.regex(r"^akira_runner$"))
+@Client.on_callback_query(filters.game)
 def handle_game_short_name(app: Client, call: CallbackQuery):
+    print("is game")
     user_id = str(call.from_user.id)
     # Aquí generas el token (implementación equivalente a createToken)
     token = createToken(user_id)
