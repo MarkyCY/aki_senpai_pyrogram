@@ -12,10 +12,6 @@ async def awa(_, __, message):
     
 awa_detect = filters.create(awa)
 
-@Client.on_callback_query()
-async def awa(app: Client, call: CallbackQuery):
-    print(f"Callback data: {call}")
-
 # Handler específico para el juego
 @Client.on_callback_query(awa_detect)
 async def handle_game_short_name(app: Client, call: CallbackQuery):
