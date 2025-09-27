@@ -14,7 +14,7 @@ awa_detect = filters.create(awa)
 
 
 # Handler específico para el juego
-@Client.on_callback_query(filters.awa_detect)
+@Client.on_callback_query(awa_detect)
 def handle_game_short_name(app: Client, call: CallbackQuery):
     print("is game")
     user_id = str(call.from_user.id)
