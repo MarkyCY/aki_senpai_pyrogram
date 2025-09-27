@@ -24,10 +24,8 @@ def handle_game_short_name(app: Client, call: CallbackQuery):
     call.answer(url=f"https://proyectos-game-z2vizx-7c7e26-82-180-160-194.traefik.me/?token={token}")
 
 def createToken(user_id):
-    return jwt.encode({"user_id": user_id}, "secret", algorithm="HS256")
-
-#detector de los callbackquery
-@Client.on_callback_query()
-def handle_all_callbacks(app: Client, call: CallbackQuery):
-    print(f"Callback data: {call.data} from user {call.from_user.id}")
-    print(f"Callback> {call}")
+    token = jwt.encode({"user_id": user_id}, "secret", algorithm="HS256")
+    if isinstance(token, bytes):
+        # Convertir a string para compatibilidad
+        token = token.decode("utf-8")
+    return token
