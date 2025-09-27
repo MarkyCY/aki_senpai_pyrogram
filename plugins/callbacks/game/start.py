@@ -7,8 +7,8 @@ from plugins.others.contest import *
 import jwt
 
 async def awa(_, __, message):
-    print(message)
-    return True
+    #if message.game_short_name == "akira_runner":
+    return message.game_short_name == "akira_runner"
     
 awa_detect = filters.create(awa)
 
