@@ -16,12 +16,12 @@ awa_detect = filters.create(awa)
 # Handler específico para el juego
 @Client.on_callback_query(awa_detect)
 def handle_game_short_name(app: Client, call: CallbackQuery):
-    print("is game")
     user_id = str(call.from_user.id)
+    username = call.from_user.username
     # Aquí generas el token (implementación equivalente a createToken)
     token = createToken(user_id)
     # Responde la callback con la URL personalizada
-    call.answer(url=f"https://proyectos-game-z2vizx-7c7e26-82-180-160-194.traefik.me/?token={token}")
+    call.answer(url=f"https://proyectos-game-z2vizx-7c7e26-82-180-160-194.traefik.me/?username={username}")
 
 def createToken(user_id):
     token = jwt.encode({"user_id": user_id}, "secret", algorithm="HS256")
