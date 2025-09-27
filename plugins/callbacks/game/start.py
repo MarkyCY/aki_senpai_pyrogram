@@ -23,3 +23,4 @@ def createToken(user_id):
 @Client.on_callback_query()
 def handle_all_callbacks(app: Client, call: CallbackQuery):
     print(f"Callback data: {call.data} from user {call.from_user.id}")
+    print(f"Callback> {call}")
