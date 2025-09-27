@@ -6,9 +6,15 @@ from pyrogram import filters
 from plugins.others.contest import *
 import jwt
 
+async def awa(_, __, message):
+    print(message)
+    return True
+    
+awa_detect = filters.create(awa)
+
 
 # Handler específico para el juego
-@Client.on_callback_query(filters.game)
+@Client.on_callback_query(filters.awa_detect)
 def handle_game_short_name(app: Client, call: CallbackQuery):
     print("is game")
     user_id = str(call.from_user.id)
