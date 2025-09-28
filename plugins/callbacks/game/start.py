@@ -20,4 +20,4 @@ async def handle_game_short_name(app: Client, call: CallbackQuery):
     inline_message_id = call.inline_message_id
     print(call.inline_message_id)
     # Responde la callback con la URL personalizada
-    await call.answer(url=f"https://proyectos-game-z2vizx-7c7e26-82-180-160-194.traefik.me/?username={username}&inline_message_id={inline_message_id}&user_id={user_id}")
+    await call.answer(url=f"https://luz-del-alba.duckdns.org?username={username}&inline_message_id={inline_message_id}&user_id={user_id}")
