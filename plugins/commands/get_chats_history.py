@@ -127,7 +127,7 @@ def generate_groq(text: str):
 def generate_genai(text: str):
     client = genai.Client(api_key=os.environ.get("GEMINI_API"))
 
-    model = "gemini-2.5-flash-preview-04-17"
+    model = "gemini-2.5-flash"
     generate_content_config = types.GenerateContentConfig(
         response_mime_type="text/plain",
         system_instruction="""Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos. Dame la respuesta a modo de lista con los sucesos más relevantes del chat y también cosas que puedan ser divertidas o dar chisme. Tu respuesta está será en formato de mensaje de telegram para un grupo así que todo debe ser bien legible, enumerado los titulos y con plecas (-) los subtitulos y dos saltos de linea entre eventos. Formato de respuesta: Titulo\n\nIntroducción:\n\n1. Titulo de evento:\n   - Evento bien descrito.\n   - Evento bien descrito.\n\n2. Otro Titulo de Evento:\n   - Evento bien descrito.\n   - Evento bien descrito.\n\nDespedida calida. IMPORTATE: NO USAR ASTERISCOS (*), SOLO - Y NUMEROS.""",
