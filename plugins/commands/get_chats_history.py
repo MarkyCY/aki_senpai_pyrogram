@@ -109,7 +109,7 @@ async def resumen_command(app: Client, message: Message):
 def generate_groq(text: str):
     client = Groq(api_key=os.getenv('GROQ_API'))
     completion = client.chat.completions.create(
-        model="deepseek-r1-distill-llama-70b",
+        model="openai/gpt-oss-120b",
         messages=[
             {"role": "system", "content": "Tu labor es resumir fácilmente los chats en español de la mejor manera, e informarle a los usuarios que ha pasado recientemente en el grupo como si tu conocieras a todos."},
             {"role": "user", "content": text}
