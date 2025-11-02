@@ -13,7 +13,7 @@ def find_messages_by_bot(bot_type):
 
 @Client.on_message(filters.photo & filters.group & filters.bot & filters.user(1964681186), group=1)
 # @Client.on_message((filters.photo & filters.group), group=1)
-async def waifu_is_out(app: Client, message: Message):
+async def husbando_is_out(app: Client, message: Message):
     # text = message.text or ""
     # args = text.split()
     # message_id = int(args[1])
@@ -21,7 +21,7 @@ async def waifu_is_out(app: Client, message: Message):
     
     print("husbando detectada en el grupo.")
 
-    # Verificando que salga una waifu.
+    # Verificando que salga una husbando.
     text = message.caption.split(' ')
     if text[1] != "husbando":
         return
@@ -50,44 +50,44 @@ async def waifu_is_out(app: Client, message: Message):
 # Seria cuando se detecta un /protecc
 @Client.on_message(filters.command("protecc", prefixes=['/', '.']))
 async def catch_capture(app: Client, message: Message = None):
-    waifu_messages = find_messages_by_bot("husbando")
+    husbando_messages = find_messages_by_bot("husbando")
 
-    if not waifu_messages:
+    if not husbando_messages:
         return
     
-    data = AppTimes[waifu_messages[0]]
-    AppTimes[waifu_messages[0]]["users_time"][message.from_user.id] = int((time.perf_counter() - data["start_time"]) * 1000)
+    data = AppTimes[husbando_messages[0]]
+    AppTimes[husbando_messages[0]]["users_time"][message.from_user.id] = int((time.perf_counter() - data["start_time"]) * 1000)
 
     # Testing
-    # AppTimes[waifu_messages[0]]["users_time"][123456] = int((time.perf_counter() - data["start_time"]) * 1000)
+    # AppTimes[husbando_messages[0]]["users_time"][123456] = int((time.perf_counter() - data["start_time"]) * 1000)
 
 
 @Client.on_message(filters.group & filters.bot & filters.user(1964681186), group=2)
 # @Client.on_message(filters.group, group=2)
-async def waifu_captured(app: Client, message: Message = None):
+async def husbando_captured(app: Client, message: Message = None):
 
     text = message.text.split(' ') 
     if text[1] != "OwO":
         return
 
-    # ID del usuario que capturó la waifu
+    # ID del usuario que capturó la husbando
     user_id = message.reply_to_message.from_user.id if message.reply_to_message else None
     # user_id = 123456
 
     # Buscamos el id a traves del contador registrado
-    waifu_messages = find_messages_by_bot("husbando")
+    husbando_messages = find_messages_by_bot("husbando")
 
-    if not waifu_messages:
+    if not husbando_messages:
         return
 
-    # Obtenemos los datos del mensaje waifu
-    data = AppTimes[waifu_messages[0]] if waifu_messages else None
+    # Obtenemos los datos del mensaje husbando
+    data = AppTimes[husbando_messages[0]] if husbando_messages else None
 
     if data and user_id:
         users = data.get("users_time", {})
         tiempo_ms = users[user_id] if user_id in users else None
         if tiempo_ms:
-            await message.reply_text(f"El usuario {user_id} capturó la waifu en {tiempo_ms} ms.")
+            await message.reply_text(f"El usuario {user_id} capturó la husbando en {tiempo_ms} ms.")
             print(f"Mostrando todos los tiempos registrados:\n{users}")
             print(f"Tiempo total pasado desde el inicio: {int((time.perf_counter() - data['start_time']) * 1000)} ms")
             AppTimes.clear()
@@ -101,7 +101,7 @@ async def waifu_captured(app: Client, message: Message = None):
 
 @Client.on_message(filters.group & filters.bot & filters.user(1964681186), group=3)
 # @Client.on_message(filters.group, group=3)
-async def waifu_dead(app: Client, message: Message = None):
+async def husbando_dead(app: Client, message: Message = None):
     text = message.text.split(' ')
     if text[0] != "rip,":
         return
