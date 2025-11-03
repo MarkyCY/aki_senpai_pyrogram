@@ -1,4 +1,4 @@
-from pyrogram import Client, filters
+from pyrogram import Client, filters, enums
 from pyrogram.types import Message
 import time
 
@@ -67,11 +67,12 @@ async def catch_capture(app: Client, message: Message = None):
 async def husbando_captured(app: Client, message: Message = None):
 
     text = message.text.split(' ') 
-    if text[1] != "OwO":
+    if len(text) < 2 and text[1] != "OwO":
         return
 
-    # ID del usuario que capturó la husbando
+    # ID del usuario que capturó el husbando
     user_id = message.reply_to_message.from_user.id if message.reply_to_message else None
+    name = message.reply_to_message.from_user.first_name if message.reply_to_message else "None"
     # user_id = 123456
 
     # Buscamos el id a traves del contador registrado
@@ -87,7 +88,7 @@ async def husbando_captured(app: Client, message: Message = None):
         users = data.get("users_time", {})
         tiempo_ms = users[user_id] if user_id in users else None
         if tiempo_ms:
-            await message.reply_text(f"El usuario {user_id} capturó la husbando en {tiempo_ms} ms.")
+            await message.reply_text(f"El usuario <a href='tg://user?id={user_id}'>{name}</a> capturó el husbando en {tiempo_ms} ms.", parse_mode=enums.ParseMode.HTML)
             print(f"Mostrando todos los tiempos registrados:\n{users}")
             print(f"Tiempo total pasado desde el inicio: {int((time.perf_counter() - data['start_time']) * 1000)} ms")
             AppTimes.clear()

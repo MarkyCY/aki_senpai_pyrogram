@@ -1,4 +1,4 @@
-from pyrogram import Client, filters
+from pyrogram import Client, filters, enums
 from pyrogram.types import Message
 import time
 
@@ -11,7 +11,7 @@ def find_messages_by_bot(bot_type):
         if data.get("bot") == bot_type
     ]
 
-@Client.on_message(filters.photo & filters.group & filters.bot & filters.user(1733263647), group=1)
+@Client.on_message(filters.photo & filters.group & filters.bot & filters.user(1733263647), group=4)
 # @Client.on_message((filters.photo & filters.group), group=1)
 async def waifu_is_out(app: Client, message: Message):
     # text = message.text or ""
@@ -62,7 +62,7 @@ async def catch_capture(app: Client, message: Message = None):
     # AppTimes[waifu_messages[0]]["users_time"][123456] = int((time.perf_counter() - data["start_time"]) * 1000)
 
 
-@Client.on_message(filters.group & filters.bot & filters.user(1733263647), group=2)
+@Client.on_message(filters.group & filters.bot & filters.user(1733263647), group=5)
 # @Client.on_message(filters.group, group=2)
 async def waifu_captured(app: Client, message: Message = None):
 
@@ -72,6 +72,7 @@ async def waifu_captured(app: Client, message: Message = None):
 
     # ID del usuario que capturó la waifu
     user_id = message.reply_to_message.from_user.id if message.reply_to_message else None
+    name = message.reply_to_message.from_user.first_name if message.reply_to_message else "None"
     # user_id = 123456
 
     # Buscamos el id a traves del contador registrado
@@ -87,7 +88,7 @@ async def waifu_captured(app: Client, message: Message = None):
         users = data.get("users_time", {})
         tiempo_ms = users[user_id] if user_id in users else None
         if tiempo_ms:
-            await message.reply_text(f"El usuario {user_id} capturó la waifu en {tiempo_ms} ms.")
+            await message.reply_text(f"El usuario <a href='tg://user?id={user_id}'>{name}</a> capturó la waifu en {tiempo_ms} ms.", parse_mode=enums.ParseMode.HTML)
             print(f"Mostrando todos los tiempos registrados:\n{users}")
             print(f"Tiempo total pasado desde el inicio: {int((time.perf_counter() - data['start_time']) * 1000)} ms")
             AppTimes.clear()
@@ -99,7 +100,7 @@ async def waifu_captured(app: Client, message: Message = None):
 
     """
 
-@Client.on_message(filters.group & filters.bot & filters.user(1733263647), group=3)
+@Client.on_message(filters.group & filters.bot & filters.user(1733263647), group=6)
 # @Client.on_message(filters.group, group=3)
 async def waifu_dead(app: Client, message: Message = None):
     text = message.text.split(' ')
