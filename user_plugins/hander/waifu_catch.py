@@ -48,8 +48,8 @@ async def waifu_is_out(app: Client, message: Message):
         print("Temporizador iniciado.")
 
 # Seria cuando se detecta un /protecc
-@Client.on_message(filters.command("protecc", prefixes=['/', '.']))
-async def catch_capture(app: Client, message: Message = None):
+@Client.on_message(filters.command("protecc", prefixes=['/', '.']), group=7)
+async def catch_waifu_capture(app: Client, message: Message = None):
     waifu_messages = find_messages_by_bot("waifu")
 
     if not waifu_messages:
