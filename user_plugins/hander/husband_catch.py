@@ -67,7 +67,7 @@ async def catch_capture(app: Client, message: Message = None):
 async def husbando_captured(app: Client, message: Message = None):
 
     text = message.text.split(' ') 
-    if len(text) < 2 and text[1] != "OwO":
+    if text[1] != "OwO":
         return
 
     # ID del usuario que capturó el husbando
